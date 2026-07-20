@@ -1,0 +1,12 @@
+[
+  {
+    "id": "01_ping",
+    "tool": "athena_query",
+    "args": { "query": "select 1 as ok", "maxRows": 10 }
+  },
+  {
+    "id": "02_s3_raiz",
+    "tool": "s3_list",
+    "args": {}
+  }
+]

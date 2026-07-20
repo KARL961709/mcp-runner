@@ -1,0 +1,15 @@
+# LISTA BLANCA: por defecto NADA se versiona.
+# El repo es un canal de una sola direccion (fabrica -> PC banco). Si algun dia
+# se corre el batch dentro de esta carpeta, las salidas NO se pueden commitear
+# por accidente: no es disciplina, es que git no las ve.
+*
+
+# Unicas excepciones: la herramienta generica, sin nada del banco adentro.
+!.gitignore
+!README.md
+!_batch.js
+!_call.js
+!plan_ejemplo.json
+
+# NO agregar aqui: ibk-aws-mcp.js (lleva account id, buckets, ARN del rol),
+# planes con SQL contra tablas reales, ni ninguna carpeta de salida.
