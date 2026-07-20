@@ -11,6 +11,7 @@
 !_call.js
 !plan_ejemplo.json
 !Run-Athena.ps1
+!Go.ps1
 !config.ejemplo.ps1
 
 # Las queries SI viajan por el repo (decision del usuario, 2026-07-20): es la
