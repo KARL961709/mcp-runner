@@ -13,8 +13,13 @@
 !Run-Athena.ps1
 !config.ejemplo.ps1
 
+# Las queries SI viajan por el repo (decision del usuario, 2026-07-20): es la
+# unica forma de que el codigo llegue a la maquina de ejecucion sin retipear.
+!sql/
+!sql/*.sql
+
 # NO agregar aqui, nunca:
 #   config.ps1        -> nombres de workgroup / base
 #   ibk-aws-mcp.js    -> account id, buckets, ARN del rol
-#   sql\*.sql         -> queries contra tablas reales
-#   output\, *.csv    -> resultados
+#   output\, *.csv    -> RESULTADOS. Esta es la linea que no se cruza:
+#                        el codigo entra, los datos no salen.
