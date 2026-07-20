@@ -1,15 +1,20 @@
 # LISTA BLANCA: por defecto NADA se versiona.
-# El repo es un canal de una sola direccion (fabrica -> PC banco). Si algun dia
-# se corre el batch dentro de esta carpeta, las salidas NO se pueden commitear
-# por accidente: no es disciplina, es que git no las ve.
+# El repo es un canal de una sola direccion (fabrica -> PC de ejecucion). Si se
+# corre el runner dentro de esta carpeta, las salidas NO se pueden commitear por
+# accidente: no es disciplina, es que git no las ve.
 *
 
-# Unicas excepciones: la herramienta generica, sin nada del banco adentro.
+# Unicas excepciones: la herramienta generica, sin nada del entorno adentro.
 !.gitignore
 !README.md
 !_batch.js
 !_call.js
 !plan_ejemplo.json
+!Run-Athena.ps1
+!config.ejemplo.ps1
 
-# NO agregar aqui: ibk-aws-mcp.js (lleva account id, buckets, ARN del rol),
-# planes con SQL contra tablas reales, ni ninguna carpeta de salida.
+# NO agregar aqui, nunca:
+#   config.ps1        -> nombres de workgroup / base
+#   ibk-aws-mcp.js    -> account id, buckets, ARN del rol
+#   sql\*.sql         -> queries contra tablas reales
+#   output\, *.csv    -> resultados
