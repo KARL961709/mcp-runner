@@ -25,7 +25,8 @@ param(
   [string]   $WorkGroup,
   [string]   $Database,
   [int]      $TimeoutSec = 900,
-  [string[]] $Only = @()
+  [string[]] $Only = @(),
+  [switch]   $Clip
 )
 
 $ErrorActionPreference = "Stop"
@@ -201,5 +202,17 @@ $manifiesto | ConvertTo-Json -Depth 4 | Set-Content -Path (Join-Path $OutDir "_m
 
 Write-Host ""
 Write-Host $resumen
+
+# -Clip deja el resumen listo para pegar en el chat: es el ultimo tramo del
+# canal de vuelta y no tiene sentido que cueste un Get-Content mas.
+if ($Clip) {
+  try {
+    Set-Clipboard -Value $resumen
+    Write-Host "Resumen copiado al portapapeles - pegalo en el chat con Ctrl+V" -ForegroundColor Cyan
+  } catch {
+    Write-Host "(no pude usar el portapapeles: $($_.Exception.Message))" -ForegroundColor Yellow
+  }
+}
+
 if ($ok -lt $manifiesto.Count) { exit 1 }
 exit 0
