@@ -149,17 +149,33 @@ foreach ($archivo in $archivos) {
       throw "Athena devolvio $estado"
     }
 
-    # Descarga del CSV completo desde el OutputLocation del workgroup.
-    $origen = $exec.ResultConfiguration.OutputLocation
-    $csv = Join-Path $OutDir "$nombre.csv"
-    aws s3 cp $origen $csv --profile $AwsProfile --only-show-errors
-    if ($LASTEXITCODE -ne 0) { throw "No pude bajar el resultado desde $origen (exit $LASTEXITCODE)" }
+    # DDL/DML (CREATE TABLE AS, DROP, INSERT INTO, ALTER) no devuelve filas. Para un
+    # CTAS, OutputLocation apunta a `tables/<uuid>`, que es el PREFIJO con los datos de
+    # la tabla, no un CSV: el `aws s3 cp` responde 404 HeadObject aunque la query haya
+    # ido perfecta. Visto en PO_1_flags_rcc: SUCCEEDED en 232s y 404 al descargar.
+    # Se detecta por la primera palabra del SQL, ignorando comentarios y lineas vacias.
+    $primeraLinea = ($sql -split "`n" |
+                     Where-Object { $_.Trim() -and -not $_.Trim().StartsWith("--") } |
+                     Select-Object -First 1)
+    $esDDL = $primeraLinea -match '^\s*(CREATE|DROP|ALTER|INSERT|MSCK)\b'
 
-    # Conteo por streaming: no carga el archivo entero en memoria.
-    # Es conteo de LINEAS: si algun campo trae saltos de linea, sobreestima.
-    $n = 0
-    foreach ($l in [System.IO.File]::ReadLines($csv)) { $n++ }
-    $lineas = [Math]::Max(0, $n - 1)
+    if ($esDDL) {
+      $csv = $null
+      $lineas = 0
+    }
+    else {
+      # Descarga del CSV completo desde el OutputLocation del workgroup.
+      $origen = $exec.ResultConfiguration.OutputLocation
+      $csv = Join-Path $OutDir "$nombre.csv"
+      aws s3 cp $origen $csv --profile $AwsProfile --only-show-errors
+      if ($LASTEXITCODE -ne 0) { throw "No pude bajar el resultado desde $origen (exit $LASTEXITCODE)" }
+
+      # Conteo por streaming: no carga el archivo entero en memoria.
+      # Es conteo de LINEAS: si algun campo trae saltos de linea, sobreestima.
+      $n = 0
+      foreach ($l in [System.IO.File]::ReadLines($csv)) { $n++ }
+      $lineas = [Math]::Max(0, $n - 1)
+    }
   }
   catch {
     if (-not $motivo) { $motivo = $_.Exception.Message }
