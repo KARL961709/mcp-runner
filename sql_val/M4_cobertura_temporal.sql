@@ -3,8 +3,8 @@
 --   archivo : M_mapeo/M4_cobertura_temporal.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\M4_cobertura_temporal.sql
 --   sha256  : b7fb09011bba   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : el eje que M1/M2 no ven: particiones faltantes y meses incompletos
+--   estado  : VERDE
+--   nota    : particiones OK; destapo 202509=202510 y 2 dup en 202503
 -- =====================================================================================
 -- =====================================================================================
 -- M4_cobertura_temporal.sql | ¿estan TODOS los meses, y completos?
