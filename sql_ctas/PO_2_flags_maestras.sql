@@ -34,7 +34,7 @@ WITH pob AS (
   SELECT cast(date_format(date_parse(p_codmes,'%Y%m') + interval '1' month,'%Y%m') AS varchar) AS codmes,
          cast(tip_doc AS varchar) AS tip_doc, key_value
   FROM e_perm_aws.scr_admbankbpe_rsk
-  WHERE p_codmes BETWEEN '202206' AND '202607'
+  WHERE p_codmes BETWEEN '202401' AND '202607'
   GROUP BY 1,2,3
 ),
 
@@ -72,16 +72,16 @@ nacimiento_rl AS (
 rcc_rl_raw AS (
   SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
     FROM e_perm_aws.t_fact_report_rcc_rsk
-    WHERE p_codmes BETWEEN '202104' AND '202607'
-      AND codmes   BETWEEN '202104' AND '202607'
+    WHERE p_codmes BETWEEN '202211' AND '202607'
+      AND codmes   BETWEEN '202211' AND '202607'
       AND p_codmes >= '201901'
       AND substr(cod_cuenta_rcc,1,2) = '81'          -- solo castigo: 81.302 / 81.925
       AND key_value IN (SELECT nrodoc_rl FROM uni_rl)
   UNION ALL
   SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
     FROM d_perm_aws.t_fact_report_rcc_rsk
-    WHERE p_codmes BETWEEN '202104' AND '202607'
-      AND codmes   BETWEEN '202104' AND '202607'
+    WHERE p_codmes BETWEEN '202211' AND '202607'
+      AND codmes   BETWEEN '202211' AND '202607'
       AND p_codmes <= '201812'
       AND substr(cod_cuenta_rcc,1,2) = '81'
       AND key_value IN (SELECT nrodoc_rl FROM uni_rl)
