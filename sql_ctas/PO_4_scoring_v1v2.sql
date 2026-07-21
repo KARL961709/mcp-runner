@@ -100,7 +100,7 @@ b AS (
   SELECT cast(tip_doc AS varchar) AS tip_doc, key_value,
          cast(p_codmes AS int) AS p_codmes, max(probabilidad) AS pd_raw
   FROM e_perm_aws.scr_admbankbpe_rsk
-  WHERE p_codmes BETWEEN '202606' AND '202606'
+  WHERE p_codmes BETWEEN '202206' AND '202607'
   GROUP BY 1,2,3
 ),
 fl AS (
