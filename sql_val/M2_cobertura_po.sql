@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : M_mapeo/M2_cobertura_po.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\M2_cobertura_po.sql
---   sha256  : ed50849fdbc7   (del cuerpo, sin este encabezado)
+--   sha256  : e0238684c566   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : cuanto de la PO alcanza cada fuente — mide si flg_giro esta apagado
 -- =====================================================================================
@@ -48,8 +48,13 @@ sec_rk AS (
                          ORDER BY fecproceso, fecinicio, estadoregistro, ruc_value DESC) AS num
   FROM e_perm_aws.t_mst_sec_sunat_rsk
 ),
+-- OJO de donde sale cada columna. El ladder hace `SELECT X.*` con X = princ_sunat,
+-- asi que ciiu / tipcontribuyente / estadocontribuyente / fecbaja / ubigeo son TODAS
+-- de t_mst_princ_sunat_rsk. De sec_sunat solo se usa key_value, y solo para armar
+-- NRODOC cuando flg_ruc esta en (10,15,17).
+-- (La version anterior de este archivo ponia Y.ciiu apuntando a sec_sunat: no existe.)
 sunat AS (
-  SELECT X.ruc_value, X.flg_ruc, X.fecalta2, Y.ciiu,
+  SELECT X.ruc_value, X.flg_ruc, X.fecalta2, X.ciiu,
          (CASE WHEN X.flg_ruc IN (10,15,17) THEN '1' ELSE '2' END)              AS tipdoc,
          (CASE WHEN X.flg_ruc IN (10,15,17) THEN Y.key_value ELSE X.ruc_value END) AS nrodoc
   FROM (SELECT a.*, cast(extract(year  from a.fecalta)*10000
