@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C5_dirty_por_motivo.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C5_dirty_por_motivo.sql
 --   sha256  : d26ec51fb493   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : riesgo vs politica dentro del dirty — explica el 0.97x de PJJ
+--   estado  : VERDE
+--   nota    : los filtros de RIESGO no ordenan riesgo (0.72x PJJ / 0.86x PNN); la politica si
 -- =====================================================================================
 -- =====================================================================================
 -- C5_dirty_por_motivo.sql | ¿por que el corte clean/dirty no separa riesgo en PJJ?
