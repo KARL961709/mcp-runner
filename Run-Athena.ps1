@@ -100,9 +100,22 @@ foreach ($archivo in $archivos) {
   $estado = "?"; $motivo = $null; $qid = $null; $lineas = $null; $csv = $null
 
   try {
-    # file:// con barras normales: evita todo el infierno de comillas y espacios
-    # al pasar SQL multilinea como argumento (las rutas de OneDrive los tienen).
-    $uri = "file://" + ($archivo.FullName -replace '\\', '/')
+    # Athena rechaza el BOM: llega como 'ï' y da MALFORMED_QUERY en la columna 1.
+    # Lo escriben Notepad y Set-Content -Encoding utf8 (PS 5.1) sin avisar, asi
+    # que normalizamos siempre a UTF-8 sin BOM en un temporal, en vez de confiar
+    # en como se guardo el .sql original.
+    # ReadAllText ya detecta y quita el BOM; el replace es cinturon y tirantes
+    # por si el archivo llega con doble BOM o codificado de forma rara.
+    $sql = [System.IO.File]::ReadAllText($archivo.FullName)
+    $sql = $sql -replace "^﻿", ""
+    if (-not $sql.Trim()) { throw "El archivo .sql esta vacio" }
+
+    $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("athena_" + $nombre + ".sql")
+    [System.IO.File]::WriteAllText($tmp, $sql, (New-Object System.Text.UTF8Encoding($false)))
+
+    # file:// con barras normales: evita el infierno de comillas y espacios al
+    # pasar SQL multilinea como argumento (las rutas de OneDrive los tienen).
+    $uri = "file://" + ($tmp -replace '\\', '/')
 
     $raw = aws athena start-query-execution `
       --profile $AwsProfile `
