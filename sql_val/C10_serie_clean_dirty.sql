@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C10_serie_clean_dirty.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C10_serie_clean_dirty.sql
 --   sha256  : a092d2230c31   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : la inversion reciente del dirty: trimestre a trimestre, con peso de SIN BLOQUE
+--   estado  : VERDE
+--   nota    : el corte separa 1.40-2.41x p<0.001 en 2022-24; 2025 es composicion, no inversion
 -- =====================================================================================
 -- =====================================================================================
 -- C10_serie_clean_dirty.sql | ¿el dirty separa riesgo, y desde cuando deja de hacerlo?
