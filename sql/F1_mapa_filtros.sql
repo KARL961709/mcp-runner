@@ -472,5 +472,6 @@ CROSS JOIN UNNEST(CAST(ARRAY[
     ROW('20 esp_cny', s20, u20),
     ROW('ZZ TOTAL dirty', n_dirty, cast(0 AS bigint)),
     ROW('ZZ TOTAL clean', n_clean, cast(0 AS bigint))
-  ] AS ARRAY(ROW(filtro VARCHAR, marcados BIGINT, unico_motivo BIGINT)))) AS x
+  ] AS ARRAY(ROW(filtro VARCHAR, marcados BIGINT, unico_motivo BIGINT))))
+     AS x(filtro, marcados, unico_motivo)
 ORDER BY x.filtro
