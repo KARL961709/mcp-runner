@@ -18,6 +18,9 @@
   .\Run-Athena.ps1 -Only CHECK_riesgo_grupos
   .\Run-Athena.ps1 -SqlDir .\sql -OutDir .\output -TimeoutSec 1800
 #>
+# PositionalBinding=$false: ver la nota en Go.ps1. Todos los parametros van
+# siempre por nombre; un argumento suelto es un error, no un -SqlDir accidental.
+[CmdletBinding(PositionalBinding = $false)]
 param(
   [string]   $SqlDir,
   [string]   $OutDir,
