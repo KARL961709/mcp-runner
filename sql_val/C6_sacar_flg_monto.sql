@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : C_calibra/C6_sacar_flg_monto.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C6_sacar_flg_monto.sql
---   sha256  : 7ef34d3c429e   (del cuerpo, sin este encabezado)
+--   sha256  : c04dfdcaca6d   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : flg_monto es post-decision: cuanto migra a clean si sale del AND
 -- =====================================================================================
@@ -111,6 +111,21 @@ SELECT '3. COMPOSICION', cast(cast(codmes / 100 AS int) AS varchar) || ' · mont
        'RD ' || cast(round(100.0 * sum(CASE WHEN monto = 1 THEN y ELSE 0 END)
                 / nullif(count_if(monto = 1), 0), 2) AS varchar) || ' %'
 FROM c GROUP BY cast(codmes / 100 AS int)
+
+-- ------------------------------------------------- 5. mes a mes
+-- El anio promedia y puede tapar la forma. Lo que decide entre las dos explicaciones
+-- del quiebre es COMO cae el % de monto=0:
+--   escalon brusco  -> cambio de politica de originacion en un mes identificable
+--   deriva gradual  -> cambio de mezcla de mercado
+-- 35 filas.
+UNION ALL
+SELECT '5. POR MES', cast(codmes AS varchar), 'TODOS',
+       cast(count(*) AS varchar),
+       cast(count_if(monto = 0) AS varchar),
+       cast(round(100.0 * count_if(monto = 0) / nullif(count(*), 0), 1) AS varchar) || ' % monto=0'
+       || ' · migran ' || cast(count_if(grupo = 'B · MIGRA a clean') AS varchar)
+       || ' · RD ' || cast(round(100.0 * avg(y), 2) AS varchar) || ' %'
+FROM c GROUP BY codmes
 
 -- ------------------------------------------------- 4. abrir sunat_knockout
 -- C5 dio PNN 634 obs con RD 19.87%. Son dos flags distintos y conviene saber cual pesa.
