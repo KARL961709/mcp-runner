@@ -449,29 +449,32 @@ a AS (
 )
 SELECT x.filtro, x.marcados, x.unico_motivo
 FROM a
-CROSS JOIN UNNEST(CAST(ARRAY[
-    ROW('01 monto', s01, u01),
-    ROW('02 novig_1m_m2', s02, u02),
-    ROW('03 novig_12m_m2', s03, u03),
-    ROW('04 clasif_m2', s04, u04),
-    ROW('05 org_castigo', s05, u05),
-    ROW('06 org_jud', s06, u06),
-    ROW('07 org_refin', s07, u07),
-    ROW('08 org_reestr', s08, u08),
-    ROW('09 org_atraso', s09, u09),
-    ROW('10 org_clasif', s10, u10),
-    ROW('11 impulsa_bwd', s11, u11),
-    ROW('12 reactiva_puro', s12, u12),
-    ROW('13 pnsn', s13, u13),
-    ROW('14 estado_ruc', s14, u14),
-    ROW('15 giro', s15, u15),
-    ROW('16 edad_tit', s16, u16),
-    ROW('17 edad_rl', s17, u17),
-    ROW('18 rrll_castigo', s18, u18),
-    ROW('19 esp_tit', s19, u19),
-    ROW('20 esp_cny', s20, u20),
-    ROW('ZZ TOTAL dirty', n_dirty, cast(0 AS bigint)),
-    ROW('ZZ TOTAL clean', n_clean, cast(0 AS bigint))
-  ] AS ARRAY(ROW(filtro VARCHAR, marcados BIGINT, unico_motivo BIGINT))))
-     AS x(filtro, marcados, unico_motivo)
+CROSS JOIN UNNEST(
+  ARRAY[
+    '01 monto',
+    '02 novig_1m_m2',
+    '03 novig_12m_m2',
+    '04 clasif_m2',
+    '05 org_castigo',
+    '06 org_jud',
+    '07 org_refin',
+    '08 org_reestr',
+    '09 org_atraso',
+    '10 org_clasif',
+    '11 impulsa_bwd',
+    '12 reactiva_puro',
+    '13 pnsn',
+    '14 estado_ruc',
+    '15 giro',
+    '16 edad_tit',
+    '17 edad_rl',
+    '18 rrll_castigo',
+    '19 esp_tit',
+    '20 esp_cny',
+    'ZZ TOTAL dirty',
+    'ZZ TOTAL clean'
+  ],
+  ARRAY[s01, s02, s03, s04, s05, s06, s07, s08, s09, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, n_dirty, n_clean],
+  ARRAY[u01, u02, u03, u04, u05, u06, u07, u08, u09, u10, u11, u12, u13, u14, u15, u16, u17, u18, u19, u20, cast(0 AS bigint), cast(0 AS bigint)]
+) AS x(filtro, marcados, unico_motivo)
 ORDER BY x.filtro
