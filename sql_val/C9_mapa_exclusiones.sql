@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C9_mapa_exclusiones.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C9_mapa_exclusiones.sql
 --   sha256  : 32c8290d4fe1   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : el mapa: %dirty del total y peso de cada una de las 20 exclusiones
+--   estado  : VERDE
+--   nota    : 3 salidas: clean 60.4% / dirty real 16.9% / sin bloque 22.7%; giro es 35% del dirty
 -- =====================================================================================
 -- =====================================================================================
 -- C9_mapa_exclusiones.sql | el mapa: que entra a cada bloque y cuanto pesa cada filtro
