@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C8_scorecard_capta_monto.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C8_scorecard_capta_monto.sql
 --   sha256  : 8a9532d04783   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : EL GATE: el pd_raw ya recoge el gradiente por ticket, o hay brecha de discriminacion
+--   estado  : VERDE
+--   nota    : el scorecard SI capta el ticket y sobre-corrige (8/10 celdas); excepcion PNN q5
 -- =====================================================================================
 -- =====================================================================================
 -- C8_scorecard_capta_monto.sql | ¿el pd_raw ya recoge el gradiente de riesgo por ticket?
