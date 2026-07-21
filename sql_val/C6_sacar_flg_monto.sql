@@ -3,7 +3,7 @@
 --   archivo : C_calibra/C6_sacar_flg_monto.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C6_sacar_flg_monto.sql
 --   sha256  : c04dfdcaca6d   (del cuerpo, sin este encabezado)
---   estado  : ROJO
+--   estado  : VERDE
 --   nota    : flg_monto es post-decision: cuanto migra a clean si sale del AND
 -- =====================================================================================
 -- =====================================================================================
