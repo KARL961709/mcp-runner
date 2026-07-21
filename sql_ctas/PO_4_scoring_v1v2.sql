@@ -21,7 +21,10 @@
 --   prob_modelo_cal_v1     cadena CLEAN aplicada a TODOS
 --   puntuacion_cal_v1      round((1 - prob_modelo_cal_v1) * 1000)
 --   grupos_cal_v1          cortes [964, 942, 919, 820]   optimizados sobre altas para V1
---   flg_clean              0 o 1, NUNCA NULL (ver nota)
+--   flg_clean              0 o 1, NUNCA NULL (ver nota). NO incluye impulsa/reactiva:
+--                          son marcadores de programa, no de riesgo.
+--   flg_impulsa_bwd        marcador, no enruta. PD extrapolada si = 1
+--   flg_reactiva_puro      idem
 --   prob_modelo_cal_v2     cadena propia de cada bloque, enrutada por flg_clean
 --   puntuacion_cal_v2      round((1 - prob_modelo_cal_v2) * 1000)
 --   grupos_cal_v2          cortes [961, 939, 914, 819]   optimizados sobre altas para V2
@@ -105,7 +108,9 @@ b AS (
 ),
 fl AS (
   SELECT cast(codmes AS int) AS codmes, cast(tip_doc AS varchar) AS tip_doc, key_value,
-         max(flg_clean) AS flg_clean
+         max(flg_clean)        AS flg_clean,
+         max(flg_impulsa_bwd)  AS flg_impulsa_bwd,
+         max(flg_reactiva_puro) AS flg_reactiva_puro
   FROM disc_model_owner.b46029_po_flg_clean
   GROUP BY 1,2,3
 ),
@@ -117,7 +122,9 @@ base AS (
          CASE WHEN b.tip_doc = '2' THEN 'PJJ' ELSE 'PNN' END AS personeria,
          greatest(1e-6, least(1-1e-6, b.pd_raw)) AS pd_raw,
          f.fhat, f.meses_usados AS ft_meses_usados,
-         cast(coalesce(fl.flg_clean, 1) AS integer) AS flg_clean
+         cast(coalesce(fl.flg_clean, 1) AS integer)         AS flg_clean,
+         cast(coalesce(fl.flg_impulsa_bwd, 0) AS integer)   AS flg_impulsa_bwd,
+         cast(coalesce(fl.flg_reactiva_puro, 0) AS integer) AS flg_reactiva_puro
   FROM b
   JOIN ft f
     ON f.codmes_alta = cast(date_format(date_parse(cast(b.p_codmes AS varchar),'%Y%m')
@@ -182,6 +189,11 @@ SELECT
   CASE WHEN round((1.0 - c.pd_pit) * 1000) >= 964 THEN 'G1' WHEN round((1.0 - c.pd_pit) * 1000) >= 942 THEN 'G2' WHEN round((1.0 - c.pd_pit) * 1000) >= 919 THEN 'G3' WHEN round((1.0 - c.pd_pit) * 1000) >= 820 THEN 'G4' ELSE 'G5' END                                            AS grupos_cal_v1,
 
   c.flg_clean,
+  -- marcadores de PROGRAMA: no enrutan (no estan en el AND de flg_clean), pero se
+  -- exponen para que quien consuma sepa que esa PD es extrapolada — esos clientes
+  -- quedaron fuera del ajuste de AMBOS bloques.
+  c.flg_impulsa_bwd,
+  c.flg_reactiva_puro,
 
   -- ---------- V2: cada bloque con la suya ----------
   CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END AS prob_modelo_cal_v2,

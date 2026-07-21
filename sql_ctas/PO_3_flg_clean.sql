@@ -3,14 +3,31 @@
 --
 -- ESCRIBE: crea disc_model_owner.b46029_po_flg_clean
 --
--- Regla de q4_maestro_calib_src.sql (flg_calib_m2), con DOS desviaciones documentadas:
+-- Regla de q4_maestro_calib_src.sql (flg_calib_m2), con TRES desviaciones documentadas:
+--
+--   * IMPULSA Y REACTIVA_PURO NO ENTRAN AL AND  (decision del usuario, 2026-07-21)
+--     Se siguen calculando y se exponen como columnas, pero NO deciden clean/dirty.
+--     Por que: son marcadores de PROGRAMA, no de riesgo. Su papel legitimo es excluir
+--     esas operaciones del APRENDIZAJE de los coeficientes — y ahi se mantienen fuera,
+--     tanto en clean (flg_calib_m2 los saca) como en dirty (q3b los saca). Usarlos
+--     ademas para enrutar en produccion mezcla dos cosas distintas: un cliente Impulsa
+--     con RCC y maestras limpias caia en dirty solo por el programa, y recibia
+--     coeficientes ajustados sobre una poblacion que no lo incluia.
+--     El propio q3b lo dice: el grupo dirty son "excluidos por politica/perfil, NO por
+--     programa". F1 midio 376 de 848 dirty que existian solo por Impulsa.
+--     Con el cambio: impulsa + RCC sucio sigue siendo dirty (por el RCC, que es lo
+--     correcto); impulsa + todo limpio pasa a clean.
+--     OJO: esto hace que flg_clean de la PO NO sea flg_calib_m2. Son variables
+--     distintas a proposito.
+--
 --   * SIN flg_monto: depende del monto desembolsado y no existe antes del alta. En
 --     altas pesa poco de todos modos — F1 midio 33 clientes de 848 dirty, un 3.9%.
---   * flg_impulsa BACKWARD [m0-12, m0] en vez de forward [m0, m0+12]: el original mira
---     hacia adelante y no es implementable ex-ante. B1 confirmo que ya no entran
---     clientes nuevos al programa (unidades por mes desde 202504), asi que ambas
---     definiciones convergen para cohortes actuales.
+--
 --   * flg_ubigeo se calcula aparte y NO entra (LIBERADO, decision 2026-07-02).
+--
+-- flg_impulsa_bwd se calcula BACKWARD [m0-12, m0] en vez de forward [m0, m0+12]: el
+-- original mira hacia adelante y no es implementable ex-ante. B1 confirmo que ya no
+-- entran clientes nuevos (unidades por mes desde 202504).
 --
 -- flg_clean sale 0 o 1 SIEMPRE: los LEFT JOIN llevan coalesce(...,0), asi que un
 -- cliente sin fila en alguna etapa se trata como sin knockout = clean.
@@ -43,12 +60,14 @@ SELECT
   coalesce(m.flg_esp_tit,0)        AS flg_esp_tit,
   coalesce(m.flg_esp_cny,0)        AS flg_esp_cny,
 
+  -- 17 condiciones de RIESGO. flg_impulsa_bwd y flg_reactiva_puro quedan FUERA a
+  -- proposito: son marcadores de programa y su papel es excluir del aprendizaje de los
+  -- coeficientes, no enrutar en produccion. Se exponen arriba como columnas.
   CASE WHEN coalesce(r.flg_novig_1m_m2,0)=0    AND coalesce(r.flg_novig_12m_m2,0)=0
         AND coalesce(r.flg_clasif_m2,0)=0      AND coalesce(r.flg_org_castigo_m2,0)=0
         AND coalesce(r.flg_org_jud_m2,0)=0     AND coalesce(r.flg_org_refin_m2,0)=0
         AND coalesce(r.flg_org_reestr_m2,0)=0  AND coalesce(r.flg_org_atraso_m2,0)=0
         AND coalesce(r.flg_org_clasif_m2,0)=0
-        AND coalesce(r.flg_impulsa_bwd,0)=0    AND coalesce(r.flg_reactiva_puro,0)=0
         AND coalesce(m.flg_pnsn,0)=0           AND coalesce(m.flg_estado_ruc,0)=0
         AND coalesce(m.flg_giro,0)=0           AND coalesce(m.flg_edad_tit,0)=0
         AND coalesce(m.flg_edad_rl,0)=0        AND coalesce(m.flg_rrll_castigo_m2,0)=0
