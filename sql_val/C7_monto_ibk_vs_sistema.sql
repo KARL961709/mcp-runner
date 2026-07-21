@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C7_monto_ibk_vs_sistema.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C7_monto_ibk_vs_sistema.sql
 --   sha256  : 45a70e684e00   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : flg_monto hoy mide exposicion SISTEMA, no ticket IBK: cuanto cambia si se alinea
+--   estado  : VERDE
+--   nota    : alinear a IBK no mueve el ancla (+-0.04pp); el sistema infla el ticket 2.6-3.4x
 -- =====================================================================================
 -- =====================================================================================
 -- C7_monto_ibk_vs_sistema.sql | ¿cuanto cambia flg_monto si se mide en IBK y no en el sistema?
