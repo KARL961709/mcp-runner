@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : C_calibra/C10_serie_clean_dirty.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C10_serie_clean_dirty.sql
---   sha256  : 73869d234b8e   (del cuerpo, sin este encabezado)
+--   sha256  : a092d2230c31   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : la inversion reciente del dirty: trimestre a trimestre, con peso de SIN BLOQUE
 -- =====================================================================================
@@ -40,7 +40,7 @@
 
 WITH b AS (
   SELECT cast(cast(codmes AS int) / 100 AS varchar) || 'T'
-      || cast((cast(substr(cast(codmes AS varchar), 5, 2) AS int) - 1) / 3 + 1 AS varchar) AS trim,
+      || cast((cast(substr(cast(codmes AS varchar), 5, 2) AS int) - 1) / 3 + 1 AS varchar) AS trimestre,
          personeria,
          cast(target_12m AS double) AS y,
          coalesce(flg_calib_m2,0)      AS clean,
@@ -59,7 +59,7 @@ g AS (
   FROM b
 ),
 p AS (
-  SELECT trim,
+  SELECT trimestre,
          count_if(grupo = 'CLEAN')       AS n_cle,
          sum(CASE WHEN grupo = 'CLEAN'      THEN y ELSE 0 END) AS d_cle,
          count_if(grupo = 'DIRTY real')  AS n_dir,
@@ -69,11 +69,11 @@ p AS (
          count(*) AS n_tot,
          count_if(grupo = 'DIRTY real' AND f_giro = 1)  AS n_dir_giro,
          count_if(grupo = 'DIRTY real' AND f_monto = 0) AS n_dir_monto
-  FROM g GROUP BY trim
+  FROM g GROUP BY trimestre
 )
 
 -- ------------------------------------------------- 1. la serie: ¿separa o no?
-SELECT '1. RATIO POR TRIMESTRE' AS bloque, trim AS detalle,
+SELECT '1. RATIO POR TRIMESTRE' AS bloque, trimestre AS detalle,
        cast(n_cle AS varchar) || ' / ' || cast(n_dir AS varchar) AS n_clean_dirty,
        cast(round(100.0 * d_cle / nullif(n_cle,0), 2) AS varchar) || ' %' AS rd_clean,
        cast(round(100.0 * d_dir / nullif(n_dir,0), 2) AS varchar) || ' %' AS rd_dirty,
@@ -86,7 +86,7 @@ FROM p
 -- ------------------------------------------------- 2. el peso de SIN BLOQUE
 -- Si sube justo cuando el ratio cae, la inversion es composicion y no riesgo.
 UNION ALL
-SELECT '2. PESO SIN BLOQUE', trim,
+SELECT '2. PESO SIN BLOQUE', trimestre,
        cast(n_sin AS varchar) || ' de ' || cast(n_tot AS varchar),
        cast(round(100.0 * n_sin / nullif(n_tot,0), 1) AS varchar) || ' % de las altas',
        cast(round(100.0 * d_sin / nullif(n_sin,0), 2) AS varchar) || ' % RD',
@@ -96,7 +96,7 @@ FROM p
 -- ------------------------------------------------- 3. cuanto del dirty es politica
 -- giro y monto son politica, no riesgo. Si crecen, el dirty converge al clean solo.
 UNION ALL
-SELECT '3. COMPOSICION DIRTY', trim,
+SELECT '3. COMPOSICION DIRTY', trimestre,
        cast(n_dir AS varchar) || ' dirty',
        'giro ' || cast(round(100.0 * n_dir_giro / nullif(n_dir,0), 1) AS varchar) || ' %',
        'monto ' || cast(round(100.0 * n_dir_monto / nullif(n_dir,0), 1) AS varchar) || ' %',
@@ -106,13 +106,13 @@ FROM p
 -- ------------------------------------------------- 4. acumulado por anio
 -- Con mas n por celda que el trimestre, para leer la tendencia sin ruido.
 UNION ALL
-SELECT '4. POR ANIO', substr(trim, 1, 4),
+SELECT '4. POR ANIO', substr(trimestre, 1, 4),
        cast(sum(n_cle) AS varchar) || ' / ' || cast(sum(n_dir) AS varchar),
        cast(round(100.0 * sum(d_cle) / nullif(sum(n_cle),0), 2) AS varchar) || ' %',
        cast(round(100.0 * sum(d_dir) / nullif(sum(n_dir),0), 2) AS varchar) || ' %',
        'ratio ' || cast(round((1.0*sum(d_dir)/nullif(sum(n_dir),0))
                             / nullif(1.0*sum(d_cle)/nullif(sum(n_cle),0), 0), 2) AS varchar) || 'x'
        || ' · sin bloque ' || cast(round(100.0 * sum(n_sin) / nullif(sum(n_tot),0), 1) AS varchar) || ' %'
-FROM p GROUP BY substr(trim, 1, 4)
+FROM p GROUP BY substr(trimestre, 1, 4)
 
 ORDER BY 1, 2
