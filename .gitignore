@@ -20,6 +20,13 @@
 !sql/
 !sql/*.sql
 
+# CTAS y otros scripts que se corren A MANO, uno por uno. Van en carpeta aparte
+# A PROPOSITO: Run-Athena.ps1 lee `sql/` (L48), asi que Go.ps1 NUNCA los ejecuta.
+# Un CREATE TABLE no puede vivir en sql/ — el runner corre el lote entero y
+# escribiria sin que nadie lo decida.
+!sql_ctas/
+!sql_ctas/*.sql
+
 # NO agregar aqui, nunca:
 #   config.ps1        -> nombres de workgroup / base
 #   ibk-aws-mcp.js    -> account id, buckets, ARN del rol
