@@ -62,6 +62,10 @@ pob AS (
 -- =====================================================================================
 -- BLOQUE A — RCC crudo (port de q2_adv_prog_src.sql)
 -- =====================================================================================
+-- OJO: el filtro `key_value IN (SELECT ... FROM pob)` NO es opcional. Sin el, esto lee
+-- el RCC COMPLETO del sistema financiero en toda la ventana (todas las entidades, todos
+-- los clientes) y Athena aborta con "Query exhausted resources at this scale factor".
+-- La poblacion son ~2.3k clientes; el RCC son cientos de millones de filas por mes.
 rcc_raw AS (
   SELECT codmes, tip_doc, key_value, cod_clasificacion_deudor, condicion,
          tipo_credito, cod_cuenta_rcc, saldo
@@ -69,6 +73,7 @@ rcc_raw AS (
     WHERE p_codmes BETWEEN '202502' AND '202605'
       AND codmes   BETWEEN '202502' AND '202605'
       AND p_codmes >= '201901'
+      AND key_value IN (SELECT key_value FROM pob)
   UNION ALL
   SELECT codmes, tip_doc, key_value, cod_clasificacion_deudor, condicion,
          tipo_credito, cod_cuenta_rcc, saldo
@@ -76,6 +81,7 @@ rcc_raw AS (
     WHERE p_codmes BETWEEN '202502' AND '202605'
       AND codmes   BETWEEN '202502' AND '202605'
       AND p_codmes <= '201812'
+      AND key_value IN (SELECT key_value FROM pob)
 ),
 
 -- agregados por cliente-mes. Definiciones VERBATIM de q2_adv_prog_src L27-47.
@@ -193,14 +199,33 @@ nacimiento_rl AS (
   GROUP BY 1,2,3
 ),
 
--- RCC del rep legal, reutiliza rcc_raw (misma ventana podada). Castigo 81.302 / 81.925.
+-- RCC del REP LEGAL. NO puede reutilizar rcc_raw: ese esta filtrado a los key_value de
+-- la poblacion, y el representante legal es OTRA persona (nrodoc_rl). Lleva su propia
+-- lectura, filtrada a los documentos de los rep legales — igual de podada.
+rcc_rl_raw AS (
+  SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
+    FROM e_perm_aws.t_fact_report_rcc_rsk
+    WHERE p_codmes BETWEEN '202502' AND '202605'
+      AND codmes   BETWEEN '202502' AND '202605'
+      AND p_codmes >= '201901'
+      AND substr(cod_cuenta_rcc,1,2) = '81'          -- solo castigo: 81.302 / 81.925
+      AND key_value IN (SELECT nrodoc_rl FROM uni_rl)
+  UNION ALL
+  SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
+    FROM d_perm_aws.t_fact_report_rcc_rsk
+    WHERE p_codmes BETWEEN '202502' AND '202605'
+      AND codmes   BETWEEN '202502' AND '202605'
+      AND p_codmes <= '201812'
+      AND substr(cod_cuenta_rcc,1,2) = '81'
+      AND key_value IN (SELECT nrodoc_rl FROM uni_rl)
+),
 fea_rcc_rl AS (
   SELECT b.codmes, a.nrodoc_rl, a.tipdoc_rl,
          sum(case when (substr(b.cod_cuenta_rcc,1,2)='81' and substr(b.cod_cuenta_rcc,4,3)='302')
                     or (substr(b.cod_cuenta_rcc,1,2)='81' and substr(b.cod_cuenta_rcc,4,3)='925')
                   then b.saldo else null end) AS sld_castigado
   FROM uni_rl a
-  INNER JOIN rcc_raw b
+  INNER JOIN rcc_rl_raw b
     ON a.nrodoc_rl=b.key_value AND a.tipdoc_rl=b.tip_doc
   GROUP BY b.codmes, a.nrodoc_rl, a.tipdoc_rl
 ),
@@ -359,7 +384,7 @@ esp_cny AS (
 )
 
 -- =====================================================================================
--- SALIDA — mapa de los 20 filtros de flg_calib_m2
+-- SALIDA — mapa de los 20 filtros de flg_calib_m2   (AGREGADO, sin identificadores)
 --   marcados      : cuantos caen por ESE filtro (aislado; se solapan entre si)
 --   unico_motivo  : cuantos caen SOLO por ese  <- los que se salvarian si se quita
 -- =====================================================================================
