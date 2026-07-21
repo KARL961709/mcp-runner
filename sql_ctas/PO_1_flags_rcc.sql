@@ -19,6 +19,16 @@
 -- Sin filtro de cliente en el RCC, igual que el original: deja que el motor lo resuelva
 -- por particion en vez de armar un semi-join de 4M claves.
 --
+-- UNA DESVIACION, Y ES NECESARIA: NADA MIRA MAS ALLA DE m0-2
+--   El original evalua impulsa y reactiva_puro con lb=0, el RCC del mes del ALTA.
+--   Para CALIBRAR eso es correcto — el alta ya ocurrio y su mes es historia.
+--   Para la PO no: aqui codmes = p_codmes + 1, asi que lb=0 es el RCC de UN MES
+--   DESPUES del score. Ese dato no existe cuando sale la campania: es look-ahead.
+--   Se mueven a lb=2, la misma foto que los otros 9 flags.
+--   Ademas la lectura se corta en m0-2: ningun flag mira lb=0 ni lb=1, asi que traer
+--   esos meses seria arrastrar datos posteriores al score sin siquiera usarlos.
+--   Resultado: TODO en esta tabla se decide con informacion de p_codmes - 1 o anterior.
+--
 -- REEMPLAZAR
 --   {P_INI} {P_FIN}   rango de p_codmes, 'YYYYMM'
 --   {RCC_INI}         P_INI menos 14 meses (lookback de novig_12m_m2 = [m0-13, m0-2])
@@ -103,9 +113,13 @@ lb AS (
   FROM pob a
   LEFT JOIN cm c
     ON c.tip_doc=a.tip_doc AND c.key_value=a.key_value
+   -- 14, no 13: impulsa ahora usa lb hasta 14. Y el tope se corta en m0-2, no en m0:
+   -- ya no hay ningun flag que mire lb=0 ni lb=1, asi que leer esos meses seria
+   -- traer al plan datos posteriores al score sin usarlos.
    AND cast(c.codmes as int) >= cast(date_format(date_parse(a.codmes,'%Y%m')
-                                                 - interval '13' month,'%Y%m') as int)
-   AND cast(c.codmes as int) <= cast(a.codmes as int)
+                                                 - interval '14' month,'%Y%m') as int)
+   AND cast(c.codmes as int) <= cast(date_format(date_parse(a.codmes,'%Y%m')
+                                                 - interval '2' month,'%Y%m') as int)
 )
 SELECT codmes, tip_doc, key_value,
   case when max(case when lb=2                then saldo_novig_neg else 0 end)>0 then 1 else 0 end as flg_novig_1m_m2,
@@ -117,11 +131,19 @@ SELECT codmes, tip_doc, key_value,
   case when max(case when lb=2 then sld_rest  else 0 end)>0 then 1 else 0 end as flg_org_reestr_m2,
   case when max(case when lb=2 then dm        else 0 end)>0 then 1 else 0 end as flg_org_atraso_m2,
   case when max(case when lb=2 then clasif_nn else 0 end)=1 then 1 else 0 end as flg_org_clasif_m2,
-  case when max(case when lb between 0 and 12 then sld_impulsa else 0 end)>0
+  -- IMPULSA y REACTIVA a m0-2, NO a m0.
+  -- En el original (q2_adv_prog_src) estos usan lb=0, o sea el RCC del mes del ALTA.
+  -- En calibracion eso es legitimo: el alta ya ocurrio y su mes es historia.
+  -- AQUI NO. Para la PO, codmes = p_codmes + 1, asi que lb=0 seria el RCC de UN MES
+  -- DESPUES del score — dato que no existe cuando sale la campania. Es look-ahead.
+  -- Se mueven a la misma foto que el resto: lb=2 = p_codmes - 1.
+  --   impulsa:  [0,12] -> [2,14]   mismos 13 meses, terminando en m0-2
+  --   reactiva:  lb=0  -> lb=2
+  case when max(case when lb between 2 and 14 then sld_impulsa else 0 end)>0
        then 1 else 0 end as flg_impulsa_bwd,
-  case when max(case when lb=0 then sld_reactiva else 0 end)>0
-        and max(case when lb=0 then saldo_vig    else 0 end)
-         <= max(case when lb=0 then sld_reactiva else 0 end)
+  case when max(case when lb=2 then sld_reactiva else 0 end)>0
+        and max(case when lb=2 then saldo_vig    else 0 end)
+         <= max(case when lb=2 then sld_reactiva else 0 end)
        then 1 else 0 end as flg_reactiva_puro
 FROM lb
 GROUP BY codmes, tip_doc, key_value
