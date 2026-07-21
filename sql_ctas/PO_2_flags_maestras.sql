@@ -38,7 +38,7 @@ WITH pob AS (
          cast(tip_doc AS varchar) AS tip_doc, key_value
   FROM e_perm_aws.scr_admbankbpe_rsk
   WHERE p_codmes BETWEEN '202401' AND '202607'
-  GROUP BY 1,2,3
+  GROUP BY 1,2,3,4
 ),
 
 uni_conyuge AS (

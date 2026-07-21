@@ -31,7 +31,7 @@ WITH pob AS (
          cast(tip_doc AS varchar) AS tip_doc, key_value
   FROM e_perm_aws.scr_admbankbpe_rsk
   WHERE p_codmes BETWEEN '202606' AND '202606'
-  GROUP BY 1,2,3
+  GROUP BY 1,2,3,4
 ),
 
 uni_conyuge AS (
@@ -247,8 +247,8 @@ esp_cny AS (
 )
 
 SELECT
-  min(p.codmes)      AS codmes,
-  min(p.codmes_ref)  AS codmes_ref,
+  min(p.codmes)                               AS codmes,
+  min(p.codmes_ref)                           AS codmes_ref,
   count(*)                                    AS n_clientes,
   sum(coalesce(m.flg_pnsn,0))                 AS pnsn,
   sum(coalesce(m.flg_estado_ruc,0))           AS estado_ruc,
