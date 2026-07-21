@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C11_giro_dentro_o_fuera.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C11_giro_dentro_o_fuera.sql
 --   sha256  : 4f83777bcd1f   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : RD historica del giro: decide si sigue siendo exclusion o entra a la poblacion
+--   estado  : VERDE
+--   nota    : giro RD 4.83% vs clean 8.83% (0.55x, p=0.0008): NO carga riesgo, se libera del AND
 -- =====================================================================================
 -- =====================================================================================
 -- C11_giro_dentro_o_fuera.sql | ¿flg_giro debe seguir siendo exclusion?
