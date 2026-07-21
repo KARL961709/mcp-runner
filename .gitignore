@@ -27,6 +27,15 @@
 !sql_ctas/
 !sql_ctas/*.sql
 
+# ARMADA V2 (2026-07-21). Reemplaza a sql/ + sql_ctas/, que quedan como historico.
+# Misma regla de siempre, ahora explicita en el nombre:
+#   sql_prod  CREA TABLAS -> se corre de a uno con -Only
+#   sql_val   READ-ONLY   -> se puede correr por lote
+!sql_prod/
+!sql_prod/*.sql
+!sql_val/
+!sql_val/*.sql
+
 # NO agregar aqui, nunca:
 #   config.ps1        -> nombres de workgroup / base
 #   ibk-aws-mcp.js    -> account id, buckets, ARN del rol
