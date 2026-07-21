@@ -7,6 +7,7 @@
 # Unicas excepciones: la herramienta generica, sin nada del entorno adentro.
 !.gitignore
 !README.md
+!CLAUDE.md
 !_batch.js
 !_call.js
 !plan_ejemplo.json
