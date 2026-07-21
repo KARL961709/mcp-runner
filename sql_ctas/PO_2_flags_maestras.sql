@@ -32,6 +32,9 @@ WITH (format='PARQUET', parquet_compression='SNAPPY') AS
 
 WITH pob AS (
   SELECT cast(date_format(date_parse(p_codmes,'%Y%m') + interval '1' month,'%Y%m') AS varchar) AS codmes,
+         -- codmes_ref = p_codmes - 1 = codmes - 2. TODOS los cortes de fecha usan esta,
+         -- no `codmes`: en la PO el mes del alta es futuro respecto del score.
+         cast(date_format(date_parse(p_codmes,'%Y%m') - interval '1' month,'%Y%m') AS varchar) AS codmes_ref,
          cast(tip_doc AS varchar) AS tip_doc, key_value
   FROM e_perm_aws.scr_admbankbpe_rsk
   WHERE p_codmes BETWEEN '202401' AND '202607'
@@ -52,7 +55,7 @@ uni_rl AS (
   INNER JOIN pob b
     ON a.ruc_value=b.key_value
    AND cast(date_format(date_parse(cast(a.fec_vigencia as varchar),'%Y-%m-%d'),'%Y%m') as int)
-       <= cast(b.codmes as int)
+       <= cast(b.codmes_ref as int)
   GROUP BY b.codmes, b.key_value, b.tip_doc, a.key_value, a.tip_doc
 ),
 
@@ -137,14 +140,14 @@ filtro_sunat AS (
               WHEN Y.ESTADO IN ('30','31')      THEN 'ANULACION'
               WHEN Y.ESTADO IN ('32')           THEN 'PEND. INI. ACTIV.' ELSE 'MISSING' END) AS CL_ESTADO
       FROM (
-        SELECT DISTINCT X.codmes,X.tip_doc,X.key_value,
-          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes as integer)) THEN 'SIN_DATO' ELSE Y.tipcontribuyente    END) AS TPOEMP,
-          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes as integer)) THEN 'SIN_DATO' ELSE Y.estadocontribuyente END) AS ESTADO,
-          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes as integer)) THEN NULL       ELSE Y.fecbaja             END) AS FECBAJA,
-          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes as integer)) THEN 'SIN_DATO' ELSE Y.UBIGEO              END) AS UBIGEO,
-          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes as integer)) THEN ''         ELSE Y.fecalta2            END) AS fecalta2,
-          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes as integer)) THEN 'SIN_DATO' ELSE Y.CIIU                END) AS CIIU
-        FROM (SELECT codmes,tip_doc,key_value FROM pob GROUP BY 1,2,3) X
+        SELECT DISTINCT X.codmes,X.codmes_ref,X.tip_doc,X.key_value,
+          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes_ref as integer)) THEN 'SIN_DATO' ELSE Y.tipcontribuyente    END) AS TPOEMP,
+          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes_ref as integer)) THEN 'SIN_DATO' ELSE Y.estadocontribuyente END) AS ESTADO,
+          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes_ref as integer)) THEN NULL       ELSE Y.fecbaja             END) AS FECBAJA,
+          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes_ref as integer)) THEN 'SIN_DATO' ELSE Y.UBIGEO              END) AS UBIGEO,
+          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes_ref as integer)) THEN ''         ELSE Y.fecalta2            END) AS fecalta2,
+          (CASE WHEN (CAST(SUBSTR(Y.fecalta2,1,6) AS INTEGER)>cast(X.codmes_ref as integer)) THEN 'SIN_DATO' ELSE Y.CIIU                END) AS CIIU
+        FROM (SELECT codmes,codmes_ref,tip_doc,key_value FROM pob GROUP BY 1,2,3,4) X
         LEFT JOIN (
           SELECT X.*,
                  (CASE WHEN X.flg_ruc=10 THEN '1' WHEN X.flg_ruc=15 THEN '1'
@@ -173,7 +176,7 @@ filtros_bpe AS (
          case when c.flag_aceptanuevos='Restringido' then 1
               when c.flag_aceptanuevos='Atendido'    then 0 else -1 end AS Giro_restringido
   FROM (
-    SELECT b.codmes, b.tip_doc, b.key_value, b.tpoemp, b.estado, b.fecbaja, b.ciiu,
+    SELECT b.codmes, b.codmes_ref, b.tip_doc, b.key_value, b.tpoemp, b.estado, b.fecbaja, b.ciiu,
            b.ubigeo, b.cl_estado
     FROM (SELECT codmes,tip_doc,key_value FROM pob) a
     LEFT JOIN filtro_sunat b
@@ -188,17 +191,17 @@ flag_bpe AS (
   SELECT A.codmes, A.tip_doc, A.key_value,
     case when J.tpoemp='01' then 1 else 0 end AS flg_pnsn,
     case when J.ESTADO not in ('00','03')
-          and (J.FECBAJA is null or cast(date_format(J.FECBAJA,'%Y%m') as int) <= cast(a.codmes as int))
+          and (J.FECBAJA is null or cast(date_format(J.FECBAJA,'%Y%m') as int) <= cast(J.codmes_ref as int))
          then 1 else 0 end AS flg_estado_ruc,
     case when J.Giro_restringido=1 then 1 else 0 end AS flg_giro,
-    case when (COALESCE(CAST(SUBSTRING(a.codmes,1,4) AS INT)
+    case when (COALESCE(CAST(SUBSTRING(A.codmes_ref,1,4) AS INT)
                         - cast(EXTRACT(YEAR FROM D.fec_nacimiento) as int), 30) <= 25)
-           OR (COALESCE(CAST(SUBSTRING(a.codmes,1,4) AS INT)
+           OR (COALESCE(CAST(SUBSTRING(A.codmes_ref,1,4) AS INT)
                         - cast(EXTRACT(YEAR FROM D.fec_nacimiento) as int), 30) >= 75)
          then 1 else 0 end AS flg_edad_tit,
-    case when (COALESCE(CAST(SUBSTRING(a.codmes,1,4) AS INT)
+    case when (COALESCE(CAST(SUBSTRING(A.codmes_ref,1,4) AS INT)
                         - cast(EXTRACT(YEAR FROM F.fec_nacimiento_rl_max) as int), 30) <= 25)
-           OR (COALESCE(CAST(SUBSTRING(a.codmes,1,4) AS INT)
+           OR (COALESCE(CAST(SUBSTRING(A.codmes_ref,1,4) AS INT)
                         - cast(EXTRACT(YEAR FROM F.fec_nacimiento_rl_min) as int), 30) >= 75)
          then 1 else 0 end AS flg_edad_rl,
     case when B.sld_castigado_12um_rl_m2>0 then 1 else 0 end AS flg_rrll_castigo_m2
@@ -232,7 +235,7 @@ esp_tit AS (
   FROM pob A
   LEFT JOIN especiales B
     ON A.tip_doc=B.tip_doc AND A.key_value=B.key_value
-   AND A.codmes < B.considerar_hasta AND A.codmes >= B.codmes_ingreso
+   AND A.codmes_ref < B.considerar_hasta AND A.codmes_ref >= B.codmes_ingreso
   GROUP BY 1,2,3
 ),
 
@@ -245,7 +248,7 @@ esp_cny AS (
    AND TRIM(R.tipdoc_conyugue) <> '' AND TRIM(R.coddoc_conyugue) <> ''
   LEFT JOIN especiales C
     ON R.tipdoc_conyugue=C.tip_doc AND R.coddoc_conyugue=C.key_value
-   AND A.codmes < C.considerar_hasta AND A.codmes >= C.codmes_ingreso
+   AND A.codmes_ref < C.considerar_hasta AND A.codmes_ref >= C.codmes_ingreso
   WHERE A.tip_doc <> '2'
   GROUP BY 1,2,3
 )
