@@ -1,0 +1,12 @@
+-- =====================================================================================
+-- DROP_3_flg_clean.sql | borra la tabla antes de re-crearla
+--
+-- VA APARTE del CREATE a proposito: Run-Athena manda el archivo entero como UNA sola
+-- query (--query-string $uri), y Athena no acepta dos sentencias en una ejecucion.
+-- Por eso no se puede poner DROP + CREATE en el mismo .sql.
+--
+-- IF EXISTS: no falla si la tabla todavia no existe, asi que es seguro correrlo siempre.
+-- Athena borra la METADATA; los datos quedan en S3 ocupando espacio. No estorban al
+-- re-crear (cada CTAS escribe en una ruta nueva), pero conviene saberlo.
+-- =====================================================================================
+DROP TABLE IF EXISTS disc_model_owner.b46029_po_flg_clean
