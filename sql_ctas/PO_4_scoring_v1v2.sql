@@ -1,5 +1,13 @@
 -- =====================================================================================
--- SCORING_PO_V1V2.sql | PO completa con las DOS versiones
+-- SCORING_PO_V1V2.sql | PO completa con las DOS versiones — MATERIALIZA
+--
+-- ESCRIBE: crea disc_model_owner.b46029_po_scoring_v1v2, particionada por p_codmes.
+--   Son ~4.2M filas por mes: devolverlas a un CSV no sirve para nada. Se materializa,
+--   como hace q7_scoring_po_cal.sql con scr_admbankbpe_po_cal.
+--   p_codmes va ULTIMO en el SELECT porque Athena exige que las columnas de particion
+--   sean las finales.
+--   Si ya existe: DROP TABLE disc_model_owner.b46029_po_scoring_v1v2
+--
 -- Generado por generar_sql_po_v1v2.py. NO editar constantes: regenerar.
 --
 -- USO
@@ -31,8 +39,9 @@
 --
 -- ⚠ EXTRAPOLACION: la calibracion se ajusto sobre ALTAS ADMITIDAS. El pd_raw de la PO
 --   llega a ~0.87 contra ~0.5 en altas. La cola alta no tiene evidencia detras.
--- READ-ONLY.
 -- =====================================================================================
+CREATE TABLE disc_model_owner.b46029_po_scoring_v1v2
+WITH (format='PARQUET', parquet_compression='SNAPPY', partitioned_by=ARRAY['p_codmes']) AS
 
 WITH ft (codmes_alta, fhat, meses_usados) AS ( VALUES
   (202207, 0.46731627731126968, 3),
@@ -163,7 +172,7 @@ pit_dty AS (
 )
 
 SELECT
-  c.p_codmes, c.codmes_alta, c.tip_doc, c.key_value, c.personeria,
+  c.codmes_alta, c.tip_doc, c.key_value, c.personeria,
   c.pd_raw            AS prob_modelo,
   c.fhat, c.ft_meses_usados,
 
@@ -178,7 +187,10 @@ SELECT
   CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END AS prob_modelo_cal_v2,
   cast(round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000)
        AS integer)                                          AS puntuacion_cal_v2,
-  CASE WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 961 THEN 'G1' WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 939 THEN 'G2' WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 914 THEN 'G3' WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 819 THEN 'G4' ELSE 'G5' END                                                      AS grupos_cal_v2
+  CASE WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 961 THEN 'G1' WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 939 THEN 'G2' WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 914 THEN 'G3' WHEN round((1.0 - CASE WHEN c.flg_clean = 1 THEN c.pd_pit ELSE d.pd_pit END) * 1000) >= 819 THEN 'G4' ELSE 'G5' END                                                      AS grupos_cal_v2,
+
+  -- p_codmes AL FINAL: Athena exige que las columnas de particion sean las ultimas
+  c.p_codmes
 FROM pit_cln c
 JOIN pit_dty d
   ON d.p_codmes = c.p_codmes AND d.tip_doc = c.tip_doc AND d.key_value = c.key_value
