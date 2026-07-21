@@ -384,7 +384,12 @@ esp_cny AS (
 )
 
 -- =====================================================================================
--- SALIDA — mapa de los 20 filtros de flg_calib_m2   (AGREGADO, sin identificadores)
+-- SALIDA — mapa de los 20 filtros   (AGREGADO, sin identificadores)
+--
+-- UNA SOLA PASADA. La version anterior tenia 22 ramas UNION ALL escaneando `f` cada
+-- una; Athena armaba un plan enorme y moria con INTERNAL_ERROR_QUERY_ENGINE a los 68s.
+-- Aqui se agrega una vez a una fila de 40 medidas y se despivota con UNNEST.
+--
 --   marcados      : cuantos caen por ESE filtro (aislado; se solapan entre si)
 --   unico_motivo  : cuantos caen SOLO por ese  <- los que se salvarian si se quita
 -- =====================================================================================
@@ -416,30 +421,56 @@ esp_cny AS (
   LEFT JOIN esp_tit  t ON t.codmes=p.codmes AND t.tip_doc=p.tip_doc AND t.key_value=p.key_value
   LEFT JOIN esp_cny  y ON y.codmes=p.codmes AND y.tip_doc=p.tip_doc AND y.key_value=p.key_value
 ),
-f AS (SELECT b.*, (k01 + k02 + k03 + k04 + k05 + k06 + k07 + k08 + k09 + k10 + k11 + k12 + k13 + k14 + k15 + k16 + k17 + k18 + k19 + k20) AS n_ko FROM base b)
-
-SELECT filtro, bloque, fuente, marcados, unico_motivo FROM (
-SELECT '01 monto' AS filtro, 'poblacion' AS bloque, 'q1_altas_src L36' AS fuente, sum(k01) AS marcados, count_if(k01=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '02 novig_1m_m2' AS filtro, 'RCC perim' AS bloque, 'q2_adv_prog L72' AS fuente, sum(k02) AS marcados, count_if(k02=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '03 novig_12m_m2' AS filtro, 'RCC perim' AS bloque, 'q2_adv_prog L73' AS fuente, sum(k03) AS marcados, count_if(k03=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '04 clasif_m2' AS filtro, 'RCC perim' AS bloque, 'q2_adv_prog L74' AS fuente, sum(k04) AS marcados, count_if(k04=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '05 org_castigo' AS filtro, 'RCC orig' AS bloque, 'q2_adv_prog L75' AS fuente, sum(k05) AS marcados, count_if(k05=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '06 org_jud' AS filtro, 'RCC orig' AS bloque, 'q2_adv_prog L76' AS fuente, sum(k06) AS marcados, count_if(k06=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '07 org_refin' AS filtro, 'RCC orig' AS bloque, 'q2_adv_prog L77' AS fuente, sum(k07) AS marcados, count_if(k07=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '08 org_reestr' AS filtro, 'RCC orig' AS bloque, 'q2_adv_prog L78' AS fuente, sum(k08) AS marcados, count_if(k08=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '09 org_atraso' AS filtro, 'RCC orig' AS bloque, 'q2_adv_prog L79' AS fuente, sum(k09) AS marcados, count_if(k09=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '10 org_clasif' AS filtro, 'RCC orig' AS bloque, 'q2_adv_prog L80' AS fuente, sum(k10) AS marcados, count_if(k10=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '11 impulsa_bwd' AS filtro, 'programa' AS bloque, 'q2_adv_prog L81' AS fuente, sum(k11) AS marcados, count_if(k11=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '12 reactiva_puro' AS filtro, 'programa' AS bloque, 'q2_adv_prog L83' AS fuente, sum(k12) AS marcados, count_if(k12=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '13 pnsn' AS filtro, 'maestra' AS bloque, 'q2_sunat L214' AS fuente, sum(k13) AS marcados, count_if(k13=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '14 estado_ruc' AS filtro, 'maestra' AS bloque, 'q2_sunat L215' AS fuente, sum(k14) AS marcados, count_if(k14=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '15 giro' AS filtro, 'maestra' AS bloque, 'q2_sunat L219' AS fuente, sum(k15) AS marcados, count_if(k15=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '16 edad_tit' AS filtro, 'maestra' AS bloque, 'q2_sunat L221' AS fuente, sum(k16) AS marcados, count_if(k16=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '17 edad_rl' AS filtro, 'maestra' AS bloque, 'q2_sunat L222' AS fuente, sum(k17) AS marcados, count_if(k17=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '18 rrll_castigo' AS filtro, 'maestra' AS bloque, 'q2_sunat L223' AS fuente, sum(k18) AS marcados, count_if(k18=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '19 esp_tit' AS filtro, 'VPC' AS bloque, 'q2_sunat L322' AS fuente, sum(k19) AS marcados, count_if(k19=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT '20 esp_cny' AS filtro, 'VPC' AS bloque, 'q2_sunat L323' AS fuente, sum(k20) AS marcados, count_if(k20=1 AND n_ko=1) AS unico_motivo FROM f
-UNION ALL SELECT 'ZZ TOTAL dirty','','', cast(count_if(n_ko>=1) AS bigint), cast(count_if(n_ko=1) AS bigint) FROM f
-UNION ALL SELECT 'ZZ TOTAL clean','','', cast(count_if(n_ko=0) AS bigint), cast(0 AS bigint) FROM f
+f AS (SELECT b.*, (k01 + k02 + k03 + k04 + k05 + k06 + k07 + k08 + k09 + k10 + k11 + k12 + k13 + k14 + k15 + k16 + k17 + k18 + k19 + k20) AS n_ko FROM base b),
+a AS (
+  SELECT sum(k01) AS s01, cast(count_if(k01=1 AND n_ko=1) AS bigint) AS u01,
+         sum(k02) AS s02, cast(count_if(k02=1 AND n_ko=1) AS bigint) AS u02,
+         sum(k03) AS s03, cast(count_if(k03=1 AND n_ko=1) AS bigint) AS u03,
+         sum(k04) AS s04, cast(count_if(k04=1 AND n_ko=1) AS bigint) AS u04,
+         sum(k05) AS s05, cast(count_if(k05=1 AND n_ko=1) AS bigint) AS u05,
+         sum(k06) AS s06, cast(count_if(k06=1 AND n_ko=1) AS bigint) AS u06,
+         sum(k07) AS s07, cast(count_if(k07=1 AND n_ko=1) AS bigint) AS u07,
+         sum(k08) AS s08, cast(count_if(k08=1 AND n_ko=1) AS bigint) AS u08,
+         sum(k09) AS s09, cast(count_if(k09=1 AND n_ko=1) AS bigint) AS u09,
+         sum(k10) AS s10, cast(count_if(k10=1 AND n_ko=1) AS bigint) AS u10,
+         sum(k11) AS s11, cast(count_if(k11=1 AND n_ko=1) AS bigint) AS u11,
+         sum(k12) AS s12, cast(count_if(k12=1 AND n_ko=1) AS bigint) AS u12,
+         sum(k13) AS s13, cast(count_if(k13=1 AND n_ko=1) AS bigint) AS u13,
+         sum(k14) AS s14, cast(count_if(k14=1 AND n_ko=1) AS bigint) AS u14,
+         sum(k15) AS s15, cast(count_if(k15=1 AND n_ko=1) AS bigint) AS u15,
+         sum(k16) AS s16, cast(count_if(k16=1 AND n_ko=1) AS bigint) AS u16,
+         sum(k17) AS s17, cast(count_if(k17=1 AND n_ko=1) AS bigint) AS u17,
+         sum(k18) AS s18, cast(count_if(k18=1 AND n_ko=1) AS bigint) AS u18,
+         sum(k19) AS s19, cast(count_if(k19=1 AND n_ko=1) AS bigint) AS u19,
+         sum(k20) AS s20, cast(count_if(k20=1 AND n_ko=1) AS bigint) AS u20,
+         cast(count_if(n_ko >= 1) AS bigint) AS n_dirty,
+         cast(count_if(n_ko  = 0) AS bigint) AS n_clean
+  FROM f
 )
-ORDER BY filtro
+SELECT x.filtro, x.marcados, x.unico_motivo
+FROM a
+CROSS JOIN UNNEST(CAST(ARRAY[
+    ROW('01 monto', s01, u01),
+    ROW('02 novig_1m_m2', s02, u02),
+    ROW('03 novig_12m_m2', s03, u03),
+    ROW('04 clasif_m2', s04, u04),
+    ROW('05 org_castigo', s05, u05),
+    ROW('06 org_jud', s06, u06),
+    ROW('07 org_refin', s07, u07),
+    ROW('08 org_reestr', s08, u08),
+    ROW('09 org_atraso', s09, u09),
+    ROW('10 org_clasif', s10, u10),
+    ROW('11 impulsa_bwd', s11, u11),
+    ROW('12 reactiva_puro', s12, u12),
+    ROW('13 pnsn', s13, u13),
+    ROW('14 estado_ruc', s14, u14),
+    ROW('15 giro', s15, u15),
+    ROW('16 edad_tit', s16, u16),
+    ROW('17 edad_rl', s17, u17),
+    ROW('18 rrll_castigo', s18, u18),
+    ROW('19 esp_tit', s19, u19),
+    ROW('20 esp_cny', s20, u20),
+    ROW('ZZ TOTAL dirty', n_dirty, cast(0 AS bigint)),
+    ROW('ZZ TOTAL clean', n_clean, cast(0 AS bigint))
+  ] AS ARRAY(ROW(filtro VARCHAR, marcados BIGINT, unico_motivo BIGINT)))) AS x
+ORDER BY x.filtro
