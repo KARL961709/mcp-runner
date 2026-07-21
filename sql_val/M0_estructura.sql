@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : M_mapeo/M0_estructura.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\M0_estructura.sql
---   sha256  : 7c4754566a5f   (del cuerpo, sin este encabezado)
+--   sha256  : 075289da9edf   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : solo metadata: instantaneo y sin riesgo. Correr primero
 -- =====================================================================================
@@ -20,7 +20,11 @@
 --      aqui, el problema de reproducibilidad se arregla solo.
 --   3. si el RCC de d_perm_aws tiene el mismo esquema que el de e_perm_aws
 --
--- 12 filas. READ-ONLY.
+-- OJO: disc_model_owner.* NO son fuentes madre — son derivadas del propio paquete
+-- (8 niveles: altas_2301_2505 -> altas_larga -> ibk_altas_src -> los 4 q2 -> calib_src).
+-- Se incluye calib_src porque es contra quien se valida, no porque sea origen.
+--
+-- 14 filas. READ-ONLY.
 -- =====================================================================================
 
 SELECT
@@ -34,6 +38,8 @@ WHERE (table_schema = 'e_perm_aws' AND table_name IN (
          't_mst_princ_sunat_rsk',
          't_mst_sec_sunat_rsk',
          't_mst_bpe_giros_restringidos',
+         't_mst_bpe_ubigeos_restringidos',
+         't_dim_inst_fin_rsk',
          't_mst_reniec_rsk',
          't_mst_rep_legal_sunat_rsk',
          't_rel_vpc_myp_clientenegativo',

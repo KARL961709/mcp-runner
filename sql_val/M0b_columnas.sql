@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : M_mapeo/M0b_columnas.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\M0b_columnas.sql
---   sha256  : 4abca778e9d8   (del cuerpo, sin este encabezado)
+--   sha256  : 7dcf4f9618ae   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : GATE: verifica que exista cada columna que usan M1/M2/M3. Correr antes
 -- =====================================================================================
@@ -52,9 +52,12 @@ WITH usadas (tabla, columna, usada_en) AS (VALUES
   ('e_perm_aws.t_mst_reniec_rsk',              'tipdoc_conyugue',       'M1'),
   ('e_perm_aws.t_mst_reniec_rsk',              'coddoc_conyugue',       'M1'),
   -- SUNAT principal — de AQUI salen ciiu y los atributos, no de la secundaria
+  -- CORREGIDO tras la 1a corrida: yo habia declarado tip_doc y key_value como
+  -- dependencias de M2 y no existen en esta tabla. M2 NO las usa (solo ruc_value,
+  -- flg_ruc, fecalta, ciiu). El identificador de persona lo aporta sec_sunat via
+  -- Y.key_value, que es justo para lo que esta ese LEFT JOIN. El FALTA era un error
+  -- de este manifiesto, no de M2.
   ('e_perm_aws.t_mst_princ_sunat_rsk',         'ruc_value',             'M1 M2'),
-  ('e_perm_aws.t_mst_princ_sunat_rsk',         'tip_doc',               'M2'),
-  ('e_perm_aws.t_mst_princ_sunat_rsk',         'key_value',             'M2'),
   ('e_perm_aws.t_mst_princ_sunat_rsk',         'flg_ruc',               'M1 M2'),
   ('e_perm_aws.t_mst_princ_sunat_rsk',         'fecalta',               'M1 M2'),
   ('e_perm_aws.t_mst_princ_sunat_rsk',         'ciiu',                  'M2  <-- el que fallo'),
@@ -72,6 +75,11 @@ WITH usadas (tabla, columna, usada_en) AS (VALUES
   -- giros
   ('e_perm_aws.t_mst_bpe_giros_restringidos',  'codigoacteconomica',    'M1 M2'),
   ('e_perm_aws.t_mst_bpe_giros_restringidos',  'flag_aceptanuevos',     'M1 M2'),
+  -- las dos fuentes madre que faltaban en el inventario (halladas al rastrear q4)
+  ('e_perm_aws.t_mst_bpe_ubigeos_restringidos','cod_ubigeo',            'original q2_sunat_esp'),
+  ('e_perm_aws.t_mst_bpe_ubigeos_restringidos','flag_zonabpe',          'original q2_sunat_esp'),
+  ('e_perm_aws.t_dim_inst_fin_rsk',            'cod_instit_financiera', 'original 01_altas_larga'),
+  ('e_perm_aws.t_dim_inst_fin_rsk',            'nombre_instit_financiera','original 01_altas_larga'),
   -- representante legal
   ('e_perm_aws.t_mst_rep_legal_sunat_rsk',     'ruc_value',             'M1 M2'),
   ('e_perm_aws.t_mst_rep_legal_sunat_rsk',     'key_value',             'ladder'),
