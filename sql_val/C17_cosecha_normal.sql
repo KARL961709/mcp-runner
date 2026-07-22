@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C17_cosecha_normal.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C17_cosecha_normal.sql
 --   sha256  : 73324606314f   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : volumen reciente 2602-2604 + RD sobre cosecha normal (pre-Impulsa vs post); para el deck
+--   estado  : VERDE
+--   nota    : cosecha normal = A pre-Impulsa (gar 2.6%); PNN separa 1.93x, PJJ no (0.73x p=0.12)
 -- =====================================================================================
 -- =====================================================================================
 -- C17_cosecha_normal.sql | volumen reciente + RD sobre COSECHA NORMAL (no distorsionada)
