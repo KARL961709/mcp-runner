@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C18_familias_cosecha.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C18_familias_cosecha.sql
 --   sha256  : ee445920b03b   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : RD por familia sobre cosecha normal 2207-2303, para homologar la slide de exclusiones
+--   estado  : VERDE
+--   nota    : RD familia cosecha normal: el exceso del dirty viene de politica (monto/sunat), no del RCC
 -- =====================================================================================
 -- =====================================================================================
 -- C18_familias_cosecha.sql | RD por familia de exclusion sobre la COSECHA NORMAL
