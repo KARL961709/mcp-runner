@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C16_drivers_personeria.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C16_drivers_personeria.sql
 --   sha256  : 801710dc5b93   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : los DRIVERS PN/PJ x bloque para el slide base; pooled y ultimos 3 meses
+--   estado  : VERDE
+--   nota    : drivers PN/PJ x bloque: PNN separa 1.94x, PJJ 1.15x; base 12,053
 -- =====================================================================================
 -- =====================================================================================
 -- C16_drivers_personeria.sql | los DRIVERS: PN / PJ (y el bloque clean/dirty dentro)
