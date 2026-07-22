@@ -36,6 +36,17 @@
 !sql_val/
 !sql_val/*.sql
 
+# Proyecto El Nino / FEN (2026-07-21): codigo + queries que viajan al banco.
+# Curado a mano: SIN node_modules, SIN datos (out/, intermedios/, resultados/).
+# Se re-incluye todo el arbol y luego se re-ignoran las carpetas de data/deps por
+# si alguna se copia por error: el codigo entra, los datos no salen.
+!elnino_ibk/
+!elnino_ibk/**
+elnino_ibk/**/node_modules/
+elnino_ibk/**/out/
+elnino_ibk/**/intermedios/
+elnino_ibk/**/resultados/
+
 # NO agregar aqui, nunca:
 #   config.ps1        -> nombres de workgroup / base
 #   ibk-aws-mcp.js    -> account id, buckets, ARN del rol

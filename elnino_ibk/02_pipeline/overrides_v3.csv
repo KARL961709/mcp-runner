@@ -1,0 +1,26 @@
+ubigeo,set_cuenca,set_prov,set_dist,motivo
+130107,Cuenca Moche,,,distrito Moche pertenece a cuenca Moche (etiqueta Pfafstetter Intercuenca 137715)
+130703,Cuenca Jequetepeque,,,distrito Jequetepeque pertenece a cuenca Jequetepeque
+150203,Cuenca Pativilca,,,distrito Pativilca pertenece a cuenca Pativilca
+150801,Cuenca Huaura,,,Huacho en valle bajo Huaura
+150803,Cuenca Huaura,,,Caleta de Carquin zona costera Huaura
+150805,Cuenca Huaura,,,Hualmay valle bajo Huaura
+150810,Cuenca Huaura,,,Santa Maria valle bajo Huaura
+150812,Cuenca Huaura,,,Vegueta valle bajo Huaura
+240103,Cuenca Tumbes,,,La Cruz desembocadura Tumbes
+240301,Cuenca Zarumilla,,,distrito Zarumilla pertenece a cuenca Zarumilla
+040201,Cuenca Camana,,,Camana en desembocadura rio Camana (Pfafstetter Intercuenca 133)
+040202,Cuenca Camana,,,Jose Maria Quimper valle Camana
+040204,Cuenca Camana,,,Mariscal Caceres valle Camana
+040208,Cuenca Camana,,,Samuel Pastor valle Camana
+040307,Cuenca Chala,,,distrito Chala pertenece a cuenca Chala
+021103,Cuenca Huarmey,,,Culebras zona Huarmey
+021801,Cuenca Santa,,,Chimbote zona Santa/Lacramarca
+021803,Cuenca Santa,,,Coishco zona Santa
+021808,Cuenca Santa,,,distrito Santa pertenece a cuenca Santa
+021809,Cuenca Santa,,,Nuevo Chimbote zona Santa
+110301,,NASCA,NAZCA,fix nombres rotos por comillas embebidas en CSV origen
+110302,,NASCA,CHANGUILLO,fix nombres rotos
+110303,,NASCA,EL INGENIO,fix nombres rotos
+110304,,NASCA,MARCONA,fix nombres rotos
+110305,,NASCA,VISTA ALEGRE,fix nombres rotos
