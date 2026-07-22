@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C19_pdraw_capta_bloque.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C19_pdraw_capta_bloque.sql
 --   sha256  : 2e5d860c4726   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : EL GATE del refit: el pd_raw ya recoge el nivel dirty/clean por personeria? EC por celda
+--   estado  : VERDE
+--   nota    : el pd_raw capta parcial el nivel PNN (1.37x de 1.94x); PJJ nada -> hibrido C
 -- =====================================================================================
 -- =====================================================================================
 -- C19_pdraw_capta_bloque.sql | ¿el pd_raw ya recoge el nivel dirty vs clean, por personeria?
