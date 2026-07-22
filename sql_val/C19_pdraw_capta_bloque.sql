@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : C_calibra/C19_pdraw_capta_bloque.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C19_pdraw_capta_bloque.sql
---   sha256  : 549798fa93ac   (del cuerpo, sin este encabezado)
+--   sha256  : 2e5d860c4726   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : EL GATE del refit: el pd_raw ya recoge el nivel dirty/clean por personeria? EC por celda
 -- =====================================================================================
@@ -54,7 +54,7 @@ j AS (
   FROM pob p
   JOIN sc ON sc.tip_doc = p.tip_doc AND sc.key_value = p.key_value
         AND p.codmes = cast(date_format(date_parse(cast(sc.p_codmes AS varchar),'%Y%m')
-                                        + interval '1' month,'%Y%m') AS varchar)
+                                        + interval '1' month,'%Y%m') AS int)
   WHERE p.gar = 0
 )
 
