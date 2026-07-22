@@ -2,7 +2,7 @@
 -- ORIGEN BPE PD · V2 · VALIDACION (read-only)
 --   archivo : C_calibra/C17_cosecha_normal.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C17_cosecha_normal.sql
---   sha256  : a62f0c4e7b82   (del cuerpo, sin este encabezado)
+--   sha256  : 73324606314f   (del cuerpo, sin este encabezado)
 --   estado  : ROJO
 --   nota    : volumen reciente 2602-2604 + RD sobre cosecha normal (pre-Impulsa vs post); para el deck
 -- =====================================================================================
@@ -14,14 +14,13 @@
 --                             a 202604): ventana 202602-202604.
 --   RD (tasa de default)   -> necesita rd12 cerrado Y una cosecha NORMAL, sin la distorsion
 --                             de garantizados. 2503-2505 NO sirve: SIN BLOQUE ~20-25% y la
---                             base queda sesgada por seleccion (los buenos se fueron a
---                             SIN BLOQUE via Impulsa forward).
+--                             base queda sesgada (los buenos se fueron a SIN BLOQUE).
 --
--- Este SQL muestra las candidatas de cosecha normal con su % de garantizados, para elegir:
---   A · pre-Impulsa   202207-202303  (garantizados 2-8%, la mas "normal", matura, con eventos)
+-- Candidatas de cosecha normal, con su % de garantizados para elegir:
+--   A · pre-Impulsa   202207-202303  (garantizados 2-8%, la mas normal, matura, con eventos)
 --   B · post-Impulsa  202501-202505  (garantizados ~20%, reciente pero pocos eventos)
--- Cada una con la grilla PN/PJ x clean/dirty (n, def, RD).
 --
+-- 6 columnas en TODOS los bloques: bloque, detalle, corte, n, valor, nota.
 -- Definicion final: 16 exclusiones, giro liberado. Base = clean + dirty (sin garantizados).
 -- ~30 filas. READ-ONLY.
 -- =====================================================================================
@@ -51,19 +50,20 @@ k AS (
 )
 
 -- 1 · VOLUMEN 202602-202604 (lo mas reciente, sin RD): driver x bloque
-SELECT '1. VOLUMEN 2602-2604' AS bloque, personeria || ' · ' || bloque AS celda,
-       cast(count(*) AS varchar) AS n,
-       cast(round(100.0 * count(*)
-            / nullif(sum(count(*)) OVER (), 0), 1) AS varchar) || ' %' AS pct_base,
-       'sin rd (no maduro)' AS rd
+SELECT '1. VOLUMEN 2602-2604' AS bloque,
+       personeria || ' · ' || bloque         AS detalle,
+       'volumen'                             AS corte,
+       cast(count(*) AS varchar)             AS n,
+       cast(round(100.0 * count(*) / nullif(sum(count(*)) OVER (), 0), 1) AS varchar) || ' % base' AS valor,
+       'sin rd (no maduro)'                  AS nota
 FROM k WHERE win = 'VOL' AND bloque IN ('CLEAN','DIRTY')
 GROUP BY personeria, bloque
 
--- 1b · garantizados en la ventana de volumen (para declararlo)
 UNION ALL
-SELECT '1. VOLUMEN 2602-2604', 'z · garantizados / total', 'contexto',
+SELECT '1. VOLUMEN 2602-2604', 'z · garantizados', 'contexto',
        cast(count_if(bloque='SINBLOQUE') AS varchar),
-       cast(round(100.0 * count_if(bloque='SINBLOQUE') / nullif(count(*),0),1) AS varchar) || ' % del total', ''
+       cast(round(100.0 * count_if(bloque='SINBLOQUE') / nullif(count(*),0),1) AS varchar) || ' % del total',
+       'los que no entran al ajuste'
 FROM k WHERE win = 'VOL'
 
 -- 2 · garantizados por cosecha candidata (para elegir la NORMAL)
