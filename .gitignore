@@ -47,6 +47,20 @@ elnino_ibk/**/out/
 elnino_ibk/**/intermedios/
 elnino_ibk/**/resultados/
 
+# Bundle del mapa FEN: insumos puntuales que SI viajan (derivados de fuentes
+# publicas, NO dato del banco). Todo lo demas de 01_inputs/ y out/ sigue fuera.
+elnino_ibk/01_inputs/*
+!elnino_ibk/01_inputs/geo/
+elnino_ibk/01_inputs/geo/*
+!elnino_ibk/01_inputs/geo/peru_dist.geojson
+!elnino_ibk/02_pipeline/out/
+elnino_ibk/02_pipeline/out/*
+!elnino_ibk/02_pipeline/out/grado_fen_v3.csv
+# Outputs GENERADOS del mapa: NO viajan, se producen con node en el banco.
+elnino_ibk/03_deck/mapa_fen_v3.html
+elnino_ibk/03_deck/mapa_fen_v3.svg
+elnino_ibk/03_deck/mapa_fen_grupos.svg
+
 # NO agregar aqui, nunca:
 #   config.ps1        -> nombres de workgroup / base
 #   ibk-aws-mcp.js    -> account id, buckets, ARN del rol
