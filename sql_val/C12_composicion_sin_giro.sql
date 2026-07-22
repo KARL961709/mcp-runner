@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C12_composicion_sin_giro.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C12_composicion_sin_giro.sql
 --   sha256  : dc4bf381162d   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : la composicion de filtros con giro liberado: AND de 18, antes/despues
+--   estado  : VERDE
+--   nota    : giro liberado: clean 8525 (70.7%) / dirty 3528 (29.3%); dirty sube a 13.75% RD
 -- =====================================================================================
 -- =====================================================================================
 -- C12_composicion_sin_giro.sql | la composicion de filtros con GIRO liberado del AND
