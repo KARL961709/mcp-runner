@@ -3,8 +3,8 @@
 --   archivo : C_calibra/C15_serie_mensual_propuesta.sql
 --   origen  : ~\Documents\2026\GDM\Origen_BPE_PD_V2\_src\C15_serie_mensual_propuesta.sql
 --   sha256  : 48567e92b9f0   (del cuerpo, sin este encabezado)
---   estado  : ROJO
---   nota    : evolutivo MENSUAL clean/dirty definicion final (16 excl); alimenta el grafico del deck
+--   estado  : VERDE
+--   nota    : evolutivo mensual: dirty reciente ~13%, no el 29% pooled (inflado por Impulsa)
 -- =====================================================================================
 -- =====================================================================================
 -- C15_serie_mensual_propuesta.sql | evolutivo MENSUAL clean/dirty de la PROPUESTA FINAL
