@@ -232,6 +232,24 @@ $resumen = ($lineasRes -join "`r`n") + "`r`n"
 Set-Content -Path (Join-Path $OutDir "_resumen.txt") -Value $resumen -Encoding ascii
 $manifiesto | ConvertTo-Json -Depth 4 | Set-Content -Path (Join-Path $OutDir "_manifest.json") -Encoding utf8
 
+# _resultados.txt: junta el contenido de cada lectura en UN solo archivo, para pegar una vez
+# en vez de abrir cada CSV. Cap de filas como salvaguarda (sql_val = agregados, no detalle).
+$capFilas = 100
+$bloques = @()
+foreach ($m in $manifiesto) {
+  if ($m.csv) {
+    $ruta = Join-Path $OutDir $m.csv
+    if (Test-Path $ruta) {
+      $bloques += "== $($m.query)  ($($m.filas) filas) =="
+      $bloques += @(Get-Content -LiteralPath $ruta -TotalCount ($capFilas + 1))
+      if ($m.filas -gt $capFilas) { $bloques += "... (truncado a $capFilas filas; refina la query si necesitas mas)" }
+      $bloques += ""
+    }
+  }
+}
+$resultados = ($bloques -join "`r`n") + "`r`n"
+Set-Content -Path (Join-Path $OutDir "_resultados.txt") -Value $resultados -Encoding utf8
+
 Write-Host ""
 Write-Host $resumen
 
@@ -239,8 +257,9 @@ Write-Host $resumen
 # canal de vuelta y no tiene sentido que cueste un Get-Content mas.
 if ($Clip) {
   try {
-    Set-Clipboard -Value $resumen
-    Write-Host "Resumen copiado al portapapeles - pegalo en el chat con Ctrl+V" -ForegroundColor Cyan
+    $clip = if ($resultados.Trim()) { $resumen + "`r`n" + $resultados } else { $resumen }
+    Set-Clipboard -Value $clip
+    Write-Host "Resumen + resultados copiados al portapapeles - pegalo en el chat con Ctrl+V" -ForegroundColor Cyan
   } catch {
     Write-Host "(no pude usar el portapapeles: $($_.Exception.Message))" -ForegroundColor Yellow
   }

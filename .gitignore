@@ -36,6 +36,13 @@
 !sql_val/
 !sql_val/*.sql
 
+# UNA CARPETA POR PROYECTO (2026-07-24): reemplaza el volcado en sql_val/. Cada proyecto
+# lleva sus subcarpetas sql_val/ (read-only) y sql_prod/ (build). Solo viajan los .sql;
+# config/output/csv siguen bloqueados por el * de arriba. Correr: -SqlDir proyectos/<proy>/sql_val
+!proyectos/
+!proyectos/**/
+!proyectos/**/*.sql
+
 # Proyecto El Nino / FEN (2026-07-21): codigo + queries que viajan al banco.
 # Curado a mano: SIN node_modules, SIN datos (out/, intermedios/, resultados/).
 # Se re-incluye todo el arbol y luego se re-ignoran las carpetas de data/deps por
