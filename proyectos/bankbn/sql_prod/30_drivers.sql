@@ -1,8 +1,4 @@
--- ============================================================================
--- 30. DRIVERS: flg_impulsa/_u12m (81_952xx) + flg_ppjj (tip_doc=2) -> ds_adm_bpe_bankbn_drivers
--- ============================================================================
-DROP TABLE IF EXISTS disc_model_owner.ds_adm_bpe_bankbn_drivers;
-
+-- 30. DRIVERS -> ds_adm_bpe_bankbn_drivers
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_drivers AS
 WITH universo_impulsa AS (
     SELECT a.codmes, a.tip_doc, a.key_value,

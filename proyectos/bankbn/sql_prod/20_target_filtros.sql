@@ -1,9 +1,4 @@
--- ============================================================================
--- 20. TARGET + FILTROS + SCORE (MaduracionV9 completo) -> ds_adm_bpe_bankbn_mad
--- Fuente=_po (D1). fix target_12m (+12). desfase +1. <CODMES>=T0 <CODMES_FWD>=T0+12 <CODMES_M12>=T0-12
--- ============================================================================
-DROP TABLE IF EXISTS disc_model_owner.ds_adm_bpe_bankbn_mad;
-
+-- 20. TARGET+FILTROS+SCORE (MaduracionV9, codmes=202405, fix target_12m, +probabilidad) -> ds_adm_bpe_bankbn_mad
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_mad AS
 with morigbk_rcc as (SELECT DISTINCT 
         a.codmes,
@@ -56,7 +51,7 @@ with morigbk_rcc as (SELECT DISTINCT
         END AS flg_tipo_credito
     -- FROM (where e_perm_aws.t_fact_report_rcc_rsk WHERE codmes >= '202306') a  -- fuente aws: reporte rcc 
     -- FROM (where e_perm_aws.t_fact_report_rcc_rsk WHERE codmes BETWEEN '202306' and '202406') a  -- fuente aws: reporte rcc 
-    FROM (select * from e_perm_aws.t_fact_report_rcc_rsk WHERE codmes BETWEEN '<CODMES>' and '<CODMES_FWD>') a  -- fuente aws: reporte rcc 
+    FROM (select * from e_perm_aws.t_fact_report_rcc_rsk WHERE codmes BETWEEN '202405' and '202505') a  -- fuente aws: reporte rcc 
     INNER JOIN (
         SELECT 
             tip_doc, 
@@ -64,7 +59,7 @@ with morigbk_rcc as (SELECT DISTINCT
         -- FROM d_mdl_riesgos_disc.PO_PREVIA_AD_BANK_FINAL_202306 
         FROM disc_model_owner.ds_adm_bpe_bankbn_po 
         -- WHERE ((30000 <= max_saldo AND (saldo_m0 >= 10000 AND saldo_m0 < 30000)) OR (saldo_m0 >= 30000)) and codmes='202306' 
-        WHERE ((30000 <= max_saldo AND (saldo_m0 >= 10000 AND saldo_m0 < 30000)) OR (saldo_m0 >= 30000)) and codmes='<CODMES>' 
+        WHERE ((30000 <= max_saldo AND (saldo_m0 >= 10000 AND saldo_m0 < 30000)) OR (saldo_m0 >= 30000)) and codmes='202405' 
         GROUP BY 1, 2
     ) b -- fuente propia: initial PO
     ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value 
@@ -214,7 +209,7 @@ with morigbk_rcc as (SELECT DISTINCT
         -- from (select codmes,tip_doc, key_value   from d_mdl_riesgos_disc.PO_PREVIA_AD_BANK_FINAL_202306  where
         from (select codmes,tip_doc, key_value   from disc_model_owner.ds_adm_bpe_bankbn_po  where
                                      -- ((30000<=max_saldo and (saldo_m0 >= 10000 AND saldo_m0 < 30000)) or  (saldo_m0 >=30000)) and codmes='202306' 
-                                     ((30000<=max_saldo and (saldo_m0 >= 10000 AND saldo_m0 < 30000)) or  (saldo_m0 >=30000)) and codmes='<CODMES>'  --Verificar si en la talba final se cumple esta condiicones del saldo
+                                     ((30000<=max_saldo and (saldo_m0 >= 10000 AND saldo_m0 < 30000)) or  (saldo_m0 >=30000)) and codmes='202405'  --Verificar si en la talba final se cumple esta condiicones del saldo
         group by 1,2,3) a
 
         left join (select distinct * from data_rcc) b
@@ -259,7 +254,7 @@ with morigbk_rcc as (SELECT DISTINCT
   from (select  codmes ,tip_doc,key_value from morigbk_saldo_hist   ) a
   -- inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes>='202002'  and codmes<='202306'
   -- inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes BETWEEN '202206' and '202306' --busca historia hacia atrás se acota a un año, en el código se ve que busca a un año (11 en realidad)
-  inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes BETWEEN '<CODMES_M12>' and '<CODMES>' 
+  inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes BETWEEN '202304' and '202405' 
   --and ---((substr(COD_CUENTA_RCC,1,2)='14'and substr(cod_cuenta_rcc,7,2) not in ('01','04'))  or (substr(COD_CUENTA_RCC,1,2)<>'14'))
   ) b
   on a.key_value=b.key_value and a.tip_doc=b.tip_doc
@@ -296,7 +291,7 @@ with morigbk_rcc as (SELECT DISTINCT
   from uni_rl   a
   -- inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes>='202002'  and codmes<='202306' --busca historia hacia atrás se acota a un año, en el código se ve que busca a un año (11 en realidad)
   -- inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes BETWEEN '202206' and '202306' 
-  inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes BETWEEN '<CODMES_M12>' and '<CODMES>' 
+  inner join (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes BETWEEN '202304' and '202405' 
   ---and ((substr(COD_CUENTA_RCC,1,2)='14'and substr(cod_cuenta_rcc,7,2) not in ('01','04'))  or (substr(COD_CUENTA_RCC,1,2)<>'14'))
   ) b
   on a.nrodoc_rl =b.key_value and a.tipdoc_rl=b.tip_doc
@@ -598,6 +593,7 @@ base_flag_cny AS (
   a.key_value,--dm_fm1
 
   b.puntuacion,
+  b.probabilidad,
 
 
 

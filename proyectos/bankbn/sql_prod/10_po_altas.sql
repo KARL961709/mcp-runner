@@ -1,9 +1,4 @@
--- ============================================================================
--- 10. PO ALTAS (reconstruye universo desde RCC madre) -> ds_adm_bpe_bankbn_po
--- Placeholders: <CODMES>=mes de alta (M0); <CODMES_M12>=M-12. Fiel a AltasMonitoreoV4.
--- ============================================================================
-DROP TABLE IF EXISTS disc_model_owner.ds_adm_bpe_bankbn_po;
-
+-- 10. PO ALTAS (codmes=202405) -> ds_adm_bpe_bankbn_po
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_po AS
 with morigbk_tag as (--de todo el rcc saca la información de clientes y genera algunas marcas
     select codmes,tip_doc,key_value,condicion,tipo_credito,cod_cuenta_rcc,cod_instit_financiera,cod_clasificacion_deudor,
@@ -35,7 +30,7 @@ saldo,
                     '00587','00588','00589','00592','00593','00594','00596','00598','00599','00600') then 1 else 0 end as ent_honrada -- entidad honrada ??
     from (select codmes,tip_doc,key_value,condicion,tipo_credito,cod_cuenta_rcc,cod_instit_financiera,cod_clasificacion_deudor,
 saldo  from e_perm_aws.t_fact_report_rcc_rsk  ) a  -- fuente aws: RCC
-    where codmes='<CODMES>' --FECHA
+    where codmes='202405' --FECHA
 ),
 morigbk_rcc as ( -- se queda solo con tag in ('RESTO DD NEGOCIO','DESCUENTOS','FACTORING','LC NO UTILIZADA', 'LC DESCUENTO') y con ent_honrada=0
                  -- busca historia en el rcc para sacar garantía, ent_honrada otra vez, garantía, tipo de credito , y datos rcc (saldo, cuenta rcc, etc)
@@ -77,14 +72,14 @@ a.saldo,
     when tipo_credito in ('11','12','13')           then 'con'
     else 'otro'
 end flg_tipo_credito
-    from (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes between '<CODMES_M12>' and '<CODMES>')a  -- fuente aws: reporte rcc 
+    from (select * from e_perm_aws.t_fact_report_rcc_rsk where codmes between '202305' and '202405')a  -- fuente aws: reporte rcc 
     inner join (select  tip_doc, key_value from morigbk_tag 
     where tag in ('RESTO DD NEGOCIO','DESCUENTOS','FACTORING','LC NO UTILIZADA', 'LC DESCUENTO') and ent_honrada=0
     group by 1,2) b -- fuente propia: initial PO
     on a.tip_doc = b.tip_doc and a.key_value = b.key_value ---- and a.cod_instit_financiera=b.cod_instit_financiera 
     -- and a.codmes>='202002' --FECHA --Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305
-    -- and a.codmes>='<CODMES_M12>'
-    -- and codmes between '<CODMES_M12>' and '<CODMES>'--Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305 v2: se acomta már los meses a consultar se coloca en sub consulta para optimizar
+    -- and a.codmes>='202305'
+    -- and codmes between '202305' and '202405'--Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305 v2: se acomta már los meses a consultar se coloca en sub consulta para optimizar
     
     /*between cast(date_format(date_parse(cast(b.codmes as varchar),'%Y%m') - interval '13' month,'%Y%m') as int) 
     and cast(date_format(date_parse(cast(b.codmes as varchar),'%Y%m') - interval '0' month, '%Y%m') as int*/
@@ -301,13 +296,13 @@ a.saldo,
     when tipo_credito in ('11','12','13')           then 'con'
     else 'otro'
 end flg_tipo_credito
-    from (select * from e_perm_aws.t_fact_report_rcc_rsk where  codmes between '<CODMES_M12>' and '<CODMES>') a  -- fuente aws: reporte rcc 
+    from (select * from e_perm_aws.t_fact_report_rcc_rsk where  codmes between '202305' and '202405') a  -- fuente aws: reporte rcc 
     -- inner join (select tip_doc, key_value from   d_mdl_riesgos_disc.PO_PREVIA_AD_202305  where alta2=1 --filtara las altas a nivel de entidad, sólo saca la pobalción
     inner join (select tip_doc, key_value from   morigbk_altas  where alta2=1 --filtara las altas a nivel de entidad, sólo saca la pobalción
     group by 1,2) b -- fuente propia: initial PO
     on a.tip_doc = b.tip_doc and a.key_value = b.key_value 
-    -- and codmes>='<CODMES_M12>' --Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305
-    -- and codmes between '<CODMES_M12>' and '<CODMES>'--Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305 v2: se acomta már los meses a consultar, se coloca como sub consulta para optimizar
+    -- and codmes>='202305' --Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305
+    -- and codmes between '202305' and '202405'--Se acuerdo con isma colocar el mes M-12 Ejem: para 202405 M-12 es 202305 v2: se acomta már los meses a consultar, se coloca como sub consulta para optimizar
 ),
 morigbk_saldo_hist_bank as (
 with data_rcc_bank as ( 
