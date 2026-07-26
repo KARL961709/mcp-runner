@@ -15,7 +15,7 @@
 #>
 # PositionalBinding=$false: un argumento suelto (p.ej. escribir ".\Go ps1" con
 # espacio en vez de punto) se bindeaba silenciosamente a -SqlDir y abortaba con
-# un mensaje que no señalaba la causa real. Asi falla diciendo que el parametro
+# un mensaje que no senalaba la causa real. Asi falla diciendo que el parametro
 # no existe.
 [CmdletBinding(PositionalBinding = $false)]
 param(
