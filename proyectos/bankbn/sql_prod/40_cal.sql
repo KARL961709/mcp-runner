@@ -1,6 +1,6 @@
 -- 40. CAL -> disc_model_owner.ds_adm_bpe_bankbn_cal
 -- 40.1 base ds_adm_bpe_bankbn_drivers, ventana A12 codmes 202206-202506
--- 40.2 filtro_<id> = 1 cae en el filtro / 0 pasa; uno por cada id de caso_filtros.signed.yaml
+-- 40.2 filtro_<id> = 1 cae en el filtro / 0 pasa - uno por cada id de caso_filtros.signed.yaml
 -- 40.3 CASO3 -> 99 | pd_raw NULL -> 98 | CASO2 (a m-2) + honesta -> 0 | CASO1 solo marca
 -- 40.4 filtro_perfil_empresa, filtro_deuda_comercial, filtro_ent_honrada, filtro_alta,
 --      filtro_monto_endeud y filtro_saldo_vig_m0 = 0: aplicados en 10_po / 20_mad
