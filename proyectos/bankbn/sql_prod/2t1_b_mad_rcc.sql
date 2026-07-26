@@ -38,7 +38,8 @@ rcc_fwd AS (
     FROM e_perm_aws.t_fact_report_rcc_rsk a
     INNER JOIN uni_key b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value
-    WHERE a.p_codmes BETWEEN '202204' AND '202311'
+    WHERE a.p_codmes BETWEEN '202202' AND '202401'
+      AND a.codmes   BETWEEN '202204' AND '202311'
       AND a.codmes   BETWEEN '202204' AND '202311'
 ),
 data_rcc AS (

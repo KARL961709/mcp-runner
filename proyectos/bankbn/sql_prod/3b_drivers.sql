@@ -18,7 +18,8 @@ rcc_impulsa AS (
     FROM e_perm_aws.t_fact_report_rcc_rsk a
     INNER JOIN (SELECT DISTINCT tip_doc, key_value FROM uni) b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value
-    WHERE a.p_codmes BETWEEN '202206' AND '202606'
+    WHERE a.p_codmes BETWEEN '202204' AND '202608'
+      AND a.codmes   BETWEEN '202206' AND '202606'
       AND a.tipo_credito IN ('01','02','03','04','05','06','07','08','09','10')
       AND (   a.cod_cuenta_rcc LIKE '81_95201%'
            OR a.cod_cuenta_rcc LIKE '81_95202%'
@@ -44,6 +45,7 @@ impulsa AS (
     FROM uni u
     LEFT JOIN rcc_impulsa r
         ON r.tip_doc = u.tip_doc AND r.key_value = u.key_value
+       AND r.codmes BETWEEN u.codmes AND DATE_FORMAT(DATE_PARSE(u.codmes,'%Y%m') + INTERVAL '12' MONTH,'%Y%m')
     GROUP BY 1,2,3
 )
 SELECT

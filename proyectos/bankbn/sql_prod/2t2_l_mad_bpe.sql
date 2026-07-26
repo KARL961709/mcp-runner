@@ -56,7 +56,7 @@ cruce_titular AS (
         a.tip_doc,
         a.key_value,
         CASE WHEN b.tip_doc IS NOT NULL AND b.key_value IS NOT NULL THEN 'Cruce' ELSE 'No Cruce' END AS flagcruce,
-        RANK() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value ORDER BY a.codmes, a.tip_doc, a.key_value, b.fecha_dt DESC) AS num
+        ROW_NUMBER() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value ORDER BY a.codmes, a.tip_doc, a.key_value, b.fecha_dt DESC) AS num
     FROM uni_mad a
     LEFT JOIN especiales_win b
         ON a.tip_doc = b.tip_doc
@@ -71,7 +71,7 @@ base_cny AS (
         b.tipdoc_conyugue,
         b.coddoc_conyugue,
         b.fec_inscripcion,
-        RANK() OVER (PARTITION BY a.codmes, b.tipdoc_conyugue, b.coddoc_conyugue
+        ROW_NUMBER() OVER (PARTITION BY a.codmes, b.tipdoc_conyugue, b.coddoc_conyugue
                      ORDER BY a.codmes, b.tipdoc_conyugue, b.coddoc_conyugue, b.fec_inscripcion DESC) AS num
     FROM (SELECT * FROM cruce_titular WHERE tip_doc <> '2' AND num = 1) a
     INNER JOIN e_perm_aws.t_mst_reniec_rsk b
@@ -88,7 +88,7 @@ especial_cny AS (
         a.key_value,
         a.tip_doc,
         CASE WHEN b.tip_doc IS NOT NULL AND b.key_value IS NOT NULL THEN 'Cruce' ELSE 'No Cruce' END AS flagcruce_cny,
-        RANK() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value ORDER BY a.codmes, a.tip_doc, a.key_value, b.fecha_dt DESC) AS num
+        ROW_NUMBER() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value ORDER BY a.codmes, a.tip_doc, a.key_value, b.fecha_dt DESC) AS num
     FROM (SELECT * FROM base_cny WHERE num = 1) a
     LEFT JOIN especiales_win b
         ON a.tipdoc_conyugue = b.tip_doc

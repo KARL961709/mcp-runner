@@ -22,7 +22,7 @@ filtro_sunat AS (
     SELECT DISTINCT a.*
     FROM (
         SELECT a.*,
-               RANK() OVER (PARTITION BY codmes, tip_doc, key_value
+               ROW_NUMBER() OVER (PARTITION BY codmes, tip_doc, key_value
                             ORDER BY codmes, tip_doc, key_value, cl_estado_num ASC, fecalta2 DESC) AS num
         FROM (
             SELECT DISTINCT y.*,
@@ -67,7 +67,7 @@ filtro_sunat AS (
                               FROM e_perm_aws.t_mst_princ_sunat_rsk a) x
                         LEFT JOIN (
                             SELECT *,
-                                RANK() OVER (PARTITION BY tip_doc, key_value ORDER BY fecproceso, fecinicio, estadoregistro, ruc_value DESC) AS num
+                                ROW_NUMBER() OVER (PARTITION BY tip_doc, key_value ORDER BY fecproceso, fecinicio, estadoregistro, ruc_value DESC) AS num
                             FROM e_perm_aws.t_mst_sec_sunat_rsk) y
                             ON (x.ruc_value = y.ruc_value) AND y.num = 1
                         WHERE x.fecalta2 <> ''

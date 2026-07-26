@@ -45,7 +45,7 @@ base AS (
         CAST(0 AS INTEGER) AS filtro_perfil_empresa,
         CAST(0 AS INTEGER) AS filtro_deuda_comercial,
         CAST(0 AS INTEGER) AS filtro_ent_honrada,
-        CASE WHEN COALESCE(d.nombre_instit_financiera,'VALOR NO ENVIADO POR IBK') IN (
+        CASE WHEN COALESCE(d.nombre_instit_financiera,'SIN NOMBRE') IN (
                     'BANCO AGROPECUARIO',
                     'BANCO DE LA NACION',
                     'CAJA RURAL DE AHORRO Y CREDITO SIPAN S A',

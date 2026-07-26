@@ -44,12 +44,13 @@ WITH base_altas_cliente AS (
         b.deuda_ins_u12m_v2, b.deuda_neg_u12m_v2, b.deuda_con_u12m_v2,
         CASE WHEN b.cod_instit_financiera   IS NULL THEN 1 ELSE 0 END AS falla_entidad_alta,
         CASE WHEN c.nombre_instit_financiera IS NULL THEN 1 ELSE 0 END AS falla_nombre_inst,
-        RANK() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value
+        ROW_NUMBER() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value
                      ORDER BY COALESCE(c.cod_instit_financiera, b.cod_instit_financiera) ASC) AS rank
     FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_bank a
     LEFT JOIN (SELECT * FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas WHERE alta2 = 1) b
       ON a.codmes = b.codmes AND a.key_value = b.key_value AND a.tip_doc = b.tip_doc
-    LEFT JOIN e_perm_aws.t_dim_inst_fin_rsk c
+    LEFT JOIN (SELECT cod_instit_financiera, max(nombre_instit_financiera) AS nombre_instit_financiera
+               FROM e_perm_aws.t_dim_inst_fin_rsk GROUP BY 1) c
       ON c.cod_instit_financiera = b.cod_instit_financiera
     WHERE a.max_saldo > 0
       AND COALESCE(c.nombre_instit_financiera,'SIN NOMBRE') NOT IN (
