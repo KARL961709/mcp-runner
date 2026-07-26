@@ -360,8 +360,8 @@ base_altas_cliente AS (
     WHERE a.max_saldo > 0
       AND COALESCE(c.nombre_instit_financiera,'SIN NOMBRE') NOT IN (
             'BANCO AGROPECUARIO','BANCO DE LA NACION',
-            'BBVA CONSUMER FINANCE ENT. DESARROLLO PEQUEÑA Y MICROEMPRESA',
             'CAJA RURAL DE AHORRO Y CREDITO SIPAN S A','LEASING TOTAL S A','VALOR NO ENVIADO POR IBK')
+      AND UPPER(COALESCE(c.nombre_instit_financiera,'SIN NOMBRE')) NOT LIKE 'BBVA CONSUMER%'
 )
 SELECT *,
     codmes AS p_codmes,
