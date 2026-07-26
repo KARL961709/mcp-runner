@@ -1,12 +1,12 @@
 -- 1t2_h_bank.sql | TRAMO 1T2  codmes 202212-202305 (6 meses) | -> disc_model_owner.ds_adm_bpe_bankbn_tmp_bank
 -- Tramificado desde 10h_bank.sql. Unico cambio respecto del original: los literales de
--- ventana (y CREATE->INSERT INTO donde corresponde). Logica de negocio intacta.
+-- ventana (y el destino por tramo). Logica de negocio intacta.
 --
 --   escribe : codmes 202212..202305
 --   lee     : RCC 202111..202305 (13m de historia antes de 202212)
 --   particion: p_codmes 202109..202307 (+-2m, misma convencion del original)
 --   las tmp_* son DESCARTABLES por tramo (drop+create dentro del tramo).
---   Acumula solo ds_adm_bpe_bankbn_po: CREATE en 1t1_i, INSERT INTO en 1t2..1t7.
+--   Cada tramo escribe su propia tabla po_tN; 1z_b_po_union consolida las 7.
 --   Misma razon que 10d: el pivot saldo_m0..m12 pide [m0-13, m0]. Lado SISTEMA
 --   (sin filtro de entidad ni tag), driver = tmp_altas de ESTE tramo.
 -- ---------------------------------------------------------------------------

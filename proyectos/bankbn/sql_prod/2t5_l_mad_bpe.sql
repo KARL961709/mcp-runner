@@ -1,7 +1,7 @@
 -- 2t5_l_mad_bpe.sql | TRAMO T5 | codmes 202406-202411 | CREATE (tmp descartable por tramo)
 -- Sin literales de mes: hereda el acotado de tmp_mad_rcc, _rl, _sunat y _rccbwd del tramo.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20f. Enriquecimiento BPE: RENIEC conyuge + especiales + flag_bpe_parcial -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_bpe
 --  1. Etapa 6 de 7. Ex CTE uni_conyuge, especiales, especiales_win, cruce_titular, base_cny, especial_cny,
 --     base_flag_cny, flag_bpe. Junta ademas 20c (RRLL), 20d (SUNAT) y 20e (RCC pasado).

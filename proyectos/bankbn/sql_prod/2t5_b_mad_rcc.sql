@@ -1,7 +1,7 @@
 -- 2t5_b_mad_rcc.sql | TRAMO T5 | codmes 202406-202411 | CREATE (tmp descartable por tramo)
 -- uni lee la PO ya completa acotando a 202406-202411. RCC forward 202404-202511 = [m0-2, m0+12] del tramo.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20a. RCC forward + pivot de ventanas -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
 --  1. Etapa 1 de 7 del ex 20_target_filtros.sql. Un solo statement, CTAS materializado.
 --  2. Contiene: uni, uni_key, rcc_fwd, data_rcc, info_consolid, morigbk_saldo_hist.

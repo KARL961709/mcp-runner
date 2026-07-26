@@ -1,7 +1,7 @@
 -- 2t4_d_mad_rl_uni.sql | TRAMO T4 | codmes 202312-202405 | CREATE (tmp descartable por tramo)
 -- Sin literales de mes: hereda el acotado de tmp_mad_rcc. Vigencia PIT fec_vigencia <= codmes.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20b. Representantes legales vigentes (SUNAT rep_legal PIT) -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl_uni
 --  1. Etapa 2 de 7. Ex CTE uni_rl. Se materializa porque el 20_target lo referenciaba 4 veces
 --     (nacimiento_rl, uni_rl_key, fea_rcc_rl, rcc_rl, rcc_rl_titular) y Trino lo re-inlineaba entero.

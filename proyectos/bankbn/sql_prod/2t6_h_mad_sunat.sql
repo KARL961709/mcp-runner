@@ -3,7 +3,7 @@
 -- El padron princ (17.4M) se semi-une a uni_mad_key antes del dedup: mismo predicado (tipdoc, nrodoc)
 -- que el LEFT JOIN de uni_mad de mas abajo, solo descarta filas que nunca matchean. Mismo resultado.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20d. SUNAT princ/sec + giros/ubigeos restringidos -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_sunat
 --  1. Etapa 4 de 7. Ex CTE filtro_sunat, filtro_sunat2, filtros_bpe. Aislada por costo: princ 17.4M.
 --  2. A11 SUNAT es SNAPSHOT: el corte por fecalta2 > codmes ('SIN_DATO') se conserva tal cual.

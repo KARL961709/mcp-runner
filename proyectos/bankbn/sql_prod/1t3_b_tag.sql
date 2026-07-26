@@ -1,12 +1,12 @@
 -- 1t3_b_tag.sql | TRAMO 1T3  codmes 202306-202311 (6 meses) | -> disc_model_owner.ds_adm_bpe_bankbn_tmp_tag
 -- Tramificado desde 10b_tag.sql. Unico cambio respecto del original: los literales de
--- ventana (y CREATE->INSERT INTO donde corresponde). Logica de negocio intacta.
+-- ventana (y el destino por tramo). Logica de negocio intacta.
 --
 --   escribe : codmes 202306..202311
 --   lee     : RCC 202306..202311 (solo el tramo)
 --   particion: p_codmes 202304..202401 (+-2m, misma convencion del original)
 --   las tmp_* son DESCARTABLES por tramo (drop+create dentro del tramo).
---   Acumula solo ds_adm_bpe_bankbn_po: CREATE en 1t1_i, INSERT INTO en 1t2..1t7.
+--   Cada tramo escribe su propia tabla po_tN; 1z_b_po_union consolida las 7.
 --   tmp_tag NO lleva historia: sus consumidores (10d semi-join, 10f driver) la usan
 --   como conjunto de claves/meses de alta, no como serie historica.
 -- ---------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 -- 1t6_i_po.sql | TRAMO 6 | -> disc_model_owner.ds_adm_bpe_bankbn_po_t6 (tabla por tramo: idempotente, se re-corre sin duplicar)
 -- Tramificado desde 10i_po.sql. Unico cambio respecto del original: los literales de
--- ventana (y CREATE->INSERT INTO donde corresponde). Logica de negocio intacta.
+-- ventana (y el destino por tramo). Logica de negocio intacta.
 --
 --   escribe : codmes 202412..202505
 --   lee     : tmp_bank + tmp_altas (202412..202505) + e_perm_aws.t_dim_inst_fin_rsk
 --   las tmp_* son DESCARTABLES por tramo (drop+create dentro del tramo).
---   Acumula solo ds_adm_bpe_bankbn_po: CREATE en 1t1_i, INSERT INTO en 1t2..1t7.
+--   Cada tramo escribe su propia tabla po_tN; 1z_b_po_union consolida las 7.
 --   INSERT INTO: la tabla ya existe desde 1t1_i. NO dropear, acumula.
 --   Athena matchea por POSICION, no por nombre. El SELECT es byte a byte el mismo
 --   que el de 1t1_i y las tmp_* se recrean con el mismo CTAS en cada tramo, asi que

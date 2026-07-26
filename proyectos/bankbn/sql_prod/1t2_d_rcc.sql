@@ -1,12 +1,12 @@
 -- 1t2_d_rcc.sql | TRAMO 1T2  codmes 202212-202305 (6 meses) | -> disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc
 -- Tramificado desde 10d_rcc.sql. Unico cambio respecto del original: los literales de
--- ventana (y CREATE->INSERT INTO donde corresponde). Logica de negocio intacta.
+-- ventana (y el destino por tramo). Logica de negocio intacta.
 --
 --   escribe : codmes 202212..202305
 --   lee     : RCC 202111..202305 (13m de historia antes de 202212)
 --   particion: p_codmes 202109..202307 (+-2m, misma convencion del original)
 --   las tmp_* son DESCARTABLES por tramo (drop+create dentro del tramo).
---   Acumula solo ds_adm_bpe_bankbn_po: CREATE en 1t1_i, INSERT INTO en 1t2..1t7.
+--   Cada tramo escribe su propia tabla po_tN; 1z_b_po_union consolida las 7.
 --   La historia NO se recorta al tramo: 10f pide [m0-13, m0] y deuda_*_u12m_v2
 --   llega a m0-13. Acotar a 202212..202305 vaciaria los meses de arranque.
 --   El semi-join contra tmp_tag deja solo las claves que dan de alta en el tramo.

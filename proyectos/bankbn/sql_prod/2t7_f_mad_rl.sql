@@ -1,7 +1,7 @@
 -- 2t7_f_mad_rl.sql | TRAMO T7 | codmes 202506-202506 | CREATE (tmp descartable por tramo)
 -- RCC del RRLL 202406-202506 = [m0-12, m0], sobre exacto de las ventanas Q5 del tramo.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20c. RRLL: nacimiento (RENIEC) + castigo RCC 12um -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl
 --  1. Etapa 3 de 7. Ex CTE nacimiento_rl, uni_rl_key, fea_rcc_rl, rcc_rl, rcc_rl_titular.
 --  2. fea_rcc_rl: el doble nivel del original (uni_rl_key INNER JOIN subconsulta ya filtrada por los

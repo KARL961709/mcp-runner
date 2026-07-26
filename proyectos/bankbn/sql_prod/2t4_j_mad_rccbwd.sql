@@ -1,7 +1,7 @@
 -- 2t4_j_mad_rccbwd.sql | TRAMO T4 | codmes 202312-202405 | CREATE (tmp descartable por tramo)
 -- RCC pasado del titular 202212-202405 = [m0-12, m0]. A7 *_1um_m2 y Q5 *_12um_v2 caen dentro.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20e. RCC pasado del titular (no vigente / no normal) -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd
 --  1. Etapa 5 de 7. Ex CTE uni_mad_key, rcc_bwd, fea_rcc, rcc_titular. Ventana RCC 202106..202506.
 --  2. Q5: *_12um = [m0-11, m0] (la usa flag_bpe_parcial) y *_12um_v2 = [m0-12, m0-2] (la usa 40_cal).

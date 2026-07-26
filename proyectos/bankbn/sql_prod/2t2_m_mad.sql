@@ -1,7 +1,7 @@
 -- 2t2_m_mad.sql | TRAMO 2 | -> disc_model_owner.ds_adm_bpe_bankbn_mad_t2 (tabla por tramo: idempotente, se re-corre sin duplicar)
 -- A4: score p_codmes 202211-202304 = codmes-1. El literal '202606' de falla_madurez_12m es el horizonte, no la ventana.
 -- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso la proyeccion del INSERT INTO coincide posicionalmente con la del CREATE TABLE.
+-- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
 -- 20g. Ensamblado final + target + score -> disc_model_owner.ds_adm_bpe_bankbn_mad
 --  1. Etapa 7 de 7. Solo une 20a (RCC) + 20f (BPE) + score. Contrato de columnas que consumen 30_drivers y 40_cal.
 --  2. A2.2 target por entidad de alta: las ventanas futuras ya vienen filtradas a ent_alta desde 20a.

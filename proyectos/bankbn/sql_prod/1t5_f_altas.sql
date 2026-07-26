@@ -1,11 +1,11 @@
 -- 1t5_f_altas.sql | TRAMO 1T5  codmes 202406-202411 (6 meses) | -> disc_model_owner.ds_adm_bpe_bankbn_tmp_altas
 -- Tramificado desde 10f_altas.sql. Unico cambio respecto del original: los literales de
--- ventana (y CREATE->INSERT INTO donde corresponde). Logica de negocio intacta.
+-- ventana (y el destino por tramo). Logica de negocio intacta.
 --
 --   escribe : codmes 202406..202411
 --   lee     : tmp_tag (202406..202411) + tmp_rcc (202305..202411)
 --   las tmp_* son DESCARTABLES por tramo (drop+create dentro del tramo).
---   Acumula solo ds_adm_bpe_bankbn_po: CREATE en 1t1_i, INSERT INTO en 1t2..1t7.
+--   Cada tramo escribe su propia tabla po_tN; 1z_b_po_union consolida las 7.
 --   CUERPO IDENTICO AL ORIGINAL, sin literales de mes: la ventana ya viene acotada
 --   por las dos tmp_* de este tramo. El bound month-aware [m0-13, m0] cae dentro.
 -- ---------------------------------------------------------------------------
