@@ -103,14 +103,14 @@ foreach ($archivo in $archivos) {
   $estado = "?"; $motivo = $null; $qid = $null; $lineas = $null; $csv = $null
 
   try {
-    # Athena rechaza el BOM: llega como 'ï' y da MALFORMED_QUERY en la columna 1.
+    # Athena rechaza el BOM: llega como 'i' y da MALFORMED_QUERY en la columna 1.
     # Lo escriben Notepad y Set-Content -Encoding utf8 (PS 5.1) sin avisar, asi
     # que normalizamos siempre a UTF-8 sin BOM en un temporal, en vez de confiar
     # en como se guardo el .sql original.
     # ReadAllText ya detecta y quita el BOM; el replace es cinturon y tirantes
     # por si el archivo llega con doble BOM o codificado de forma rara.
     $sql = [System.IO.File]::ReadAllText($archivo.FullName)
-    $sql = $sql -replace "^﻿", ""
+    $sql = $sql -replace "^$([char]0xFEFF)", ""
     if (-not $sql.Trim()) { throw "El archivo .sql esta vacio" }
 
     $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("athena_" + $nombre + ".sql")
