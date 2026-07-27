@@ -72,6 +72,12 @@ foreach ($par in @(@("AwsProfile", $AwsProfile), @("WorkGroup", $WorkGroup), @("
 if (-not (Test-Path $SqlDir)) {
   Abortar "No existe la carpeta de queries: $SqlDir" "Creala y pon ahi tus .sql, o indica otra con -SqlDir."
 }
+# -Bajar se valida ACA y no al final: descubrir que falta el bucket despues de
+# correr un CTAS de varios minutos cuesta un viaje humano completo.
+if ($Bajar) {
+  if (-not $S3Datos)    { Abortar "-Bajar necesita `$S3Datos."    "Ponelo en config.ps1, o pasalo con -S3Datos ""s3://...""" }
+  if (-not $LocalDatos) { Abortar "-Bajar necesita `$LocalDatos." "Ponelo en config.ps1, o pasalo con -LocalDatos ""C:uta""" }
+}
 
 $archivos = @(Get-ChildItem -Path $SqlDir -Filter "*.sql" -File | Sort-Object Name)
 if ($Only.Count -gt 0) {
@@ -266,8 +272,11 @@ Write-Host $resumen
 # canal de vuelta y no tiene sentido que cueste un Get-Content mas.
 if ($Clip) {
   try {
-    $clip = if ($resultados.Trim()) { $resumen + "`r`n" + $resultados } else { $resumen }
-    $clip | Set-Clipboard
+    # OJO: no llamar a esta variable $clip. PowerShell no distingue mayusculas y
+    # chocaria con el parametro [switch] $Clip: asignarle un string tira
+    # "Cannot convert System.String to SwitchParameter".
+    $textoClip = if ($resultados.Trim()) { $resumen + "`r`n" + $resultados } else { $resumen }
+    $textoClip | Set-Clipboard
     Write-Host "Resumen + resultados copiados al portapapeles - pegalo en el chat con Ctrl+V" -ForegroundColor Cyan
   } catch {
     Write-Host "(no pude usar el portapapeles: $($_.Exception.Message))" -ForegroundColor Yellow
@@ -278,8 +287,7 @@ if ($Clip) {
 # Athena SIEMPRE escribe a S3; el sync es el unico modo de tener el parquet en disco.
 # La carpeta local NO se versiona: es el punto donde termina el puente.
 if ($Bajar) {
-  if (-not $S3Datos)   { Abortar "-Bajar necesita `$S3Datos."   "Definilo en config.ps1" }
-  if (-not $LocalDatos){ Abortar "-Bajar necesita `$LocalDatos." "Definilo en config.ps1" }
+  $LocalDatos = $LocalDatos.TrimEnd('\','/')
   if (-not (Test-Path $LocalDatos)) { New-Item -ItemType Directory -Force $LocalDatos | Out-Null }
   Write-Host ""
   Write-Host "Bajando parquets: $S3Datos -> $LocalDatos" -ForegroundColor Cyan
