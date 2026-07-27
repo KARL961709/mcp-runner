@@ -3,6 +3,13 @@
 --   El staging ya viene al grano (codmes, id_value, tip_doc): aca NO se agrega (P3).
 --   Cada predicado lleva el pin de mes ADENTRO de la expresion, no solo en el ON (O4).
 --   De este archivo se extraen los expr_ref del yaml, no al reves.
+--
+--   flg_scope_ree es EJE, no filtro (A36): 1 = reenganche. NO alimenta flg_clean.
+--   flg_clean mide limpieza DENTRO del scope que se elija, asi que el resto
+--   conserva su descomposicion clean/dirty y el contraste sigue saliendo de
+--   esta tabla. El WHERE del fit lleva los dos terminos:
+--       flg_scope_ree = 1 AND flg_clean = 1 AND flg_calib = 1
+--   Omitir el primero calibra sobre el stock completo: lo cubre G_scope en sql_val.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_60_filtros AS
 SELECT
@@ -10,7 +17,7 @@ SELECT
   po.tip_doc,
   po.id_value,
 
-  CAST(CASE WHEN mar.id_value IS NULL THEN 1 ELSE 0 END AS INTEGER)                     AS filtro_scope_ree,
+  CAST(CASE WHEN mar.id_value IS NOT NULL THEN 1 ELSE 0 END AS INTEGER)                 AS flg_scope_ree,
 
   CAST(CASE WHEN gh.codmes = po.codmes_mrm AND gh.flg_gtia_hip = 1
             THEN 1 ELSE 0 END AS INTEGER)                                               AS filtro_gtia_hip,
