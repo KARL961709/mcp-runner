@@ -1,6 +1,7 @@
 -- ============================================================================
--- K2. H52 - la cohorte t0=201901 lee RCC en 201812, que SOLO existe en d_perm.
---     J2 leyo solo e_perm y dejo 973 sin contraparte. Aqui con el UNION.
+-- K3. Reemplaza a K2, que omitio el scope de cuentas del Recibido y midio otro
+--     predicado (1873 vs 4 en 2019). Aqui con el scope literal de
+--     Query Tabla Flag Comportamental PP Vigente - ENR.sql#L206.
 -- ============================================================================
 WITH ree AS (
   SELECT DISTINCT CAST(B.key_value AS VARCHAR) AS key_value,
@@ -11,11 +12,19 @@ WITH ree AS (
     AND CAST(A.codmes_desembolso AS INT) BETWEEN 201901 AND 201912
 ),
 rcc AS (
-  SELECT codmes, key_value, condicion FROM d_perm_aws.t_fact_report_rcc_rsk
-  WHERE CAST(codmes AS INT) BETWEEN 201812 AND 201812
+  SELECT codmes, key_value, condicion
+  FROM d_perm_aws.t_fact_report_rcc_rsk
+  WHERE CAST(codmes AS INT) = 201812
+    AND SUBSTR(cod_cuenta_rcc, 1, 2) = '14'
+    AND SUBSTR(cod_cuenta_rcc, 4, 1) IN ('1', '3', '4', '5', '6')
+    AND tipo_credito IN ('01','02','03','04','05','06','07','08','09','10','11','12','13')
   UNION ALL
-  SELECT codmes, key_value, condicion FROM e_perm_aws.t_fact_report_rcc_rsk
+  SELECT codmes, key_value, condicion
+  FROM e_perm_aws.t_fact_report_rcc_rsk
   WHERE CAST(codmes AS INT) BETWEEN 201901 AND 201911
+    AND SUBSTR(cod_cuenta_rcc, 1, 2) = '14'
+    AND SUBSTR(cod_cuenta_rcc, 4, 1) IN ('1', '3', '4', '5', '6')
+    AND tipo_credito IN ('01','02','03','04','05','06','07','08','09','10','11','12','13')
 ),
 sf AS (
   SELECT DATE_FORMAT(DATE_PARSE(codmes, '%Y%m') + INTERVAL '1' MONTH, '%Y%m') AS codmes,
