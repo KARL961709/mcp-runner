@@ -30,7 +30,7 @@ rcc_fwd AS (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc,
                cod_instit_financiera, cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '202102' AND '202407'
+        WHERE p_codmes BETWEEN '202104' AND '202405'
           AND codmes   BETWEEN '202104' AND '202405'
     ) a
     INNER JOIN uni_key b

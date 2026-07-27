@@ -46,7 +46,7 @@ FROM (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                cod_clasificacion_deudor, saldo
         FROM d_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201403' AND '201707'
+        WHERE p_codmes BETWEEN '201405' AND '201705'
           AND codmes   BETWEEN '201405' AND '201705'
     ) a
     INNER JOIN (

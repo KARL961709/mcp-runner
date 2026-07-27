@@ -29,12 +29,12 @@ fea_rcc_rl AS (
     FROM (
         SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
         FROM d_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201804' AND '201812'
+        WHERE p_codmes BETWEEN '201806' AND '202105'
           AND codmes   BETWEEN '201806' AND '202105'
         UNION ALL
         SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201901' AND '202107'
+        WHERE p_codmes BETWEEN '201806' AND '202105'
           AND codmes   BETWEEN '201806' AND '202105'
     ) a
     INNER JOIN uni_rl_key k

@@ -32,7 +32,7 @@ FROM (
     FROM (
             SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_instit_financiera, saldo
             FROM d_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201504' AND '201707'
+            WHERE p_codmes BETWEEN '201506' AND '201705'
               AND codmes   BETWEEN '201506' AND '201705'
     ) a
 ) t

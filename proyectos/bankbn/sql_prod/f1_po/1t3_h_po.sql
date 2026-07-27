@@ -10,13 +10,13 @@ WITH data_rcc_bank AS (
             SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                    cod_clasificacion_deudor, saldo
             FROM d_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201803' AND '201812'
+            WHERE p_codmes BETWEEN '201805' AND '202105'
               AND codmes   BETWEEN '201805' AND '202105'
             UNION ALL
             SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                    cod_clasificacion_deudor, saldo
             FROM e_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201901' AND '202107'
+            WHERE p_codmes BETWEEN '201805' AND '202105'
               AND codmes   BETWEEN '201805' AND '202105'
         ) a
         INNER JOIN (

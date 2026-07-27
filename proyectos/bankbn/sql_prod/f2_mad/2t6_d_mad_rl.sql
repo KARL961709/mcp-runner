@@ -29,7 +29,7 @@ fea_rcc_rl AS (
     FROM (
         SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '202404' AND '202608'
+        WHERE p_codmes BETWEEN '202406' AND '202606'
           AND codmes   BETWEEN '202406' AND '202606'
     ) a
     INNER JOIN uni_rl_key k

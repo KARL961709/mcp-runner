@@ -32,12 +32,12 @@ FROM (
     FROM (
             SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_instit_financiera, saldo
             FROM d_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201704' AND '201812'
+            WHERE p_codmes BETWEEN '201706' AND '201905'
               AND codmes   BETWEEN '201706' AND '201905'
             UNION ALL
             SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_instit_financiera, saldo
             FROM e_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201901' AND '201907'
+            WHERE p_codmes BETWEEN '201706' AND '201905'
               AND codmes   BETWEEN '201706' AND '201905'
     ) a
 ) t
