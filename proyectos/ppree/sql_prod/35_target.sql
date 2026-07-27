@@ -5,6 +5,9 @@
 --   MALO_Nm = mora > umbral EN ALGUN mes de [t0+1, t0+N]  OR  refi  OR  castigo
 --   Madurez POR CALENDARIO, nunca resta entera sobre YYYYMM (O6).
 --   Inmaduro -> NULL, jamas 0.
+--   Se exportan los DOCE max_dm y los DOCE falla_madurez (G3): antes salian 5 de
+--   12 mientras se emitian 24 targets, asi que siete horizontes quedaban sin eje
+--   de madurez ni columna auditable.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_35_target AS
 WITH f AS (
@@ -78,9 +81,12 @@ mad AS (
 )
 SELECT
   codmes_mrm, tip_doc, id_value,
-  max_dm_01, max_dm_03, max_dm_06, max_dm_09, max_dm_12,
+  max_dm_01, max_dm_02, max_dm_03, max_dm_04, max_dm_05, max_dm_06,
+  max_dm_07, max_dm_08, max_dm_09, max_dm_10, max_dm_11, max_dm_12,
   miss_06, miss_06 + miss_12 AS miss_12t,
-  falla_madurez_01, falla_madurez_03, falla_madurez_06, falla_madurez_09, falla_madurez_12,
+  falla_madurez_01, falla_madurez_02, falla_madurez_03, falla_madurez_04,
+  falla_madurez_05, falla_madurez_06, falla_madurez_07, falla_madurez_08,
+  falla_madurez_09, falla_madurez_10, falla_madurez_11, falla_madurez_12,
   CASE WHEN falla_madurez_01 = 1 THEN NULL WHEN max_dm_01 > 60 OR ev_01 = 1 THEN 1 ELSE 0 END AS target_01m_60,
   CASE WHEN falla_madurez_02 = 1 THEN NULL WHEN max_dm_02 > 60 OR ev_02 = 1 THEN 1 ELSE 0 END AS target_02m_60,
   CASE WHEN falla_madurez_03 = 1 THEN NULL WHEN max_dm_03 > 60 OR ev_03 = 1 THEN 1 ELSE 0 END AS target_03m_60,

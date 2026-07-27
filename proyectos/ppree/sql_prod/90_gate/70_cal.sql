@@ -5,6 +5,15 @@
 --   resto -> 0. Reconcilia #99 + #1 + #0 = universo por construccion.
 --   flg_scope_ree es EJE aparte y NO entra al gate (A36).
 --   Ningun filtro se escribe como constante: los seis salen de 60_filtros.
+--   falla_foto_t0 NO entra al 99 (A44): el Recibido no excluye a nadie por un mes
+--   sin foto - el LEFT JOIN no matchea, los flags caen a 0 por el else de #L234,
+--   #L237 y #L238, y el cliente se clasifica por su mora futura. Metido en el 99
+--   mandaba la cohorte 202107 entera (112,119 registros) fuera de la poblacion,
+--   y ademas hacia que 99 significara dos cosas. Va a flg_calib, que es donde
+--   viven las condiciones de disponibilidad.
+--   La madurez se calcula ACA desde codmes_mrm, no con COALESCE del join a
+--   35_target (A45): es funcion pura del calendario, y el COALESCE fundia
+--   'no cruzo el target' con 'cohorte inmadura'.
 --   filtro_baja queda FUERA de la suma del 99 (A40): H86 midio n_cuc_nulo = 0
 --   en los 8 anios sobre el UNIVERSO COMPLETO, o sea que no puede valer 1 en
 --   ninguna parte. Se conserva como columna con su n=0 firmado como hecho, pero
@@ -42,17 +51,18 @@ WITH base AS (
     t.target_09m_30, t.target_10m_30, t.target_11m_30, t.target_12m_30,
     t.max_dm_01, t.max_dm_03, t.max_dm_06, t.max_dm_09, t.max_dm_12,
     t.miss_06, t.miss_12t,
-    COALESCE(t.falla_madurez_12, 1) AS falla_madurez_12,
-    COALESCE(t.falla_madurez_09, 1) AS falla_madurez_09,
-    COALESCE(t.falla_madurez_06, 1) AS falla_madurez_06,
-    COALESCE(t.falla_madurez_03, 1) AS falla_madurez_03,
-    COALESCE(t.falla_madurez_01, 1) AS falla_madurez_01,
+    CAST(CASE WHEN DATE_FORMAT(DATE_ADD('month', 12, DATE_PARSE(f.codmes_mrm, '%Y%m')), '%Y%m') > '202606' THEN 1 ELSE 0 END AS INTEGER) AS falla_madurez_12,
+    CAST(CASE WHEN DATE_FORMAT(DATE_ADD('month',  9, DATE_PARSE(f.codmes_mrm, '%Y%m')), '%Y%m') > '202606' THEN 1 ELSE 0 END AS INTEGER) AS falla_madurez_09,
+    CAST(CASE WHEN DATE_FORMAT(DATE_ADD('month',  6, DATE_PARSE(f.codmes_mrm, '%Y%m')), '%Y%m') > '202606' THEN 1 ELSE 0 END AS INTEGER) AS falla_madurez_06,
+    CAST(CASE WHEN DATE_FORMAT(DATE_ADD('month',  3, DATE_PARSE(f.codmes_mrm, '%Y%m')), '%Y%m') > '202606' THEN 1 ELSE 0 END AS INTEGER) AS falla_madurez_03,
+    CAST(CASE WHEN DATE_FORMAT(DATE_ADD('month',  1, DATE_PARSE(f.codmes_mrm, '%Y%m')), '%Y%m') > '202606' THEN 1 ELSE 0 END AS INTEGER) AS falla_madurez_01,
 
     d.tipo_ingreso,
     d.tipo_ingreso_dep,
     d.flg_cs,
     d.sit_lab_cs_4v,
     d.sit_lab_cs_5v,
+    d.flg_cs_estado,
     d.falla_sin_tipo_ingreso,
     d.falla_sin_cta_sueldo,
     d.ctrl_fuente_nueva,
@@ -82,8 +92,7 @@ WITH base AS (
 gate AS (
   SELECT b.*,
     CASE
-      WHEN b.filtro_gtia_hip + b.filtro_colab + b.filtro_mto_pend
-         + b.falla_foto_t0 > 0 THEN 99
+      WHEN b.filtro_gtia_hip + b.filtro_colab + b.filtro_mto_pend > 0 THEN 99
       WHEN b.filtro_malo_sf + b.filtro_malo_origen = 0 THEN 1
       ELSE 0
     END AS flg_clean
@@ -94,7 +103,9 @@ SELECT
   CAST(CASE
     WHEN g.flg_clean <> 99
      AND g.falla_cruce_pd = 0
+     AND g.falla_pd_rango = 0
      AND g.falla_madurez_12 = 0
+     AND g.falla_foto_t0 = 0
      AND g.falla_dup = 0 THEN 1
     ELSE 0
   END AS INTEGER) AS flg_calib,
