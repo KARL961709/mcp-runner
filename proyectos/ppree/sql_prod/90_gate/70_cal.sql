@@ -5,6 +5,10 @@
 --   resto -> 0. Reconcilia #99 + #1 + #0 = universo por construccion.
 --   flg_scope_ree es EJE aparte y NO entra al gate (A36).
 --   Ningun filtro se escribe como constante: los seis salen de 60_filtros.
+--   filtro_baja queda FUERA de la suma del 99 (A40): H86 midio n_cuc_nulo = 0
+--   en los 8 anios sobre el UNIVERSO COMPLETO, o sea que no puede valer 1 en
+--   ninguna parte. Se conserva como columna con su n=0 firmado como hecho, pero
+--   sumarlo consagraria un filtro inerte - el defecto exacto que R6 persigue.
 --   La ventana no es un WHERE: entran las 90 cohortes y el recorte lo hace el flag.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_cal AS
@@ -78,7 +82,7 @@ WITH base AS (
 gate AS (
   SELECT b.*,
     CASE
-      WHEN b.filtro_gtia_hip + b.filtro_colab + b.filtro_mto_pend + b.filtro_baja
+      WHEN b.filtro_gtia_hip + b.filtro_colab + b.filtro_mto_pend
          + b.falla_foto_t0 > 0 THEN 99
       WHEN b.filtro_malo_sf + b.filtro_malo_origen = 0 THEN 1
       ELSE 0
