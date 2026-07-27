@@ -3,13 +3,11 @@ CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_cal AS
 WITH ent AS (
     SELECT
         d.*,
-        CASE
-            WHEN UPPER(COALESCE(d.nombre_instit_financiera,'')) LIKE 'BBVA CONSUMER%' THEN 'OTRO'
-            WHEN d.cod_instit_financiera = '00002' THEN 'IBK'
-            WHEN UPPER(COALESCE(d.nombre_instit_financiera,'')) LIKE '%CREDITO DEL PERU%' THEN 'BCP'
-            WHEN UPPER(COALESCE(d.nombre_instit_financiera,'')) LIKE '%BBVA%' THEN 'BBVA'
-            WHEN UPPER(COALESCE(d.nombre_instit_financiera,'')) LIKE '%CONTINENTAL%' THEN 'BBVA'
-            WHEN UPPER(COALESCE(d.nombre_instit_financiera,'')) LIKE '%SCOTIABANK%' THEN 'SCOTIA'
+        CASE d.cod_instit_financiera
+            WHEN '00001' THEN 'BCP'
+            WHEN '00002' THEN 'IBK'
+            WHEN '00004' THEN 'SCOTIA'
+            WHEN '00006' THEN 'BBVA'
             ELSE 'OTRO'
         END AS entidad
     FROM disc_model_owner.ds_adm_bpe_bankbn_drivers d
