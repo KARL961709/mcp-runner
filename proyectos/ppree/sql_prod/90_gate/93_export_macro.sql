@@ -7,6 +7,10 @@
 --   Lleva n_meses_fut_faltantes para que las cohortes 202007-202106, que pierden
 --   el mes 202107 de su ventana, sean identificables en vez de invisibles.
 --   Sin key_value: es una serie, no un detalle.
+--   Emite la RD en cuatro cortes para que la seleccion de variable macro pueda
+--   probar sensibilidad sin rehacer el parquet: rd12 (clean+dirty, el consumo
+--   declarado), rd12_clean, rd12_dirty, y rd12_ventana_completa (excluye las 12
+--   cohortes 202007-202106 que pierden el mes 202107 de su ventana futura).
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_px_macro
 WITH (format = 'PARQUET', write_compression = 'SNAPPY',
@@ -28,7 +32,14 @@ SELECT
   ROUND(AVG(CASE WHEN tipo_ingreso_dep = 'NO DEP'
                  THEN CAST(target_12m_60 AS DOUBLE) END), 6)          AS rd12_nodep,
   SUM(CASE WHEN flg_clean = 1 THEN 1 ELSE 0 END)                      AS n_clean,
+  ROUND(AVG(CASE WHEN flg_clean = 1
+                 THEN CAST(target_12m_60 AS DOUBLE) END), 6)          AS rd12_clean,
   SUM(CASE WHEN flg_clean = 0 THEN 1 ELSE 0 END)                      AS n_dirty,
+  ROUND(AVG(CASE WHEN flg_clean = 0
+                 THEN CAST(target_12m_60 AS DOUBLE) END), 6)          AS rd12_dirty,
+  SUM(CASE WHEN miss_12t = 0 THEN 1 ELSE 0 END)                       AS n_ventana_completa,
+  ROUND(AVG(CASE WHEN miss_12t = 0
+                 THEN CAST(target_12m_60 AS DOUBLE) END), 6)          AS rd12_ventana_completa,
   SUM(CASE WHEN falla_cruce_pd = 0 THEN 1 ELSE 0 END)                 AS n_con_pd,
   MAX(miss_12t)                                                       AS max_meses_fut_faltantes,
   SUM(CASE WHEN miss_12t > 0 THEN 1 ELSE 0 END)                       AS n_ventana_incompleta,
