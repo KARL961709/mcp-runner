@@ -22,7 +22,7 @@ WITH f AS (
 ),
 acc AS (
   SELECT f.*,
-    GREATEST(COALESCE(dm_m1,0))                                                                                              AS max_dm_01,
+    COALESCE(dm_m1,0)                                                                                                        AS max_dm_01,
     GREATEST(COALESCE(dm_m1,0), COALESCE(dm_m2,0))                                                                           AS max_dm_02,
     GREATEST(COALESCE(dm_m1,0), COALESCE(dm_m2,0), COALESCE(dm_m3,0))                                                        AS max_dm_03,
     GREATEST(COALESCE(dm_m1,0), COALESCE(dm_m2,0), COALESCE(dm_m3,0), COALESCE(dm_m4,0))                                     AS max_dm_04,
@@ -40,7 +40,7 @@ acc AS (
              COALESCE(dm_m7,0), COALESCE(dm_m8,0), COALESCE(dm_m9,0), COALESCE(dm_m10,0), COALESCE(dm_m11,0))                AS max_dm_11,
     GREATEST(COALESCE(dm_m1,0), COALESCE(dm_m2,0), COALESCE(dm_m3,0), COALESCE(dm_m4,0), COALESCE(dm_m5,0), COALESCE(dm_m6,0),
              COALESCE(dm_m7,0), COALESCE(dm_m8,0), COALESCE(dm_m9,0), COALESCE(dm_m10,0), COALESCE(dm_m11,0), COALESCE(dm_m12,0)) AS max_dm_12,
-    GREATEST(COALESCE(ev_m1,0))                                                                                              AS ev_01,
+    COALESCE(ev_m1,0)                                                                                                        AS ev_01,
     GREATEST(COALESCE(ev_m1,0), COALESCE(ev_m2,0))                                                                           AS ev_02,
     GREATEST(COALESCE(ev_m1,0), COALESCE(ev_m2,0), COALESCE(ev_m3,0))                                                        AS ev_03,
     GREATEST(COALESCE(ev_m1,0), COALESCE(ev_m2,0), COALESCE(ev_m3,0), COALESCE(ev_m4,0))                                     AS ev_04,
