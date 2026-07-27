@@ -78,7 +78,8 @@ base_altas_cliente AS (
         CASE WHEN b.cod_instit_financiera   IS NULL THEN 1 ELSE 0 END AS falla_entidad_alta,
         CASE WHEN c.nombre_instit_financiera IS NULL THEN 1 ELSE 0 END AS falla_nombre_inst,
         ROW_NUMBER() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value
-                     ORDER BY COALESCE(c.cod_instit_financiera, b.cod_instit_financiera) ASC) AS rn
+                     ORDER BY CASE WHEN COALESCE(c.cod_instit_financiera, b.cod_instit_financiera) = '00002' THEN 0 ELSE 1 END,
+                              COALESCE(c.cod_instit_financiera, b.cod_instit_financiera) ASC) AS rn
     FROM bank a
     LEFT JOIN (SELECT * FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas_t2 WHERE alta2 = 1) b
       ON a.codmes = b.codmes AND a.key_value = b.key_value AND a.tip_doc = b.tip_doc
