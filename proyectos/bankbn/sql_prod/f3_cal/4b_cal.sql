@@ -1,4 +1,4 @@
--- 4b_cal.sql | filtro_i y flg_clean | lee drivers, ventana 202206-202506
+-- 4b_cal.sql | flg_clean 99/1/0 y flg_calib | lee drivers, ventana completa 201506-202606
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_cal AS
 WITH ent AS (
     SELECT
@@ -11,7 +11,6 @@ WITH ent AS (
             ELSE 'OTRO'
         END AS entidad
     FROM disc_model_owner.ds_adm_bpe_bankbn_drivers d
-    WHERE d.codmes BETWEEN '202206' AND '202506'
 ),
 base AS (
     SELECT
@@ -36,13 +35,14 @@ base AS (
         CAST(0 AS INTEGER) AS filtro_perfil_empresa,
         CAST(0 AS INTEGER) AS filtro_deuda_comercial,
         CAST(0 AS INTEGER) AS filtro_ent_honrada,
-        CASE WHEN COALESCE(d.nombre_instit_financiera,'SIN NOMBRE') IN (
+        CASE WHEN d.nombre_instit_financiera IS NULL
+                  OR d.nombre_instit_financiera IN (
                     'BANCO AGROPECUARIO',
                     'BANCO DE LA NACION',
                     'CAJA RURAL DE AHORRO Y CREDITO SIPAN S A',
                     'LEASING TOTAL S A',
                     'VALOR NO ENVIADO POR IBK')
-                  OR UPPER(COALESCE(d.nombre_instit_financiera,'')) LIKE 'BBVA CONSUMER%'
+                  OR UPPER(d.nombre_instit_financiera) LIKE 'BBVA CONSUMER%'
              THEN 1 ELSE 0 END AS filtro_excl_entidades,
         CAST(0 AS INTEGER) AS filtro_alta,
         CAST(0 AS INTEGER) AS filtro_monto_endeud,
@@ -85,17 +85,27 @@ base AS (
         CASE WHEN CAST(DATE_FORMAT(DATE_ADD('month',12,DATE_PARSE(d.codmes,'%Y%m')),'%Y%m') AS INT) > 202606 THEN 1 ELSE 0 END AS falla_madurez,
         CASE WHEN COUNT(1) OVER (PARTITION BY d.codmes, d.tip_doc, d.key_value) > 1 THEN 1 ELSE 0 END AS falla_dup
     FROM ent d
+),
+gate AS (
+    SELECT
+        b.*,
+        CASE
+            WHEN b.filtro_perfil_empresa + b.filtro_deuda_comercial + b.filtro_ent_honrada + b.filtro_excl_entidades
+               + b.filtro_alta + b.filtro_monto_endeud + b.filtro_saldo_vig_m0 + b.filtro_pnsn + b.filtro_top4
+               + b.filtro_reactiva_puro + b.filtro_impulsa_u12m + b.filtro_impulsa_m0 > 0 THEN 99
+            WHEN b.filtro_castigado_org + b.filtro_judicial_org + b.filtro_reest_org + b.filtro_refin_org
+               + b.filtro_clasif_no_normal + b.filtro_diasatraso_org + b.filtro_sbs_no_normal_1um + b.filtro_novig_1um
+               + b.filtro_edad_titular + b.filtro_edad_rrll + b.filtro_novig_12um + b.filtro_rrll_cast_12um = 0 THEN 1
+            ELSE 0
+        END AS flg_clean
+    FROM base b
 )
 SELECT
-    b.*,
+    g.*,
     CASE
-        WHEN b.filtro_perfil_empresa + b.filtro_deuda_comercial + b.filtro_ent_honrada + b.filtro_excl_entidades
-           + b.filtro_alta + b.filtro_monto_endeud + b.filtro_saldo_vig_m0 + b.filtro_pnsn + b.filtro_top4
-           + b.filtro_reactiva_puro + b.filtro_impulsa_u12m + b.filtro_impulsa_m0 > 0 THEN 99
-        WHEN b.pd_raw IS NULL THEN 98
-        WHEN b.filtro_castigado_org + b.filtro_judicial_org + b.filtro_reest_org + b.filtro_refin_org
-           + b.filtro_clasif_no_normal + b.filtro_diasatraso_org + b.filtro_sbs_no_normal_1um + b.filtro_novig_1um
-           + b.filtro_edad_titular + b.filtro_edad_rrll + b.filtro_novig_12um + b.filtro_rrll_cast_12um = 0 THEN 1
+        WHEN g.flg_clean <> 99
+         AND g.pd_raw IS NOT NULL
+         AND g.falla_madurez = 0 THEN 1
         ELSE 0
-    END AS flg_clean
-FROM base b
+    END AS flg_calib
+FROM gate g

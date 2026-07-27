@@ -8,7 +8,7 @@
 --     para que un codmes malformado no aborte la query.
 --  6. Invariantes del CTAS: rank = 1, max_saldo > 0, p_codmes = codmes, alta2 = 1 cuando hubo match,
 --     y ninguna fila con nombre de entidad en la lista de exclusion (Q6).
---  7. n_sin_nombre_inst es informativo: el COALESCE 'SIN NOMBRE' del Q6 deja sobrevivir esas filas.
+--  7. Las filas con nombre de entidad NULL ya NO sobreviven: entran en c_ent_excluida, que debe dar 0.
 --  8. Todas las columnas falla_* valen 0 si la etapa esta sana.
 WITH par AS (
     SELECT '202206' AS mes_ini, '202506' AS mes_fin, 37 AS n_meses_esp
@@ -63,11 +63,12 @@ agg AS (
                    OR mes_idx - mes_idx_score <> 1 THEN 1 ELSE 0 END)        AS c_score_desfase,
         SUM(CASE WHEN COALESCE(falla_entidad_alta, 0) = 1 THEN 1 ELSE 0 END) AS c_sin_entidad_alta,
         SUM(CASE WHEN alta2 IS NOT NULL AND alta2 <> 1 THEN 1 ELSE 0 END)    AS c_alta2_no1,
-        SUM(CASE WHEN COALESCE(nombre_instit_financiera, 'SIN NOMBRE') IN (
+        SUM(CASE WHEN nombre_instit_financiera IS NULL
+                   OR nombre_instit_financiera IN (
                         'BANCO AGROPECUARIO', 'BANCO DE LA NACION',
                         'CAJA RURAL DE AHORRO Y CREDITO SIPAN S A', 'LEASING TOTAL S A',
                         'VALOR NO ENVIADO POR IBK')
-                   OR UPPER(COALESCE(nombre_instit_financiera, 'SIN NOMBRE')) LIKE 'BBVA CONSUMER%'
+                   OR UPPER(nombre_instit_financiera) LIKE 'BBVA CONSUMER%'
                  THEN 1 ELSE 0 END)                                          AS c_ent_excluida,
         SUM(CASE WHEN TRIM(COALESCE(cod_instit_financiera, '')) = '' THEN 1 ELSE 0 END) AS c_ent_vacia
     FROM base

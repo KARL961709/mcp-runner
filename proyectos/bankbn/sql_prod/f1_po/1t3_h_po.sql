@@ -86,10 +86,10 @@ base_altas_cliente AS (
                FROM e_perm_aws.t_dim_inst_fin_rsk GROUP BY 1) c
       ON c.cod_instit_financiera = b.cod_instit_financiera
     WHERE a.max_saldo > 0
-      AND COALESCE(c.nombre_instit_financiera,'SIN NOMBRE') NOT IN (
+      AND c.nombre_instit_financiera NOT IN (
             'BANCO AGROPECUARIO','BANCO DE LA NACION',
             'CAJA RURAL DE AHORRO Y CREDITO SIPAN S A','LEASING TOTAL S A','VALOR NO ENVIADO POR IBK')
-      AND UPPER(COALESCE(c.nombre_instit_financiera,'SIN NOMBRE')) NOT LIKE 'BBVA CONSUMER%'
+      AND UPPER(c.nombre_instit_financiera) NOT LIKE 'BBVA CONSUMER%'
 )
 SELECT *,
     codmes AS p_codmes,
