@@ -1,7 +1,7 @@
 -- ============================================================================
--- I2. R8 - t_mst_ctaibk_rsk devolvio len_min = 0: hay key_value vacios en el
---     puente CIF que sostiene TODO el perimetro reenganche. Cuantos, y cuanto
---     fan-out mete cod_cuc -> (key_value, tip_doc).
+-- J3. R8 - t_mst_ctaibk_rsk dio len_min(key_value) = 0. Cuantas llaves vacias,
+--     cuanto fan-out cod_cuc -> (key_value, tip_doc), y cuanta marca se pierde.
+--     (i2 fallo por schema: la marca esta en d_perm_aws, no en e_perm_aws.)
 -- ============================================================================
 WITH p AS (
   SELECT
@@ -24,9 +24,12 @@ SELECT
   (SELECT COUNT(*) FROM fan WHERE n_key > 1)                                        AS n_cuc_multikey,
   (SELECT COUNT(*) FROM fan WHERE n_tipdoc > 1)                                     AS n_cuc_multitipdoc,
   (SELECT COALESCE(MAX(n_filas), 0) FROM fan)                                       AS max_filas_por_cuc,
-  (SELECT COUNT(*) FROM e_perm_aws.t_mrm_mongest_altas_pp_marcas_maa_tmp a
+  (SELECT COUNT(*) FROM d_perm_aws.t_mrm_mongest_altas_pp_marcas_maa_tmp a
      WHERE a.subproducto = '1.REENGANCHE')                                          AS n_marca_ree,
-  (SELECT COUNT(*) FROM e_perm_aws.t_mrm_mongest_altas_pp_marcas_maa_tmp a
+  (SELECT COUNT(*) FROM d_perm_aws.t_mrm_mongest_altas_pp_marcas_maa_tmp a
+     LEFT JOIN p b ON CAST(a.cif_key AS VARCHAR) = b.cod_cuc
+     WHERE a.subproducto = '1.REENGANCHE' AND b.cod_cuc IS NULL)                    AS n_marca_sin_puente,
+  (SELECT COUNT(*) FROM d_perm_aws.t_mrm_mongest_altas_pp_marcas_maa_tmp a
      INNER JOIN p b ON CAST(a.cif_key AS VARCHAR) = b.cod_cuc
      WHERE a.subproducto = '1.REENGANCHE'
-       AND (b.key_value IS NULL OR LENGTH(b.key_value) = 0))                        AS n_marca_ree_key_vacio
+       AND (b.key_value IS NULL OR LENGTH(b.key_value) = 0))                        AS n_marca_key_vacio
