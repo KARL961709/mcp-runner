@@ -53,15 +53,61 @@ SELECT
     round(100e0 * t.n_magnitud / nullif(t.n_base, 0), 4) AS pct_sobre_base,
     CASE WHEN t.n_viol = 0 THEN 'OK' ELSE 'REVISAR' END AS veredicto
 FROM a
-CROSS JOIN UNNEST(ARRAY[
-    ROW(1, 'A01 OBS filas de la PO', CAST(0 AS BIGINT), a.n_po, a.n_po),
-    ROW(2, 'A02 filas de PO sin candidato en tmp_altas sanity del join', a.n_sincand, a.n_sincand, a.n_po),
-    ROW(3, 'A03 OBS cliente-mes multientidad referencia m07 1.84 pct', CAST(0 AS BIGINT), a.n_multi, a.n_po),
-    ROW(4, 'A04 OBS cliente-mes con IBK entre los candidatos', CAST(0 AS BIGINT), a.n_candibk, a.n_po),
-    ROW(5, 'A05 IBK candidato y gana IBK debe ser 100 pct de A04', CAST(CASE WHEN a.n_candibk > 0 AND a.n_ibkgana <> a.n_candibk THEN 1 ELSE 0 END AS BIGINT), a.n_ibkgana, a.n_candibk),
-    ROW(6, 'A06 IBK candidato y PIERDE viola A30', a.n_ibkpierde, a.n_ibkpierde, a.n_candibk),
-    ROW(7, 'A07 OBS duelo IBK contra BCP', CAST(0 AS BIGINT), a.n_duelo, a.n_po),
-    ROW(8, 'A08 duelo ganado por IBK debe ser 100 pct de A07', CAST(CASE WHEN a.n_duelo > 0 AND a.n_duelo_ibk <> a.n_duelo THEN 1 ELSE 0 END AS BIGINT), a.n_duelo_ibk, a.n_duelo),
-    ROW(9, 'A09 duelo ganado por BCP firma del CTAS viejo', a.n_duelo_bcp, a.n_duelo_bcp, a.n_duelo)
-]) AS t (orden, chk, n_viol, n_magnitud, n_base)
+CROSS JOIN UNNEST(
+    ARRAY[
+         1,
+         2,
+         3,
+         4,
+         5,
+         6,
+         7,
+         8,
+         9
+    ],
+    ARRAY[
+         'A01 OBS filas de la PO',
+         'A02 filas de PO sin candidato en tmp_altas sanity del join',
+         'A03 OBS cliente-mes multientidad referencia m07 1.84 pct',
+         'A04 OBS cliente-mes con IBK entre los candidatos',
+         'A05 IBK candidato y gana IBK debe ser 100 pct de A04',
+         'A06 IBK candidato y PIERDE viola A30',
+         'A07 OBS duelo IBK contra BCP',
+         'A08 duelo ganado por IBK debe ser 100 pct de A07',
+         'A09 duelo ganado por BCP firma del CTAS viejo'
+    ],
+    ARRAY[
+         CAST(0 AS BIGINT),
+         a.n_sincand,
+         CAST(0 AS BIGINT),
+         CAST(0 AS BIGINT),
+         CAST(CASE WHEN a.n_candibk > 0 AND a.n_ibkgana <> a.n_candibk THEN 1 ELSE 0 END AS BIGINT),
+         a.n_ibkpierde,
+         CAST(0 AS BIGINT),
+         CAST(CASE WHEN a.n_duelo > 0 AND a.n_duelo_ibk <> a.n_duelo THEN 1 ELSE 0 END AS BIGINT),
+         a.n_duelo_bcp
+    ],
+    ARRAY[
+         a.n_po,
+         a.n_sincand,
+         a.n_multi,
+         a.n_candibk,
+         a.n_ibkgana,
+         a.n_ibkpierde,
+         a.n_duelo,
+         a.n_duelo_ibk,
+         a.n_duelo_bcp
+    ],
+    ARRAY[
+         a.n_po,
+         a.n_po,
+         a.n_po,
+         a.n_po,
+         a.n_candibk,
+         a.n_candibk,
+         a.n_po,
+         a.n_duelo,
+         a.n_duelo
+    ]
+) AS t (orden, chk, n_viol, n_magnitud, n_base)
 ORDER BY t.orden
