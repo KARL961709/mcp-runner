@@ -36,7 +36,7 @@ SELECT 'B_delta_filtros',
        SUM(CASE WHEN f.flg_scope_ree = 1 THEN f.filtro_gtia_hip ELSE 0 END),
        SUM(CASE WHEN f.flg_scope_ree = 1 THEN f.filtro_malo_sf  ELSE 0 END),
        SUM(CASE WHEN f.flg_scope_ree = 1 AND f.filtro_gtia_hip = 1 AND CAST(f.codmes_mrm AS INT) > 202604 THEN 1 ELSE 0 END),
-       CAST(SUM(CASE WHEN f.flg_scope_ree = 1 AND f.filtro_malo_sf = 1 AND f.valida_scope = 0 THEN 1 ELSE 0 END) AS VARCHAR),
+       CAST(SUM(CASE WHEN f.flg_scope_ree = 1 AND f.filtro_malo_sf = 1 AND CAST(f.codmes_mrm AS INT) > 202604 THEN 1 ELSE 0 END) AS VARCHAR),
        CAST(SUM(CASE WHEN f.flg_scope_ree = 1 AND f.falla_foto_t0 = 1 THEN 1 ELSE 0 END) AS VARCHAR)
 FROM disc_model_owner.ds_stk_ree_pp_60_filtros f
 GROUP BY 1, 2
