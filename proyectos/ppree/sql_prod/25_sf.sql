@@ -9,7 +9,7 @@ WITH rcc AS (
   SELECT CAST(codmes AS VARCHAR) AS rcc_codmes, CAST(key_value AS VARCHAR) AS id_value,
          CAST(tip_doc AS VARCHAR) AS tip_doc, condicion
   FROM d_perm_aws.t_fact_report_rcc_rsk
-  WHERE CAST(codmes AS INT) BETWEEN 201712 AND 201812
+  WHERE CAST(codmes AS INT) = 201812
     AND SUBSTR(cod_cuenta_rcc, 1, 2) = '14'
     AND SUBSTR(cod_cuenta_rcc, 4, 1) IN ('1', '3', '4', '5', '6')
     AND tipo_credito IN ('01','02','03','04','05','06','07','08','09','10','11','12','13')

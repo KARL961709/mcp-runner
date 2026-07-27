@@ -33,7 +33,7 @@ SELECT
   CAST(CASE WHEN dm.as_of_mes = po.codmes_mrm AND dm.flg_alguna_cta_cuc_nulo = 1
             THEN 1 ELSE 0 END AS INTEGER)                                               AS filtro_baja,
 
-  CAST(CASE WHEN dm.codmes IS NULL THEN 1 ELSE 0 END AS INTEGER)                        AS falla_foto_t0,
+  CAST(CASE WHEN mes.codmes IS NULL THEN 1 ELSE 0 END AS INTEGER)                       AS falla_foto_t0,
 
   CAST(CASE WHEN CAST(po.codmes_mrm AS INT) BETWEEN 201905 AND 202403
             THEN 1 ELSE 0 END AS INTEGER)                                               AS valida_colab,
@@ -42,6 +42,8 @@ SELECT
   CAST(COALESCE(dm.n_cuentas, 0) AS INTEGER)                                            AS ctrl_n_cuentas
 
 FROM disc_model_owner.ds_stk_ree_pp_10_po po
+LEFT JOIN disc_model_owner.ds_stk_ree_pp_26_meses mes
+       ON mes.codmes = po.codmes_mrm
 LEFT JOIN disc_model_owner.ds_stk_ree_pp_11_marca mar
        ON mar.id_value = po.id_value
       AND mar.codmes_mrm = po.codmes_mrm
