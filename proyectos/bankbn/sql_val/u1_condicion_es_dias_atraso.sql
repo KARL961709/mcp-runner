@@ -1,4 +1,4 @@
--- u1_condicion_es_dias_atraso.sql | falsa manifest_N1:70. Si condicion son dias de atraso debe escalonar con la clasificacion SBS; si no escalona, el target esta mal
+-- u1_condicion_es_dias_atraso.sql | falsa manifest_N1:70. Si condicion son dias de atraso debe escalonar con la clasificacion SBS. Si no escalona, el target esta mal
 SELECT cod_clasificacion_deudor                                       AS clasif_sbs,
        count(1)                                                       AS filas,
        count(DISTINCT condicion)                                      AS valores_distintos,
