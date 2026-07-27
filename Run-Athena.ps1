@@ -29,7 +29,10 @@ param(
   [string]   $Database,
   [int]      $TimeoutSec = 900,
   [string[]] $Only = @(),
-  [switch]   $Clip
+  [switch]   $Clip,
+  [switch]   $Bajar,
+  [string]   $S3Datos,
+  [string]   $LocalDatos
 )
 
 $ErrorActionPreference = "Stop"
@@ -110,6 +113,12 @@ foreach ($archivo in $archivos) {
     # ReadAllText ya detecta y quita el BOM; el replace es cinturon y tirantes
     # por si el archivo llega con doble BOM o codificado de forma rara.
     $sql = [System.IO.File]::ReadAllText($archivo.FullName)
+    # Los .sql versionados llevan <S3_DATOS> y el runner lo sustituye desde config:
+    # asi el path de infraestructura nunca viaja a github.
+    if ($sql -match '<S3_DATOS>') {
+      if (-not $S3Datos) { throw "$nombre usa <S3_DATOS> pero no hay `$S3Datos definido (ponelo en config.ps1)" }
+      $sql = $sql.Replace('<S3_DATOS>', $S3Datos.TrimEnd('/'))
+    }
     $sql = $sql -replace "^$([char]0xFEFF)", ""
     if (-not $sql.Trim()) { throw "El archivo .sql esta vacio" }
 
@@ -258,10 +267,29 @@ Write-Host $resumen
 if ($Clip) {
   try {
     $clip = if ($resultados.Trim()) { $resumen + "`r`n" + $resultados } else { $resumen }
-    Set-Clipboard -Value $clip
+    $clip | Set-Clipboard
     Write-Host "Resumen + resultados copiados al portapapeles - pegalo en el chat con Ctrl+V" -ForegroundColor Cyan
   } catch {
     Write-Host "(no pude usar el portapapeles: $($_.Exception.Message))" -ForegroundColor Yellow
+  }
+}
+
+# --- Descarga de parquets a la carpeta local del banco ------------------------
+# Athena SIEMPRE escribe a S3; el sync es el unico modo de tener el parquet en disco.
+# La carpeta local NO se versiona: es el punto donde termina el puente.
+if ($Bajar) {
+  if (-not $S3Datos)   { Abortar "-Bajar necesita `$S3Datos."   "Definilo en config.ps1" }
+  if (-not $LocalDatos){ Abortar "-Bajar necesita `$LocalDatos." "Definilo en config.ps1" }
+  if (-not (Test-Path $LocalDatos)) { New-Item -ItemType Directory -Force $LocalDatos | Out-Null }
+  Write-Host ""
+  Write-Host "Bajando parquets: $S3Datos -> $LocalDatos" -ForegroundColor Cyan
+  aws s3 sync $S3Datos $LocalDatos --profile $AwsProfile --only-show-errors
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "El sync fallo (exit $LASTEXITCODE)" -ForegroundColor Red
+  } else {
+    $n = (Get-ChildItem -Recurse -File $LocalDatos | Measure-Object).Count
+    $mb = [Math]::Round((Get-ChildItem -Recurse -File $LocalDatos | Measure-Object -Property Length -Sum).Sum / 1MB, 1)
+    Write-Host "  $n archivos, $mb MB en $LocalDatos" -ForegroundColor Green
   }
 }
 

@@ -8,3 +8,8 @@ $Database   = "<nombre-de-la-base>"
 # Opcionales: por defecto .\sql y .\output junto al script.
 # $SqlDir = "C:\ruta\a\mis\queries"
 # $OutDir = "C:\ruta\a\resultados"
+
+# Export de parquets (solo si usas -Bajar). El path S3 y la carpeta local NO se
+# versionan: el .sql lleva el placeholder <S3_DATOS> y el runner lo sustituye.
+# $S3Datos    = "s3://<bucket>/proyectos/bankbn/datos"
+# $LocalDatos = "C:uta\local\delancoankbn_datos"

@@ -25,7 +25,10 @@ param(
   [string]   $WorkGroup,
   [string]   $Database,
   [int]      $TimeoutSec,
-  [string[]] $Only
+  [string[]] $Only,
+  [switch]   $Bajar,
+  [string]   $S3Datos,
+  [string]   $LocalDatos
 )
 
 Set-Location $PSScriptRoot
