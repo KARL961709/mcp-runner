@@ -8,6 +8,15 @@
 --   H28 midio que MIX_CS y MIX_NO_CS tienen bad-rate distinto los 4 anios
 --   maduros. Emitir las dos cuesta lo mismo y evita reconstruir para decidir.
 --   ctrl_fuente_nueva marca el regimen de 202604+ (SUSALUD, INFERIDO_IND_MVP).
+--
+--   flg_cs_estado (A42): CS / NO_CS / SIN_DATO. La fuente lista a TODOS con
+--   flag 0/1 (H90), asi que la ausencia de fila es un hueco y no el dato
+--   'no tiene'. Medido en el perimetro reenganche 2024 sobre 15,226: 5,595 con
+--   CS=1, solo 1,317 con CS=0 MEDIDO, y 8,314 (54.6%) CS=0 por AUSENCIA. Y la
+--   cobertura oscila 34-45% entre anios, o sea que la composicion del driver
+--   se mueve con la disponibilidad del dato y no con el cliente.
+--   sit_lab_cs_4v y _5v conservan la semantica del vigente y del Recibido para
+--   no romper Fase 2; flg_cs_estado es el eje limpio, sin fundir hueco con cero.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_40_drivers AS
 WITH po AS (
@@ -70,6 +79,11 @@ SELECT
     WHEN COALESCE(c.tipo_ingreso,'INDEPENDIENTE') = 'MIXTO'       AND COALESCE(s.flg_cs,0) = 0 THEN 'MIX_NO_CS'
     ELSE 'IND'
   END                                                                         AS sit_lab_cs_5v,
+  CASE
+    WHEN s.id_value IS NULL THEN 'SIN_DATO'
+    WHEN COALESCE(s.flg_cs, 0) = 1 THEN 'CS'
+    ELSE 'NO_CS'
+  END                                                                         AS flg_cs_estado,
   CAST(CASE WHEN c.id_value IS NULL THEN 1 ELSE 0 END AS INTEGER)             AS falla_sin_tipo_ingreso,
   CAST(CASE WHEN s.id_value IS NULL THEN 1 ELSE 0 END AS INTEGER)             AS falla_sin_cta_sueldo,
   CAST(CASE WHEN c.fuente IN ('SUSALUD','INFERIDO_IND_MVP') THEN 1 ELSE 0 END AS INTEGER) AS ctrl_fuente_nueva
