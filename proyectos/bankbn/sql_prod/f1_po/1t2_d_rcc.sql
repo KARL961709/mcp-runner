@@ -46,14 +46,14 @@ FROM (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                cod_clasificacion_deudor, saldo
         FROM d_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201605' AND '201905'
-          AND codmes   BETWEEN '201605' AND '201905'
+        WHERE p_codmes BETWEEN '201605' AND '201812'
+          AND codmes   BETWEEN '201605' AND '201812'
         UNION ALL
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201605' AND '201905'
-          AND codmes   BETWEEN '201605' AND '201905'
+        WHERE p_codmes BETWEEN '201901' AND '201905'
+          AND codmes   BETWEEN '201901' AND '201905'
     ) a
     INNER JOIN (
         SELECT tip_doc, key_value

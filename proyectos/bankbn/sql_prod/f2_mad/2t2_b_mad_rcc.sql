@@ -30,14 +30,14 @@ rcc_fwd AS (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc,
                cod_instit_financiera, cod_clasificacion_deudor, saldo
         FROM d_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201704' AND '202005'
-          AND codmes   BETWEEN '201704' AND '202005'
+        WHERE p_codmes BETWEEN '201704' AND '201812'
+          AND codmes   BETWEEN '201704' AND '201812'
         UNION ALL
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc,
                cod_instit_financiera, cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201704' AND '202005'
-          AND codmes   BETWEEN '201704' AND '202005'
+        WHERE p_codmes BETWEEN '201901' AND '202005'
+          AND codmes   BETWEEN '201901' AND '202005'
     ) a
     INNER JOIN uni_key b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value
