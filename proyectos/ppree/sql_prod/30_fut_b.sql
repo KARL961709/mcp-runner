@@ -1,7 +1,8 @@
 -- ============================================================================
 -- 30b. VENTANA FUTURA k = 7..12 - misma logica que 30a
---   refi_09m y cast_09m se completan en 70_cal combinando con 30a: aca solo
---   viven los meses 7..12, que es lo que esta tabla puede afirmar.
+--   ev_mK = refi OR castigo en el mes k exacto. Emitirlo POR k, no por tramo,
+--   da el target completo en los doce horizontes al mismo costo: la limitacion
+--   H10 (evento duro solo en 03/06/09/12) era de la madre, no de este build.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_30_fut_b AS
 WITH exp AS (
@@ -43,9 +44,11 @@ SELECT
   MAX(CASE WHEN k = 10 THEN missing_k END) AS miss_m10,
   MAX(CASE WHEN k = 11 THEN missing_k END) AS miss_m11,
   MAX(CASE WHEN k = 12 THEN missing_k END) AS miss_m12,
-  MAX(CASE WHEN k <= 9 THEN refi_k ELSE 0 END) AS refi_07_09m,
-  MAX(refi_k)                                  AS refi_07_12m,
-  MAX(CASE WHEN k <= 9 THEN cast_k ELSE 0 END) AS cast_07_09m,
-  MAX(cast_k)                                  AS cast_07_12m
+  MAX(CASE WHEN k =  7 THEN GREATEST(refi_k, cast_k) END) AS ev_m7,
+  MAX(CASE WHEN k =  8 THEN GREATEST(refi_k, cast_k) END) AS ev_m8,
+  MAX(CASE WHEN k =  9 THEN GREATEST(refi_k, cast_k) END) AS ev_m9,
+  MAX(CASE WHEN k = 10 THEN GREATEST(refi_k, cast_k) END) AS ev_m10,
+  MAX(CASE WHEN k = 11 THEN GREATEST(refi_k, cast_k) END) AS ev_m11,
+  MAX(CASE WHEN k = 12 THEN GREATEST(refi_k, cast_k) END) AS ev_m12
 FROM j
 GROUP BY 1, 2, 3

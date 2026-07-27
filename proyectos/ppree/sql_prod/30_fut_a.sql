@@ -44,9 +44,11 @@ SELECT
   MAX(CASE WHEN k = 4 THEN missing_k END) AS miss_m4,
   MAX(CASE WHEN k = 5 THEN missing_k END) AS miss_m5,
   MAX(CASE WHEN k = 6 THEN missing_k END) AS miss_m6,
-  MAX(CASE WHEN k <= 3 THEN refi_k ELSE 0 END) AS refi_03m,
-  MAX(refi_k)                                  AS refi_06m,
-  MAX(CASE WHEN k <= 3 THEN cast_k ELSE 0 END) AS cast_03m,
-  MAX(cast_k)                                  AS cast_06m
+  MAX(CASE WHEN k = 1 THEN GREATEST(refi_k, cast_k) END) AS ev_m1,
+  MAX(CASE WHEN k = 2 THEN GREATEST(refi_k, cast_k) END) AS ev_m2,
+  MAX(CASE WHEN k = 3 THEN GREATEST(refi_k, cast_k) END) AS ev_m3,
+  MAX(CASE WHEN k = 4 THEN GREATEST(refi_k, cast_k) END) AS ev_m4,
+  MAX(CASE WHEN k = 5 THEN GREATEST(refi_k, cast_k) END) AS ev_m5,
+  MAX(CASE WHEN k = 6 THEN GREATEST(refi_k, cast_k) END) AS ev_m6
 FROM j
 GROUP BY 1, 2, 3
