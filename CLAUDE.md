@@ -61,6 +61,45 @@ muestra de filas.
 - **Comillas dobles** en mensajes de commit con here-string de PS 5.1 rompen el
   paso de argumentos a git: el commit falla y el `push exit: 0` engaña.
 
+## Cómo se construyen las tablas aquí
+
+Las reglas completas viven en `C:\Users\CARLOS\Documents\2026\GDM\_motor_insumos_cal\`
+(`PATRON_DISENO_SCRIPTS.md` = las 5 lentes · `ESTILO_SQL.md` · `ORDEN_SCRIPTS.md` ·
+`SKILL_EXTENDIDO.md` = los 22 gates). Las de acá ya costaron días, y están inline
+porque un puntero a un archivo que la sesión quizá no abra es más débil que la regla.
+
+**Cadena materializada, nunca un mega-query.** Trino **NO materializa los CTE: los
+inlinea**. Un CTE referenciado 3 veces se recomputa 3 veces. Cada paso es
+`DROP TABLE IF EXISTS` + `CREATE TABLE AS` leyendo del anterior. Un statement por
+archivo (Athena no corre varios) y **sin punto y coma**, ni siquiera en comentarios.
+
+**El costo se mide en particiones LEÍDAS, no en meses escritos.**
+`P = ventana_escritura + lookback + lookforward`. Pasar de 6 a 24 meses escritos no
+multiplica por 4: el lookback es cola fija (20 → 38 particiones = 1.9x).
+
+**El límite de tiempo es del runner, no de Athena.** `Run-Athena.ps1` trae
+`-TimeoutSec 900` por defecto y **no hay `stop-query-execution`**: un `TIMEOUT` puede
+haber terminado bien y dejado la tabla creada. Y el `catch` no corta el `foreach`, así
+que un fallo genera errores en cascada: **la causa raíz es siempre el primer error**.
+Por eso los CTAS se corren de a uno.
+
+**Identidad por CÓDIGO, nunca por nombre.** `LIKE '%CREDITO DEL PERU%'` no matchea
+`'BANCO DE CRÉDITO DEL PERÚ'`, y en su lugar entran los vehículos de cartera vendida.
+Antes de cualquier join entre fuentes, medir el formato de las DOS llaves
+(`length(v)` vs `length(to_utf8(v))`, ceros a la izquierda).
+
+**`RANK()` no dedupea** — los empates reciben todos el 1. Usar `ROW_NUMBER()` con orden
+total, y declarar la política de desempate: no es un detalle técnico, decide población.
+
+**Subconjunto portable de Athena:** `UNNEST` multi-array (`UNNEST(ARRAY[...], ARRAY[...])`),
+nunca `UNNEST(ARRAY[ROW(...)])` — Athena lo colapsa a una sola columna.
+
+**Un flag = un eje.** No fusionar dos preguntas en una escala ordinal. Si un consumo
+necesita `IN (1,98)` o restar buckets, el esquema está mal y se parte antes de construir.
+
+**Validar lo generado antes de pushear:** paréntesis, corchetes, comillas, ASCII puro,
+un solo statement. Toda edición masiva por script corre **en seco primero**.
+
 ## Configuración
 
 `config.ps1` (no versionado) define perfil, workgroup y base. Plantilla en
