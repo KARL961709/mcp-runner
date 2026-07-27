@@ -13,11 +13,21 @@ rcc_impulsa AS (
         a.tip_doc,
         a.key_value,
         SUM(a.saldo) AS sld_impulsa
-    FROM e_perm_aws.t_fact_report_rcc_rsk a
+    FROM (
+        SELECT DISTINCT codmes, tip_doc, key_value, saldo, tipo_credito, cod_cuenta_rcc
+        FROM (
+            SELECT codmes, tip_doc, key_value, saldo, tipo_credito, cod_cuenta_rcc
+            FROM e_perm_aws.t_fact_report_rcc_rsk
+            WHERE p_codmes BETWEEN '201901' AND '202608'
+            UNION ALL
+            SELECT codmes, tip_doc, key_value, saldo, tipo_credito, cod_cuenta_rcc
+            FROM d_perm_aws.t_fact_report_rcc_rsk
+            WHERE p_codmes BETWEEN '201504' AND '201902'
+        ) u
+    ) a
     INNER JOIN (SELECT DISTINCT tip_doc, key_value FROM uni) b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value
-    WHERE a.p_codmes BETWEEN '201504' AND '202608'
-      AND a.codmes   BETWEEN '201506' AND '202606'
+    WHERE a.codmes BETWEEN '201506' AND '202606'
       AND a.tipo_credito IN ('01','02','03','04','05','06','07','08','09','10')
       AND (   a.cod_cuenta_rcc LIKE '81_95201%'
            OR a.cod_cuenta_rcc LIKE '81_95202%'

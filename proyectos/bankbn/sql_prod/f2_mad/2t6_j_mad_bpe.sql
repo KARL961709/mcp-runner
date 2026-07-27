@@ -11,7 +11,9 @@ uni_conyuge AS (
         a.tip_doc,
         b.fec_nacimiento AS fec_nacimiento
     FROM (SELECT codmes, tip_doc, key_value FROM uni_mad WHERE tip_doc <> '2') a
-    LEFT JOIN e_perm_aws.t_mst_reniec_rsk b
+    LEFT JOIN (SELECT tip_doc, key_value, min(fec_nacimiento) AS fec_nacimiento
+               FROM e_perm_aws.t_mst_reniec_rsk
+               GROUP BY 1,2) b
         ON a.key_value = b.key_value AND a.tip_doc = b.tip_doc
 ),
 especiales AS (

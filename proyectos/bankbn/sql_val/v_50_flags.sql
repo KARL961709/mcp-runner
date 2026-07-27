@@ -1,0 +1,27 @@
+-- v_50_flags.sql | reconciliacion de flg_clean 99/1/0 y flg_calib: todo chk_* debe dar 0. Correr DESPUES de 4b_cal
+SELECT
+    count(1)                                                                       AS n_universo,
+    count(DISTINCT codmes)                                                         AS n_meses,
+    sum(CASE WHEN flg_clean = 99 THEN 1 ELSE 0 END)                                AS n_99,
+    sum(CASE WHEN flg_clean = 1  THEN 1 ELSE 0 END)                                AS n_1,
+    sum(CASE WHEN flg_clean = 0  THEN 1 ELSE 0 END)                                AS n_0,
+    sum(CASE WHEN flg_calib = 1  THEN 1 ELSE 0 END)                                AS n_calib,
+    count(1) - sum(CASE WHEN flg_clean IN (99,1,0) THEN 1 ELSE 0 END)              AS chk_particion,
+    sum(CASE WHEN flg_clean = 98 THEN 1 ELSE 0 END)                                AS chk_bucket_98,
+    sum(CASE WHEN flg_clean IS NULL OR flg_calib IS NULL THEN 1 ELSE 0 END)        AS chk_flag_nulo,
+    sum(CASE WHEN flg_calib = 1 AND flg_clean = 99 THEN 1 ELSE 0 END)              AS chk_calib_estructural,
+    sum(CASE WHEN flg_calib = 1 AND pd_raw IS NULL THEN 1 ELSE 0 END)              AS chk_calib_sin_score,
+    sum(CASE WHEN flg_calib = 1 AND target_12m IS NULL THEN 1 ELSE 0 END)          AS chk_calib_target_nulo,
+    sum(CASE WHEN falla_madurez = 0 AND target_12m IS NULL THEN 1 ELSE 0 END)      AS chk_madurez_abierta,
+    sum(CASE WHEN falla_madurez = 1 AND target_12m IS NOT NULL THEN 1 ELSE 0 END)  AS chk_madurez_cerrada,
+    sum(CASE WHEN pd_raw IS NOT NULL AND (pd_raw < 0 OR pd_raw > 1) THEN 1 ELSE 0 END) AS chk_pd_rango,
+    sum(CASE WHEN entidad = 'BCP'    THEN 1 ELSE 0 END)                            AS obs_bcp,
+    sum(CASE WHEN entidad = 'IBK'    THEN 1 ELSE 0 END)                            AS obs_ibk,
+    sum(CASE WHEN entidad = 'BBVA'   THEN 1 ELSE 0 END)                            AS obs_bbva,
+    sum(CASE WHEN entidad = 'SCOTIA' THEN 1 ELSE 0 END)                            AS obs_scotia,
+    sum(CASE WHEN entidad = 'OTRO'   THEN 1 ELSE 0 END)                            AS obs_otro,
+    sum(falla_dup)                                                                 AS obs_dup,
+    sum(CASE WHEN flg_clean = 1 AND pd_raw IS NULL THEN 1 ELSE 0 END)              AS obs_limpio_sin_score,
+    sum(CASE WHEN flg_clean = 0 AND pd_raw IS NOT NULL THEN 1 ELSE 0 END)          AS obs_sucio_con_score,
+    sum(CASE WHEN flg_clean = 1 AND flg_impulsa_u12m = 1 THEN 1 ELSE 0 END)        AS obs_lookahead_a8
+FROM disc_model_owner.ds_adm_bpe_bankbn_cal

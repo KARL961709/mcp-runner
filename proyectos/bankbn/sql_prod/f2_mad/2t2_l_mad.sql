@@ -1,9 +1,14 @@
 -- 2t2_l_mad.sql | ensamblado final target y score | escribe 201706-201905 lee score 201705-201904
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_mad_t2 AS
 WITH score AS (
-    SELECT *
-    FROM e_perm_aws.scr_admbankbpe_rsk
-    WHERE p_codmes BETWEEN '201705' AND '201904'
+    SELECT * FROM (
+        SELECT s.*,
+               ROW_NUMBER() OVER (PARTITION BY s.p_codmes, s.tip_doc, s.key_value
+                            ORDER BY s.probabilidad DESC) AS rn_scr
+        FROM e_perm_aws.scr_admbankbpe_rsk s
+        WHERE s.p_codmes BETWEEN '201705' AND '201904'
+    ) q
+    WHERE q.rn_scr = 1
 )
 SELECT
   a.codmes,
@@ -16,6 +21,7 @@ SELECT
 
   b.puntuacion,
   b.probabilidad,
+  b.p_codmes AS score_p_codmes,
   b.woe_beta_sldoppcomer,
   b.woe_prm_decresldo12m,
   b.woe_nro_decresldo12m,
