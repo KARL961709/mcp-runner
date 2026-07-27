@@ -1,13 +1,4 @@
--- 2t3_b_mad_rcc.sql | TRAMO T3 | codmes 202306-202311 | CREATE (tmp descartable por tramo)
--- uni lee la PO ya completa acotando a 202306-202311. RCC forward 202304-202411 = [m0-2, m0+12] del tramo.
--- Generado por gen_tramos.py: el texto es identico entre tramos salvo los literales de mes,
--- por eso las 7 tablas por tramo tienen proyeccion identica y el UNION ALL final cuadra.
--- 20a. RCC forward + pivot de ventanas -> disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
---  1. Etapa 1 de 7 del ex 20_target_filtros.sql. Un solo statement, CTAS materializado.
---  2. Contiene: uni, uni_key, rcc_fwd, data_rcc, info_consolid, morigbk_saldo_hist.
---  3. Grano de salida: 1 fila por (codmes, tip_doc, key_value). Filtro saldo_vig_m0 > 0 aplicado aqui.
---  4. A2.2 ventanas futuras filtradas a ent_alta. Agregados de origen (m0 y m2) = SISTEMA.
---  5. A7 columnas *_m2. Q1 target_12m usa dias_atraso_12m. Q5 se resuelve en 20e.
+-- 2t3_b_mad_rcc.sql | rcc futuro y pivot ventanas | escribe 201906-202105 lee 201904-202205
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc AS
 WITH uni AS (
     SELECT
@@ -18,7 +9,7 @@ WITH uni AS (
         cod_instit_financiera,
         nombre_instit_financiera
     FROM disc_model_owner.ds_adm_bpe_bankbn_po
-    WHERE codmes BETWEEN '202306' AND '202311'
+    WHERE codmes BETWEEN '201906' AND '202105'
       AND ((30000 <= max_saldo AND (saldo_m0 >= 10000 AND saldo_m0 < 30000)) OR (saldo_m0 >= 30000))
 ),
 uni_key AS (
@@ -35,12 +26,15 @@ rcc_fwd AS (
         a.cod_instit_financiera,
         a.cod_clasificacion_deudor,
         a.saldo
-    FROM e_perm_aws.t_fact_report_rcc_rsk a
+    FROM (
+        SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc,
+               cod_instit_financiera, cod_clasificacion_deudor, saldo
+        FROM e_perm_aws.t_fact_report_rcc_rsk
+        WHERE p_codmes BETWEEN '201902' AND '202207'
+          AND codmes   BETWEEN '201904' AND '202205'
+    ) a
     INNER JOIN uni_key b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value
-    WHERE a.p_codmes BETWEEN '202302' AND '202501'
-      AND a.codmes   BETWEEN '202304' AND '202411'
-      AND a.codmes   BETWEEN '202304' AND '202411'
 ),
 data_rcc AS (
     SELECT

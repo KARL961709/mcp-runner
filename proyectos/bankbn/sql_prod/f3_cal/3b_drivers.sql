@@ -1,6 +1,4 @@
--- 3b_drivers.sql (ex 30_drivers.sql) | NO se tramifica: lee ds_adm_bpe_bankbn_mad ya completa.
--- Contrato: consume m.codmes, m.tip_doc, m.key_value, m.cod_instit_financiera, m.segmento_reactiva y m.* -> todas en mad.
--- 30. DRIVERS (impulsa m0 / u12m, ppjj, reactiva, entidad) -> ds_adm_bpe_bankbn_drivers
+-- 3b_drivers.sql | impulsa m0/u12m, ppjj, reactiva, entidad | lee mad completa
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_drivers AS
 WITH uni AS (
     SELECT DISTINCT
@@ -18,8 +16,8 @@ rcc_impulsa AS (
     FROM e_perm_aws.t_fact_report_rcc_rsk a
     INNER JOIN (SELECT DISTINCT tip_doc, key_value FROM uni) b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value
-    WHERE a.p_codmes BETWEEN '202204' AND '202608'
-      AND a.codmes   BETWEEN '202206' AND '202606'
+    WHERE a.p_codmes BETWEEN '201504' AND '202608'
+      AND a.codmes   BETWEEN '201506' AND '202606'
       AND a.tipo_credito IN ('01','02','03','04','05','06','07','08','09','10')
       AND (   a.cod_cuenta_rcc LIKE '81_95201%'
            OR a.cod_cuenta_rcc LIKE '81_95202%'

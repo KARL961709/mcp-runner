@@ -1,30 +1,4 @@
--- 1t2_f_altas.sql | TRAMO 1T2  codmes 202212-202305 (6 meses) | -> disc_model_owner.ds_adm_bpe_bankbn_tmp_altas
--- Tramificado desde 10f_altas.sql. Unico cambio respecto del original: los literales de
--- ventana (y el destino por tramo). Logica de negocio intacta.
---
---   escribe : codmes 202212..202305
---   lee     : tmp_tag (202212..202305) + tmp_rcc (202111..202305)
---   las tmp_* son DESCARTABLES por tramo (drop+create dentro del tramo).
---   Cada tramo escribe su propia tabla po_tN; 1z_b_po_union consolida las 7.
---   CUERPO IDENTICO AL ORIGINAL, sin literales de mes: la ventana ya viene acotada
---   por las dos tmp_* de este tramo. El bound month-aware [m0-13, m0] cae dentro.
--- ---------------------------------------------------------------------------
--- NOTAS DEL ORIGINAL (10f_altas.sql):
--- 10f_altas.sql | etapa 3/5 de la PO | pivot 13m + clasificacion de altas -> disc_model_owner.ds_adm_bpe_bankbn_tmp_altas
--- Origen: CTE morigbk_saldo_hist (info_consolid / max_saldo / marca_perfil) + CTE morigbk_altas de 10_po_altas.sql.
---
---  1. UN SOLO STATEMENT (CTAS). Correr antes 1t2_e_drop_altas.sql. Requiere tmp_tag (10b) y tmp_rcc (10d).
---  2. ESTA es la etapa que justifica el corte: morigbk_altas se referenciaba 3 veces (semi-join de
---     rcc_bank, driver de info_consolid_bank y LEFT JOIN de base_altas_cliente) y Trino la recomputaba
---     entera cada vez. Materializada se calcula una sola vez y 10h/10i la leen de disco.
---  3. MONTH-AWARE (obligatorio, sin esto hay cross-join): b.codmes BETWEEN [a.codmes-13m] AND a.codmes.
---     Ademas de costo es semantico: min(b.tipo_credito) no esta acotado por CASE y sin el bound se
---     calcularia sobre los 49 meses de tmp_rcc en vez de sobre los 14 del cliente-mes.
---  4. Los CTE que quedan (max_saldo, marca_perfil, saldo_hist, data_altas, marca_entidades, marca_altas)
---     se referencian UNA sola vez: al inlinearlos Trino no repite trabajo. Son proyecciones fila a fila
---     sobre el resultado ya agregado de info_consolid.
---  5. Grano de salida: (codmes, tip_doc, key_value, cod_instit_financiera). saldo_m0/max_saldo de esta
---     tabla son de la ENTIDAD (A2.2). El saldo SISTEMA lo arma 10h.
+-- 1t2_f_altas.sql | pivot 13m y clasifica altas | escribe 201706-201905 lee tmp 201605-201905
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_altas AS
 WITH info_consolid AS (
     SELECT a.codmes, a.tip_doc, a.key_value, b.cod_instit_financiera,
