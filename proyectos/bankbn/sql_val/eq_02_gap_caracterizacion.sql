@@ -1,7 +1,7 @@
 -- eq_02_gap_caracterizacion.sql | quienes estan en el universo del desarrollador y no en el nuestro, por entidad y en los 31 meses
 SELECT COALESCE(s.nombre_instit_financiera,'(SIN NOMBRE EN DIM)')            AS entidad,
        CAST(s.cod_instit_financiera AS VARCHAR)                              AS cod,
-       CASE WHEN CAST(s.cod_instit_financiera AS VARCHAR) IN ('00001','00002','00004','00006')
+       CASE WHEN CAST(TRIM(CAST(s.cod_instit_financiera AS VARCHAR)) AS INT) IN (1,2,4,6)
             THEN 'TOP4' ELSE 'FUERA_TOP4' END                                AS grupo,
        count(1)                                                              AS n_faltante,
        count(DISTINCT CAST(s.codmes AS VARCHAR))                             AS n_meses,
@@ -19,6 +19,6 @@ LEFT JOIN (
 WHERE n.kv IS NULL
 GROUP BY COALESCE(s.nombre_instit_financiera,'(SIN NOMBRE EN DIM)'),
          CAST(s.cod_instit_financiera AS VARCHAR),
-         CASE WHEN CAST(s.cod_instit_financiera AS VARCHAR) IN ('00001','00002','00004','00006')
+         CASE WHEN CAST(TRIM(CAST(s.cod_instit_financiera AS VARCHAR)) AS INT) IN (1,2,4,6)
               THEN 'TOP4' ELSE 'FUERA_TOP4' END
 ORDER BY n_faltante DESC
