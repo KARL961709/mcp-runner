@@ -1,6 +1,6 @@
 -- ============================================================================
--- E1a. COBERTURA DE LA MADRE POR codmes_mrm  (U9 poblado / U4 madurez)
---      Serie contando FILAS. Ninguna evidencia de particiones declaradas.
+-- F1. COBERTURA DE LA MADRE DE PRODUCCION e_perm_aws.ds_flg_compppibk_rsk
+--     (la enr_ copia devolvio n=0). Serie contando FILAS por codmes_mrm.
 -- ============================================================================
 SELECT
   codmes_mrm,
@@ -21,8 +21,9 @@ SELECT
     + (CASE WHEN nro_dm_m10 IS NULL THEN 0 ELSE 1 END)
     + (CASE WHEN nro_dm_m11 IS NULL THEN 0 ELSE 1 END)
     + (CASE WHEN nro_dm_m12 IS NULL THEN 0 ELSE 1 END) AS DOUBLE)), 3)          AS prom_meses_fut_obs,
-  SUM(CASE WHEN score IS NULL OR score = 0 THEN 1 ELSE 0 END)                   AS n_sin_score,
-  MAX("$file_modified_time" AT TIME ZONE 'America/Lima')                        AS max_fch_archivo
-FROM disc_model_owner.enr_ds_flg_compppibk_rsk
+  SUM(CASE WHEN dsc_flg_malo_12m = 'MALO' THEN 1 ELSE 0 END)                    AS n_malo_12m,
+  MIN(LENGTH(CAST(id_value AS VARCHAR)))                                        AS len_min_key,
+  MAX(LENGTH(CAST(id_value AS VARCHAR)))                                        AS len_max_key
+FROM e_perm_aws.ds_flg_compppibk_rsk
 GROUP BY 1
 ORDER BY 1

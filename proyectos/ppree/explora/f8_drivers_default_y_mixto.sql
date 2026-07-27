@@ -1,5 +1,5 @@
 -- ============================================================================
--- E6. U6 (default silencioso de tipo_ingreso) y U5 (MIXTO sin abrir por CS)
+-- F8. U6 (default silencioso de tipo_ingreso) y U5 (MIXTO sin abrir por CS)
 --     pct_default MEDIDO POST-JOIN, por anio, sobre el perimetro reenganche.
 -- ============================================================================
 WITH ree AS (
@@ -14,7 +14,7 @@ uni AS (
     CAST(u.tip_doc AS VARCHAR)     AS tip_doc,
     CAST(u.id_value AS VARCHAR)    AS key_value,
     CASE WHEN u.flg_rfnc_12m = 1 OR u.flg_cstg_12m = 1 OR u.max_dm_12m > 60 THEN 1 ELSE 0 END AS y12
-  FROM disc_model_owner.enr_ds_flg_compppibk_rsk u
+  FROM e_perm_aws.ds_flg_compppibk_rsk u
   INNER JOIN ree r
     ON CAST(u.id_value AS VARCHAR) = CAST(r.key_value AS VARCHAR)
    AND CAST(u.codmes_mrm AS VARCHAR) = CAST(r.codmes_desembolso AS VARCHAR)
@@ -50,7 +50,7 @@ SELECT
   SUM(CASE WHEN c.tipo_ingreso_new = 'DEPENDIENTE'   THEN 1 ELSE 0 END)             AS n_dep,
   SUM(CASE WHEN c.tipo_ingreso_new = 'MIXTO'         THEN 1 ELSE 0 END)             AS n_mixto,
   SUM(CASE WHEN c.tipo_ingreso_new = 'INDEPENDIENTE' THEN 1 ELSE 0 END)             AS n_indep,
-  SUM(CASE WHEN cs.flg_cs_riesgos IS NOT NULL AND CAST(cs.flg_cs_riesgos AS INT) = 1 AND c.tipo_ingreso_new = 'MIXTO' THEN 1 ELSE 0 END) AS n_mixto_cs,
+  SUM(CASE WHEN c.tipo_ingreso_new = 'MIXTO' AND COALESCE(CAST(cs.flg_cs_riesgos AS INT), 0) = 1 THEN 1 ELSE 0 END) AS n_mixto_cs,
   ROUND(AVG(CASE WHEN c.tipo_ingreso_new = 'MIXTO' AND COALESCE(CAST(cs.flg_cs_riesgos AS INT), 0) = 1 THEN CAST(u.y12 AS DOUBLE) END), 4) AS rd_mixto_cs,
   ROUND(AVG(CASE WHEN c.tipo_ingreso_new = 'MIXTO' AND COALESCE(CAST(cs.flg_cs_riesgos AS INT), 0) = 0 THEN CAST(u.y12 AS DOUBLE) END), 4) AS rd_mixto_no_cs,
   ROUND(AVG(CAST(u.y12 AS DOUBLE)), 4)                                              AS rd_total

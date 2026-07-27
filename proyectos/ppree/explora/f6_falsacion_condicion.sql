@@ -1,8 +1,7 @@
 -- ============================================================================
--- E2b. U1 - FALSACION CONTRA COLUMNA INDEPENDIENTE
---      `condicion` (RCC, t0-1) vs `nro_dm_m00` (HPC cierre mensual, t0).
---      Si ambas son dias de atraso, la concordancia de tramo debe ser alta y
---      el desacuerdo simetrico. Si no lo es, `condicion` no es lo que se asume.
+-- F6. U1 - FALSACION DE `condicion` CONTRA COLUMNA INDEPENDIENTE
+--     `condicion` (RCC, t0-1) vs `nro_dm_m00` (HPC cierre mensual, t0).
+--     Si ambas son dias de atraso la concordancia de tramo es alta; si no, no.
 -- ============================================================================
 WITH rcc AS (
   SELECT
@@ -18,9 +17,9 @@ WITH rcc AS (
   GROUP BY 1, 2, 3
 ),
 mad AS (
-  SELECT codmes_mrm, id_value AS key_value, tip_doc, MAX(nro_dm_m00) AS dm00
-  FROM disc_model_owner.enr_ds_flg_compppibk_rsk
-  WHERE codmes_mrm IN ('202312', '202506')
+  SELECT CAST(codmes_mrm AS VARCHAR) AS codmes_mrm, id_value AS key_value, tip_doc, MAX(nro_dm_m00) AS dm00
+  FROM e_perm_aws.ds_flg_compppibk_rsk
+  WHERE CAST(codmes_mrm AS VARCHAR) IN ('202312', '202506')
   GROUP BY 1, 2, 3
 )
 SELECT
