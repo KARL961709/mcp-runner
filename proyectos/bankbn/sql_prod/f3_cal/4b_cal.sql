@@ -19,8 +19,17 @@ base AS (
         d.key_value,
         d.cod_instit_financiera,
 
+        d.target_01m,
+        d.target_02m,
+        d.target_03m,
+        d.target_04m,
+        d.target_05m,
         d.target_06m,
+        d.target_07m,
+        d.target_08m,
         d.target_09m,
+        d.target_10m,
+        d.target_11m,
         d.target_12m,
 
         TRY_CAST(d.probabilidad AS DOUBLE) AS pd_raw,

@@ -171,6 +171,141 @@ info_consolid AS (
         max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
                                    AND date_format(date_parse(a.codmes,'%Y%m') + interval '12' month,'%Y%m')
                   AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ven ELSE null END) AS ven_12um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_1m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_01um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_01um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_01um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_01um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '2' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_2m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '2' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_02um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '2' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_02um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '2' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_02um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '2' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_02um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '3' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_3m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '3' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_03um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '3' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_03um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '3' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_03um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '3' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_03um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '4' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_4m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '4' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_04um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '4' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_04um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '4' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_04um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '4' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_04um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '5' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_5m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '5' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_05um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '5' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_05um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '5' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_05um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '5' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_05um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '7' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_7m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '7' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_07um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '7' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_07um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '7' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_07um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '7' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_07um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '8' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_8m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '8' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_08um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '8' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_08um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '8' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_08um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '8' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_08um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '10' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_10m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '10' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_10um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '10' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_10um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '10' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_10um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '10' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_10um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '11' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.dm ELSE null END) AS dias_atraso_11m,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '11' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_jud ELSE null END) AS jud_11um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '11' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_cast ELSE null END) AS cast_11um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '11' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref ELSE null END) AS ref_11um,
+        max(CASE WHEN b.codmes BETWEEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m')
+                                   AND date_format(date_parse(a.codmes,'%Y%m') + interval '11' month,'%Y%m')
+                  AND b.cod_instit_financiera = a.ent_alta THEN b.flag_ref_ree ELSE null END) AS ree_11um,
         sum(CASE WHEN b.codmes = date_format(date_parse(a.codmes,'%Y%m') + interval '1'  month,'%Y%m') THEN b.saldo_total ELSE null END) AS sld_m1,
         sum(CASE WHEN b.codmes = date_format(date_parse(a.codmes,'%Y%m') + interval '2'  month,'%Y%m') THEN b.saldo_total ELSE null END) AS sld_m2,
         sum(CASE WHEN b.codmes = date_format(date_parse(a.codmes,'%Y%m') + interval '3'  month,'%Y%m') THEN b.saldo_total ELSE null END) AS sld_m3,

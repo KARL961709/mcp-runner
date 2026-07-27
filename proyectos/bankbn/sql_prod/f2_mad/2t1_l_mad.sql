@@ -141,6 +141,24 @@ SELECT
        WHEN a.dias_atraso_9m  > 90 OR a.jud_09um = 1 OR a.cast_09um = 1 OR a.ref_09um = 1 OR a.ree_09um = 1 THEN 1 ELSE 0 END AS target_09m,
   CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '12' month,'%Y%m') > '202606' THEN null
        WHEN a.dias_atraso_12m > 90 OR a.jud_12um = 1 OR a.cast_12um = 1 OR a.ref_12um = 1 OR a.ree_12um = 1 THEN 1 ELSE 0 END AS target_12m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '1' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_1m > 90 OR a.jud_01um = 1 OR a.cast_01um = 1 OR a.ref_01um = 1 OR a.ree_01um = 1 THEN 1 ELSE 0 END AS target_01m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '2' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_2m > 90 OR a.jud_02um = 1 OR a.cast_02um = 1 OR a.ref_02um = 1 OR a.ree_02um = 1 THEN 1 ELSE 0 END AS target_02m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '3' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_3m > 90 OR a.jud_03um = 1 OR a.cast_03um = 1 OR a.ref_03um = 1 OR a.ree_03um = 1 THEN 1 ELSE 0 END AS target_03m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '4' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_4m > 90 OR a.jud_04um = 1 OR a.cast_04um = 1 OR a.ref_04um = 1 OR a.ree_04um = 1 THEN 1 ELSE 0 END AS target_04m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '5' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_5m > 90 OR a.jud_05um = 1 OR a.cast_05um = 1 OR a.ref_05um = 1 OR a.ree_05um = 1 THEN 1 ELSE 0 END AS target_05m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '7' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_7m > 90 OR a.jud_07um = 1 OR a.cast_07um = 1 OR a.ref_07um = 1 OR a.ree_07um = 1 THEN 1 ELSE 0 END AS target_07m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '8' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_8m > 90 OR a.jud_08um = 1 OR a.cast_08um = 1 OR a.ref_08um = 1 OR a.ree_08um = 1 THEN 1 ELSE 0 END AS target_08m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '10' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_10m > 90 OR a.jud_10um = 1 OR a.cast_10um = 1 OR a.ref_10um = 1 OR a.ree_10um = 1 THEN 1 ELSE 0 END AS target_10m,
+  CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '11' month,'%Y%m') > '202606' THEN null
+       WHEN a.dias_atraso_11m > 90 OR a.jud_11um = 1 OR a.cast_11um = 1 OR a.ref_11um = 1 OR a.ree_11um = 1 THEN 1 ELSE 0 END AS target_11m,
 
   a.flg_garantia,
   CASE
