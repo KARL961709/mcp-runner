@@ -1,4 +1,4 @@
--- 1t3_b_tag.sql | claves de alta por entidad | escribe 201906-202105 lee 201906-202105
+-- 1t3_b_tag.sql | claves de alta por entidad | escribe 202011-202203 lee 202011-202203
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_tag_t3 AS
 SELECT codmes, tip_doc, key_value, cod_instit_financiera,
        max(CASE WHEN saldo > 0 THEN 1 ELSE 0 END) AS flg_saldo_pos
@@ -32,8 +32,8 @@ FROM (
     FROM (
             SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_instit_financiera, saldo
             FROM e_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201906' AND '202105'
-              AND codmes   BETWEEN '201906' AND '202105'
+            WHERE p_codmes BETWEEN '202011' AND '202203'
+              AND codmes   BETWEEN '202011' AND '202203'
     ) a
 ) t
 WHERE tag IN ('RESTO DD NEGOCIO','DESCUENTOS','FACTORING','LC NO UTILIZADA','LC DESCUENTO')

@@ -1,4 +1,4 @@
--- 2t5_h_mad_rccbwd.sql | rcc pasado del titular | escribe 202306-202505 lee 202206-202505
+-- 2t5_h_mad_rccbwd.sql | rcc pasado del titular | escribe 202309-202501 lee 202209-202501
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd_t5 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value
@@ -20,8 +20,8 @@ rcc_bwd AS (
     FROM (
         SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '202206' AND '202505'
-          AND codmes   BETWEEN '202206' AND '202505'
+        WHERE p_codmes BETWEEN '202209' AND '202501'
+          AND codmes   BETWEEN '202209' AND '202501'
     ) a
     INNER JOIN uni_mad_key b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value

@@ -1,4 +1,4 @@
--- 2t3_h_mad_rccbwd.sql | rcc pasado del titular | escribe 201906-202105 lee 201806-202105
+-- 2t3_h_mad_rccbwd.sql | rcc pasado del titular | escribe 202011-202203 lee 201911-202203
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd_t3 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value
@@ -20,13 +20,13 @@ rcc_bwd AS (
     FROM (
         SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_clasificacion_deudor, saldo
         FROM d_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201806' AND '202105'
-          AND codmes   BETWEEN '201806' AND '202105'
+        WHERE p_codmes BETWEEN '201911' AND '202203'
+          AND codmes   BETWEEN '201911' AND '202203'
         UNION ALL
         SELECT codmes, tip_doc, key_value, tipo_credito, cod_cuenta_rcc, cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201806' AND '202105'
-          AND codmes   BETWEEN '201806' AND '202105'
+        WHERE p_codmes BETWEEN '201911' AND '202203'
+          AND codmes   BETWEEN '201911' AND '202203'
     ) a
     INNER JOIN uni_mad_key b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value

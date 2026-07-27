@@ -1,4 +1,4 @@
--- 4b_cal.sql | flg_clean 99/1/0 y flg_calib | lee drivers, ventana completa 201506-202606
+-- 4b_cal.sql | flg_clean 99/1/0 y flg_calib | lee drivers, ventana completa 201802-202606
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_cal AS
 WITH ent AS (
     SELECT

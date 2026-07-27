@@ -1,4 +1,4 @@
--- 1t3_d_rcc.sql | historia rcc agregada por entidad | escribe 201906-202105 lee 201805-202105
+-- 1t3_d_rcc.sql | historia rcc agregada por entidad | escribe 202011-202203 lee 201910-202203
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc_t3 AS
 SELECT codmes, tip_doc, key_value, tipo_credito, cod_instit_financiera,
     max(CASE WHEN cast(tipo_credito AS int) BETWEEN 1 AND 10 AND tag IN ('RESTO DD','DESCUENTOS','FACTORING','REFINANCIADOS','LC NO UTILIZADA','LC DESCUENTO') THEN condicion ELSE null END) AS dm,
@@ -45,15 +45,9 @@ FROM (
     FROM (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                cod_clasificacion_deudor, saldo
-        FROM d_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201805' AND '201812'
-          AND codmes   BETWEEN '201805' AND '201812'
-        UNION ALL
-        SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
-               cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '201901' AND '202105'
-          AND codmes   BETWEEN '201901' AND '202105'
+        WHERE p_codmes BETWEEN '201910' AND '202203'
+          AND codmes   BETWEEN '201910' AND '202203'
     ) a
     INNER JOIN (
         SELECT tip_doc, key_value

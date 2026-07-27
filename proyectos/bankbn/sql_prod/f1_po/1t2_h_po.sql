@@ -1,4 +1,4 @@
--- 1t2_h_po.sql | saldo sistema y entidad alta | escribe 201706-201905 lee 201605-201905
+-- 1t2_h_po.sql | saldo sistema y entidad alta | escribe 201906-202010 lee 201805-202010
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_po_t2 AS
 WITH data_rcc_bank AS (
     SELECT codmes, tip_doc, key_value,
@@ -10,14 +10,14 @@ WITH data_rcc_bank AS (
             SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                    cod_clasificacion_deudor, saldo
             FROM d_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201605' AND '201905'
-              AND codmes   BETWEEN '201605' AND '201905'
+            WHERE p_codmes BETWEEN '201805' AND '201812'
+              AND codmes   BETWEEN '201805' AND '201812'
             UNION ALL
             SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                    cod_clasificacion_deudor, saldo
             FROM e_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '201605' AND '201905'
-              AND codmes   BETWEEN '201605' AND '201905'
+            WHERE p_codmes BETWEEN '201901' AND '202010'
+              AND codmes   BETWEEN '201901' AND '202010'
         ) a
         INNER JOIN (
             SELECT tip_doc, key_value

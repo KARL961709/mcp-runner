@@ -1,4 +1,4 @@
--- 2t3_l_mad.sql | ensamblado final target y score | escribe 201906-202105 lee score 201905-202104
+-- 2t3_l_mad.sql | ensamblado final target y score | escribe 202011-202203 lee score 202010-202202
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_mad_t3 AS
 WITH score AS (
     SELECT * FROM (
@@ -6,7 +6,7 @@ WITH score AS (
                ROW_NUMBER() OVER (PARTITION BY s.p_codmes, s.tip_doc, s.key_value
                             ORDER BY s.probabilidad DESC) AS rn_scr
         FROM e_perm_aws.scr_admbankbpe_rsk s
-        WHERE s.p_codmes BETWEEN '201905' AND '202104'
+        WHERE s.p_codmes BETWEEN '202010' AND '202202'
     ) q
     WHERE q.rn_scr = 1
 )

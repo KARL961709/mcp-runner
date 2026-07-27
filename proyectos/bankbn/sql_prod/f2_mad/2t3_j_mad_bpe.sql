@@ -1,4 +1,4 @@
--- 2t3_j_mad_bpe.sql | reniec conyuge especiales flag bpe | escribe 201906-202105
+-- 2t3_j_mad_bpe.sql | reniec conyuge especiales flag bpe | escribe 202011-202203
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_bpe_t3 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value

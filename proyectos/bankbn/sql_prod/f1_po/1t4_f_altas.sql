@@ -1,4 +1,4 @@
--- 1t4_f_altas.sql | pivot 13m y clasifica altas | escribe 202106-202305 lee tmp 202005-202305
+-- 1t4_f_altas.sql | pivot 13m y clasifica altas | escribe 202204-202308 lee tmp 202103-202308
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_altas_t4 AS
 WITH info_consolid AS (
     SELECT a.codmes, a.tip_doc, a.key_value, b.cod_instit_financiera,

@@ -1,4 +1,4 @@
--- 1t4_h_po.sql | saldo sistema y entidad alta | escribe 202106-202305 lee 202005-202305
+-- 1t4_h_po.sql | saldo sistema y entidad alta | escribe 202204-202308 lee 202103-202308
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_po_t4 AS
 WITH data_rcc_bank AS (
     SELECT codmes, tip_doc, key_value,
@@ -10,8 +10,8 @@ WITH data_rcc_bank AS (
             SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                    cod_clasificacion_deudor, saldo
             FROM e_perm_aws.t_fact_report_rcc_rsk
-            WHERE p_codmes BETWEEN '202005' AND '202305'
-              AND codmes   BETWEEN '202005' AND '202305'
+            WHERE p_codmes BETWEEN '202103' AND '202308'
+              AND codmes   BETWEEN '202103' AND '202308'
         ) a
         INNER JOIN (
             SELECT tip_doc, key_value

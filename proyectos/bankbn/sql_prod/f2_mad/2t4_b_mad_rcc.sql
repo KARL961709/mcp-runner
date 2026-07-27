@@ -1,4 +1,4 @@
--- 2t4_b_mad_rcc.sql | rcc futuro y pivot ventanas | escribe 202106-202305 lee 202104-202405
+-- 2t4_b_mad_rcc.sql | rcc futuro y pivot ventanas | escribe 202204-202308 lee 202202-202408
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t4 AS
 WITH uni AS (
     SELECT
@@ -9,7 +9,7 @@ WITH uni AS (
         cod_instit_financiera,
         nombre_instit_financiera
     FROM disc_model_owner.ds_adm_bpe_bankbn_po
-    WHERE codmes BETWEEN '202106' AND '202305'
+    WHERE codmes BETWEEN '202204' AND '202308'
       AND ((30000 <= max_saldo AND (saldo_m0 >= 10000 AND saldo_m0 < 30000)) OR (saldo_m0 >= 30000))
 ),
 uni_key AS (
@@ -30,8 +30,8 @@ rcc_fwd AS (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc,
                cod_instit_financiera, cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '202104' AND '202405'
-          AND codmes   BETWEEN '202104' AND '202405'
+        WHERE p_codmes BETWEEN '202202' AND '202408'
+          AND codmes   BETWEEN '202202' AND '202408'
     ) a
     INNER JOIN uni_key b
         ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value

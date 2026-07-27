@@ -1,4 +1,4 @@
--- 1t6_d_rcc.sql | historia rcc agregada por entidad | escribe 202506-202606 lee 202405-202606
+-- 1t6_d_rcc.sql | historia rcc agregada por entidad | escribe 202502-202606 lee 202401-202606
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc_t6 AS
 SELECT codmes, tip_doc, key_value, tipo_credito, cod_instit_financiera,
     max(CASE WHEN cast(tipo_credito AS int) BETWEEN 1 AND 10 AND tag IN ('RESTO DD','DESCUENTOS','FACTORING','REFINANCIADOS','LC NO UTILIZADA','LC DESCUENTO') THEN condicion ELSE null END) AS dm,
@@ -46,8 +46,8 @@ FROM (
         SELECT codmes, tip_doc, key_value, condicion, tipo_credito, cod_cuenta_rcc, cod_instit_financiera,
                cod_clasificacion_deudor, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '202405' AND '202606'
-          AND codmes   BETWEEN '202405' AND '202606'
+        WHERE p_codmes BETWEEN '202401' AND '202606'
+          AND codmes   BETWEEN '202401' AND '202606'
     ) a
     INNER JOIN (
         SELECT tip_doc, key_value

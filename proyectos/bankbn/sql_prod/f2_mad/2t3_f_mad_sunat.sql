@@ -1,4 +1,4 @@
--- 2t3_f_mad_sunat.sql | padron sunat giros ubigeos restringidos | escribe 201906-202105
+-- 2t3_f_mad_sunat.sql | padron sunat giros ubigeos restringidos | escribe 202011-202203
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_sunat_t3 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value

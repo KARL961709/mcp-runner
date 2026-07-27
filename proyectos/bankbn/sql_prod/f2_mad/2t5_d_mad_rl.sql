@@ -1,4 +1,4 @@
--- 2t5_d_mad_rl.sql | representantes legales nacimiento y castigo | escribe 202306-202505 lee 202206-202505
+-- 2t5_d_mad_rl.sql | representantes legales nacimiento y castigo | escribe 202309-202501 lee 202209-202501
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl_t5 AS
 WITH rl_uni AS (
     SELECT
@@ -29,8 +29,8 @@ fea_rcc_rl AS (
     FROM (
         SELECT codmes, tip_doc, key_value, cod_cuenta_rcc, saldo
         FROM e_perm_aws.t_fact_report_rcc_rsk
-        WHERE p_codmes BETWEEN '202206' AND '202505'
-          AND codmes   BETWEEN '202206' AND '202505'
+        WHERE p_codmes BETWEEN '202209' AND '202501'
+          AND codmes   BETWEEN '202209' AND '202501'
     ) a
     INNER JOIN uni_rl_key k
         ON a.key_value = k.nrodoc_rl AND a.tip_doc = k.tipdoc_rl
