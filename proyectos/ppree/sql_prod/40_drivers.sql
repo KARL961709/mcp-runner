@@ -44,7 +44,7 @@ cs AS (
   SELECT
     CAST(codmes AS VARCHAR)                          AS codmes,
     CAST(key_value AS VARCHAR)                       AS id_value,
-    CAST(tipdoc AS VARCHAR)                          AS tip_doc,
+    CAST(CAST(tipdoc AS INTEGER) AS VARCHAR)         AS tip_doc,
     MAX(CAST(flg_cs_riesgos AS INTEGER))             AS flg_cs
   FROM e_perm_aws.t_rsk_cta_sueldo
   GROUP BY 1, 2, 3
@@ -79,3 +79,6 @@ LEFT JOIN cls c
 LEFT JOIN cs s
        ON s.id_value = po.id_value AND s.tip_doc = po.tip_doc
       AND s.codmes = DATE_FORMAT(DATE_ADD('month', -1, DATE_PARSE(po.codmes_mrm, '%Y%m')), '%Y%m')
+-- el Recibido (Query_PO_calib#L326) castea AMBAS puntas a INTEGER: esa es la senal de
+-- que los dos catalogos no comparten padding. g5 lo confirma - tipdoc de cta_sueldo
+-- tiene dominio 7 contra 4 de la madre.

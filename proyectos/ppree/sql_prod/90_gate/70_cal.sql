@@ -56,7 +56,7 @@ WITH base AS (
     p.pd_raw,
     p.score_raw,
     p.flg_ree_v4,
-    COALESCE(p.cruce_pd, 1)       AS cruce_pd,
+    COALESCE(p.falla_cruce_pd, 1) AS falla_cruce_pd,
     COALESCE(p.falla_pd_rango, 0) AS falla_pd_rango,
 
     m.n_filas                                                                   AS ctrl_n_filas_cierre,
@@ -89,8 +89,9 @@ SELECT
   g.*,
   CAST(CASE
     WHEN g.flg_clean <> 99
-     AND g.cruce_pd = 0
-     AND g.falla_madurez_12 = 0 THEN 1
+     AND g.falla_cruce_pd = 0
+     AND g.falla_madurez_12 = 0
+     AND g.falla_dup = 0 THEN 1
     ELSE 0
   END AS INTEGER) AS flg_calib,
   g.codmes_mrm AS p_codmes

@@ -5,6 +5,8 @@
 --   una sola operacion de fecha. Medido: H33 (29 conteos exactos) y H46
 --   (flg_reenganche de la v4 reproduce la marca 15226/15226 y 20013/20013).
 --   La columna de documento es cod_tip_doc, no tip_doc (H30).
+--   falla_cruce_pd = 1 cuando NO hay cruce, siguiendo la convencion falla_* del build.
+--   OJO: el Recibido llama flg_cruce_pd a la polaridad CONTRARIA (1 = SI cruza).
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_50_pd AS
 SELECT
@@ -15,7 +17,7 @@ SELECT
   v.pd_comppp_reen_itc                                                  AS pd_raw,
   v.score_comppp_reen_itc                                               AS score_raw,
   CAST(v.flg_reenganche AS INTEGER)                                     AS flg_ree_v4,
-  CAST(CASE WHEN v.pd_comppp_reen_itc IS NULL THEN 1 ELSE 0 END AS INTEGER) AS cruce_pd,
+  CAST(CASE WHEN v.pd_comppp_reen_itc IS NULL THEN 1 ELSE 0 END AS INTEGER) AS falla_cruce_pd,
   CAST(CASE WHEN v.pd_comppp_reen_itc IS NOT NULL
              AND (v.pd_comppp_reen_itc <= 0 OR v.pd_comppp_reen_itc >= 1)
             THEN 1 ELSE 0 END AS INTEGER)                               AS falla_pd_rango
