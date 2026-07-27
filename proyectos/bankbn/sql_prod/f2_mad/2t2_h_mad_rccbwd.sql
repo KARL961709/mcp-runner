@@ -1,12 +1,12 @@
 -- 2t2_h_mad_rccbwd.sql | rcc pasado del titular | escribe 201706-201905 lee 201606-201905
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd_t2 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value
-    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
+    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t2
 ),
 uni_mad_key AS (
     SELECT DISTINCT tip_doc, key_value
-    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
+    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t2
 ),
 rcc_bwd AS (
     SELECT

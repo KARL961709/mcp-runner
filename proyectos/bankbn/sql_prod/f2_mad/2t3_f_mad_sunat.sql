@@ -1,12 +1,12 @@
 -- 2t3_f_mad_sunat.sql | padron sunat giros ubigeos restringidos | escribe 201906-202105
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_sunat AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_sunat_t3 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value
-    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
+    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t3
 ),
 uni_mad_key AS (
     SELECT DISTINCT tip_doc, key_value
-    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
+    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t3
 ),
 filtro_sunat AS (
     SELECT DISTINCT a.*

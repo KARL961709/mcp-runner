@@ -1,5 +1,5 @@
 -- 2t6_b_mad_rcc.sql | rcc futuro y pivot ventanas | escribe 202506-202606 lee 202504-202606
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t6 AS
 WITH uni AS (
     SELECT
         codmes,

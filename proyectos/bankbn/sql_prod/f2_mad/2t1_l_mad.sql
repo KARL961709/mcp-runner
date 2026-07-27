@@ -227,8 +227,8 @@ SELECT
   CASE WHEN date_format(date_parse(a.codmes,'%Y%m') + interval '12' month,'%Y%m') <= '202606'
         AND a.dias_atraso_12m IS NULL AND a.jud_12um IS NULL AND a.cast_12um IS NULL
         AND a.ref_12um IS NULL AND a.ree_12um IS NULL THEN 1 ELSE 0 END AS falla_target_nulo
-FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc a
-LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_bpe c
+FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t1 a
+LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_bpe_t1 c
     ON a.codmes = c.codmes
    AND a.tip_doc = c.tip_doc
    AND a.key_value = c.key_value

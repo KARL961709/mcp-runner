@@ -1,5 +1,5 @@
 -- 1t3_b_tag.sql | claves de alta por entidad | escribe 201906-202105 lee 201906-202105
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_tag AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_tag_t3 AS
 SELECT codmes, tip_doc, key_value, cod_instit_financiera,
        max(CASE WHEN saldo > 0 THEN 1 ELSE 0 END) AS flg_saldo_pos
 FROM (

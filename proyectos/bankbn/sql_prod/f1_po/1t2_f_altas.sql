@@ -1,5 +1,5 @@
 -- 1t2_f_altas.sql | pivot 13m y clasifica altas | escribe 201706-201905 lee tmp 201605-201905
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_altas AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_altas_t2 AS
 WITH info_consolid AS (
     SELECT a.codmes, a.tip_doc, a.key_value, b.cod_instit_financiera,
         max(CASE WHEN cast(b.codmes AS int) = cast(date_format(date_parse(cast(a.codmes AS varchar),'%Y%m') - interval '0' month,'%Y%m') AS int) THEN dm ELSE 0 END) AS dm_m0,
@@ -45,10 +45,10 @@ WITH info_consolid AS (
                   AND cast(b.codmes AS int) <= cast(date_format(date_parse(cast(a.codmes AS varchar),'%Y%m') - interval '2' month,'%Y%m') AS int) THEN deuda_con ELSE null END) AS deuda_con_u12m_v2
     FROM (
         SELECT codmes, tip_doc, key_value, cod_instit_financiera
-        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_tag
+        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_tag_t2
         WHERE flg_saldo_pos = 1
     ) a
-    LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc b
+    LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc_t2 b
       ON a.key_value = b.key_value
      AND a.tip_doc   = b.tip_doc
      AND a.cod_instit_financiera = b.cod_instit_financiera

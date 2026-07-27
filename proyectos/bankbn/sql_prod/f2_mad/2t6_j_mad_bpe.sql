@@ -1,8 +1,8 @@
 -- 2t6_j_mad_bpe.sql | reniec conyuge especiales flag bpe | escribe 202506-202606
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_bpe AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_bpe_t6 AS
 WITH uni_mad AS (
     SELECT DISTINCT codmes, tip_doc, key_value
-    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
+    FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t6
 ),
 uni_conyuge AS (
     SELECT
@@ -138,11 +138,11 @@ SELECT
     x.flagcruce,
     x.flagcruce_cny
 FROM base_flag_cny x
-LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl rl
+LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl_t6 rl
     ON x.codmes = rl.codmes AND x.tip_doc = rl.tip_doc AND x.key_value = rl.key_value
 LEFT JOIN uni_conyuge cy
     ON x.codmes = cy.codmes AND x.tip_doc = cy.tip_doc AND x.key_value = cy.key_value
-LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd bw
+LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rccbwd_t6 bw
     ON x.codmes = bw.codmes AND x.tip_doc = bw.tip_doc AND x.key_value = bw.key_value
-LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_sunat su
+LEFT JOIN disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_sunat_t6 su
     ON x.codmes = su.codmes AND x.tip_doc = su.tip_doc AND x.key_value = su.key_value

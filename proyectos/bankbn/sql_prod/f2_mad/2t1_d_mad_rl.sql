@@ -1,5 +1,5 @@
 -- 2t1_d_mad_rl.sql | representantes legales nacimiento y castigo | escribe 201506-201705 lee 201406-201705
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rl_t1 AS
 WITH rl_uni AS (
     SELECT
         b.codmes,
@@ -10,7 +10,7 @@ WITH rl_uni AS (
     FROM e_perm_aws.t_mst_rep_legal_sunat_rsk a
     INNER JOIN (
         SELECT DISTINCT codmes, tip_doc, key_value
-        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc
+        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_mad_rcc_t1
     ) b
         ON a.ruc_value = b.key_value
        AND cast(date_format(date_parse(cast(a.fec_vigencia AS varchar),'%Y-%m-%d'), '%Y%m') AS int) <= cast(b.codmes AS int)

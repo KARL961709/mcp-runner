@@ -1,5 +1,5 @@
 -- 1t2_d_rcc.sql | historia rcc agregada por entidad | escribe 201706-201905 lee 201605-201905
-CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc AS
+CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_tmp_rcc_t2 AS
 SELECT codmes, tip_doc, key_value, tipo_credito, cod_instit_financiera,
     max(CASE WHEN cast(tipo_credito AS int) BETWEEN 1 AND 10 AND tag IN ('RESTO DD','DESCUENTOS','FACTORING','REFINANCIADOS','LC NO UTILIZADA','LC DESCUENTO') THEN condicion ELSE null END) AS dm,
     sum(CASE WHEN cast(tipo_credito AS int) BETWEEN 1 AND 10 AND tag IN ('RESTO DD','DESCUENTOS','FACTORING','REFINANCIADOS','LC NO UTILIZADA','LC DESCUENTO') THEN saldo ELSE 0 END) AS saldo_mo,
@@ -57,7 +57,7 @@ FROM (
     ) a
     INNER JOIN (
         SELECT tip_doc, key_value
-        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_tag
+        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_tag_t2
         GROUP BY 1,2
     ) b
     ON a.tip_doc = b.tip_doc AND a.key_value = b.key_value

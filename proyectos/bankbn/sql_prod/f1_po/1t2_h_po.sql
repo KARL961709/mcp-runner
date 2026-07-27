@@ -21,7 +21,7 @@ WITH data_rcc_bank AS (
         ) a
         INNER JOIN (
             SELECT tip_doc, key_value
-            FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas
+            FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas_t2
             WHERE alta2 = 1
             GROUP BY 1,2
         ) b
@@ -46,7 +46,7 @@ info_consolid_bank AS (
         sum(CASE WHEN cast(b.codmes AS int) = cast(date_format(date_parse(cast(a.codmes AS varchar),'%Y%m') - interval '12' month,'%Y%m') AS int) THEN saldo_mo ELSE 0 END) AS saldo_m12
     FROM (
         SELECT codmes, tip_doc, key_value
-        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas
+        FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas_t2
         WHERE alta2 = 1
         GROUP BY 1,2,3
     ) a
@@ -80,7 +80,7 @@ base_altas_cliente AS (
         ROW_NUMBER() OVER (PARTITION BY a.codmes, a.tip_doc, a.key_value
                      ORDER BY COALESCE(c.cod_instit_financiera, b.cod_instit_financiera) ASC) AS rn
     FROM bank a
-    LEFT JOIN (SELECT * FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas WHERE alta2 = 1) b
+    LEFT JOIN (SELECT * FROM disc_model_owner.ds_adm_bpe_bankbn_tmp_altas_t2 WHERE alta2 = 1) b
       ON a.codmes = b.codmes AND a.key_value = b.key_value AND a.tip_doc = b.tip_doc
     LEFT JOIN (SELECT cod_instit_financiera, max(nombre_instit_financiera) AS nombre_instit_financiera
                FROM e_perm_aws.t_dim_inst_fin_rsk GROUP BY 1) c
