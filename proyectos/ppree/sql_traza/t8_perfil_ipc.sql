@@ -1,6 +1,6 @@
 -- t8  perfil de valores de las columnas candidatas de IPC en la tabla gobernada
--- Criterio de lectura: variacion MENSUAL ~ 0.3 (o 0.003 si viene en tanto por uno);
--- variacion 12m ~ 2 a 8; indice base 2009=100 ~ 100 a 250. La magnitud identifica que mide cada una.
+-- Criterio de lectura: variacion MENSUAL ~ 0.3 (o 0.003 si viene en tanto por uno),
+-- variacion 12m ~ 2 a 8 y indice base 2009=100 ~ 100 a 250. La magnitud identifica que mide cada una.
 SELECT 'mto_ipc_var_porc_mov' AS columna, COUNT(*) AS n, COUNT(mto_ipc_var_porc_mov) AS n_no_nulo,
        MIN(mto_ipc_var_porc_mov) AS v_min, AVG(mto_ipc_var_porc_mov) AS v_prom, MAX(mto_ipc_var_porc_mov) AS v_max
 FROM e_perm_aws.t_mst_bcrp_rsk
