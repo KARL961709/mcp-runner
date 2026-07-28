@@ -4,13 +4,23 @@
 --   el recorte es flg_clean <> 99 (otra poblacion) + madurez, no flg_calib.
 --   Bordes recortados por construccion: solo cohortes con falla_madurez_12 = 0,
 --   o sea hasta 202506.
---   Lleva n_meses_fut_faltantes para que las cohortes 202007-202106, que pierden
---   el mes 202107 de su ventana, sean identificables en vez de invisibles.
 --   Sin key_value: es una serie, no un detalle.
---   Emite la RD en cuatro cortes para que la seleccion de variable macro pueda
---   probar sensibilidad sin rehacer el parquet: rd12 (clean+dirty, el consumo
---   declarado), rd12_clean, rd12_dirty, y rd12_ventana_completa (excluye las 12
---   cohortes 202007-202106 que pierden el mes 202107 de su ventana futura).
+--   Emite la RD en cortes para probar sensibilidad sin rehacer el parquet:
+--   rd12 (clean+dirty, el consumo declarado), rd12_clean y rd12_dirty.
+--
+--   CUIDADO con rd12_ventana_completa (miss_12t = 0) — MEDIDO 2026-07-27:
+--   miss_12t NO cuenta el hueco 202107. Cuenta, POR CLIENTE, en cuantos de los
+--   12 meses futuros no tiene fila en el cierre, y eso es salida de cartera.
+--   RD12 por tramo: miss=0 -> 2.85% | 1-2 -> 12.94% | 3-5 -> 18.29% |
+--   6-8 -> 10.49% | 9-11 -> 1.30% | 12 -> 0.92%. Son dos poblaciones opuestas:
+--   salida tardia y deteriorada (el que cae sale por castigo/refinanciacion) y
+--   salida temprana y sana (prepago). Restringir a miss_12t = 0 deja una serie
+--   de SOBREVIVIENTES que excluye justo a los que caen: en la ventana del fit
+--   tira la RD de 3.31% a 1.48%. NO usarla para elegir la macro ni como
+--   sensibilidad de RD (ACUERDOS H112, A49).
+--   Las cohortes 202007-202106 sí traen miss>0 en el 100% de sus filas por el
+--   hueco 202107, pero el resto de meses tambien trae 25-38% por salida, asi
+--   que la columna no aisla el hueco.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_px_macro
 WITH (format = 'PARQUET', write_compression = 'SNAPPY',
