@@ -1,5 +1,5 @@
 -- t4  funnel del paso universo -> perimetro, filtro por filtro y aislado
--- devuelve 1 fila por paso; sin key_value ni identificadores
+-- devuelve 1 fila por paso, sin key_value ni identificadores en la salida
 SELECT 1 AS orden, 'po_universo_pp' AS paso, COUNT(*) AS n, COUNT(DISTINCT codmes_mrm) AS n_meses
 FROM disc_model_owner.ds_stk_ree_pp_10_po
 UNION ALL
