@@ -1,6 +1,6 @@
 -- ============================================================================
 -- 80. Scoring del stock PP con los coeficientes CONGELADOS de la calibracion
---   Aprende en el perimetro reenganche (marca, hasta 202604; ajuste hasta 202506
+--   Aprende en el perimetro reenganche (marca, hasta 202604, con ajuste hasta 202506
 --   por madurez) y APLICA sobre el stock completo, que llega a 202607.
 --   La cadena reproduce pd_pit del pipeline con diferencia maxima 4.4e-16.
 --
