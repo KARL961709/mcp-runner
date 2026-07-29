@@ -11,6 +11,13 @@
 -- literal y no re-tipeada. Unico cambio de alcance: la poblacion es el stock
 -- a puntuar en vez del perimetro reenganche.
 --
+-- codmes_drv = codmes - 1 es el mes donde se leen los drivers. Coincide con el
+-- codmes_mrm del maestro de calibracion, pero se nombra distinto porque aqui no
+-- hay PO: es solo el rezago con el que la calibracion aprendio la pareja
+-- pd_raw(codmes) contra driver(codmes-1), segun 50_pd.sql y H33.
+-- PENDIENTE DE MEDIR (c6): H33 conteo ese rezago sobre la tabla hermana
+-- ..._itc_reen_reprocesov4, no sobre esta. Aqui se hereda por analogia.
+--
 -- Reglas de cruce que imponen las fuentes:
 --   situacion laboral no tiene key_value: la llave es SUBSTR(subject_id, 3)
 --   solo numcarga = 1, dedupe por p_fecinformacion descendente
@@ -28,7 +35,7 @@
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_80_score
 WITH (format = 'PARQUET') AS
 WITH ftbl AS (
-  SELECT cod_mes AS codmes_mrm,
+  SELECT cod_mes AS codmes_drv,
          GREATEST(-1.130850, LEAST(0.765684,
            (-1.7250030205 - sqrt(1.0 - 0.0380301160) * (-1.9001957962 + 0.6583423568 * x_t))
            / sqrt(0.0380301160) + 0.19111262)) AS f_t
@@ -42,7 +49,7 @@ WITH ftbl AS (
 ),
 d AS (
   SELECT CAST(v.codmes AS VARCHAR) AS codmes,
-         DATE_FORMAT(DATE_ADD('month', -1, DATE_PARSE(CAST(v.codmes AS VARCHAR), '%Y%m')), '%Y%m') AS codmes_mrm,
+         DATE_FORMAT(DATE_ADD('month', -1, DATE_PARSE(CAST(v.codmes AS VARCHAR), '%Y%m')), '%Y%m') AS codmes_drv,
          CAST(v.cod_tip_doc AS VARCHAR) AS tip_doc,
          CAST(v.key_value AS VARCHAR) AS id_value,
          GREATEST(1e-9, LEAST(1.0 - 1e-9, AVG(v.pd_comppp_reen_itc))) AS p,
@@ -52,7 +59,7 @@ d AS (
   GROUP BY CAST(v.codmes AS VARCHAR), CAST(v.cod_tip_doc AS VARCHAR), CAST(v.key_value AS VARCHAR)
 ),
 po AS (
-  SELECT DISTINCT codmes_mrm, tip_doc, id_value FROM d
+  SELECT DISTINCT codmes_drv, tip_doc, id_value FROM d
 ),
 cls AS (
   SELECT tip_doc, id_value, codmes, tipo_ingreso
@@ -71,7 +78,7 @@ cls AS (
              ORDER BY a.p_fecinformacion DESC, a.subject_id ASC) AS rn
     FROM e_perm_aws.ds_rtd_rskvol_cas_ingr_ir a
     INNER JOIN po b
-      ON CAST(a.periodo AS VARCHAR) = b.codmes_mrm
+      ON CAST(a.periodo AS VARCHAR) = b.codmes_drv
      AND SUBSTR(a.subject_id, 3) = b.id_value
     WHERE CAST(a.numcarga AS INT) = 1
   ) r
@@ -87,7 +94,7 @@ cs AS (
   GROUP BY 1, 2, 3
 ),
 zc AS (
-  SELECT d.codmes, d.codmes_mrm, d.tip_doc, d.id_value, d.p, d.puntuacion, f.f_t,
+  SELECT d.codmes, d.codmes_drv, d.tip_doc, d.id_value, d.p, d.puntuacion, f.f_t,
          COALESCE(c.tipo_ingreso, 'INDEPENDIENTE') AS tipo_ingreso,
          CASE WHEN COALESCE(c.tipo_ingreso, 'INDEPENDIENTE') = 'DEPENDIENTE' THEN 'DEP' ELSE 'NO DEP' END AS tipo_ingreso_dep,
          CASE
@@ -107,11 +114,11 @@ zc AS (
           + (0.0342617216)) AS z_ttc
   FROM d
   LEFT JOIN cls c
-         ON c.id_value = d.id_value AND c.tip_doc = d.tip_doc AND c.codmes = d.codmes_mrm
+         ON c.id_value = d.id_value AND c.tip_doc = d.tip_doc AND c.codmes = d.codmes_drv
   LEFT JOIN cs s
          ON s.id_value = d.id_value AND s.tip_doc = d.tip_doc
-        AND s.codmes = DATE_FORMAT(DATE_ADD('month', -1, DATE_PARSE(d.codmes_mrm, '%Y%m')), '%Y%m')
-  LEFT JOIN ftbl f ON f.codmes_mrm = d.codmes_mrm
+        AND s.codmes = DATE_FORMAT(DATE_ADD('month', -1, DATE_PARSE(d.codmes_drv, '%Y%m')), '%Y%m')
+  LEFT JOIN ftbl f ON f.codmes_drv = d.codmes_drv
 ),
 fin AS (
   SELECT zc.*,
