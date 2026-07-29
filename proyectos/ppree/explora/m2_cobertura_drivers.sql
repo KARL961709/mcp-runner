@@ -1,5 +1,5 @@
 -- m2  hasta que mes llegan las fuentes de los drivers, contando filas
--- tipo_ingreso_dep sale de la situacion laboral; flg_cs de la cuenta sueldo.
+-- tipo_ingreso_dep sale de la situacion laboral y flg_cs de la cuenta sueldo.
 -- Si alguna muere antes que la poblacion, el driver queda nulo en las cohortes nuevas.
 SELECT 'situacion_laboral' AS fuente,
        CAST(periodo AS VARCHAR) AS mes,
