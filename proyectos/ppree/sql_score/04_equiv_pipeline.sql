@@ -1,11 +1,16 @@
 -- ============================================================================
 -- 04 | Equivalencia contra el pipeline de calibracion.
 --   Restringe el scoreo del stock a la MISMA poblacion sobre la que corrio la
---   calibracion (flg_calib = 1 y flg_clean = 1 de ds_stk_ree_pp_cal) y devuelve
---   los mismos agregados que produce full_calibrated.parquet, para contrastar
---   fila a fila del cuadro. Son 19 meses, de codmes_scr 202401 a 202507.
---   n_pd_raw_identica prueba ademas que la tabla nueva y la que leyo 50_pd
---   entregan la misma PD cruda sobre las mismas llaves.
+--   calibracion y devuelve los mismos agregados que full_calibrated.parquet,
+--   para contrastarlos fila a fila. Son 19 meses, codmes_scr 202401 a 202507.
+--
+--   El recorte son TRES condiciones. flg_scope_ree es eje aparte y no entra al
+--   gate de flg_clean (70_cal.sql, A36), asi que hay que pedirlo explicito: sin
+--   el, el join devuelve el stock entero - 154,539 filas en 202401 donde la
+--   calibracion tiene 1,074.
+--
+--   n_pd_raw_identica prueba ademas que esta tabla y la que leyo 50_pd entregan
+--   la misma PD cruda sobre las mismas llaves.
 -- ============================================================================
 SELECT COALESCE(s.codmes, 'TOTAL')                                            AS codmes_scr,
        COUNT(*)                                                               AS n,
@@ -19,7 +24,8 @@ JOIN disc_model_owner.ds_stk_ree_pp_cal c
   ON c.codmes_scr = s.codmes
  AND c.tip_doc    = s.tip_doc
  AND c.id_value   = s.key_value
-WHERE c.flg_calib = 1
-  AND c.flg_clean = 1
+WHERE c.flg_calib     = 1
+  AND c.flg_clean     = 1
+  AND c.flg_scope_ree = 1
 GROUP BY GROUPING SETS ((s.codmes), ())
 ORDER BY 1
