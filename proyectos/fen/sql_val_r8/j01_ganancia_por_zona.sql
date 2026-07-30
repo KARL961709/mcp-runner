@@ -1,6 +1,6 @@
 -- j01 LA DECISION -- los 5.67pp de ganancia marginal, caen en la cola FEN o en Lima?
 --     zona por CODIGO INEI via t_dim_cliente (g05: 99.76% de cobertura, mejor que el join por nombre)
---     grado = d_perm_aws.grado_elnino_ubigeo_v3 (la copia que sobrevivio; v4 todavia no esta en Athena)
+--     grado = d_perm_aws.grado_elnino_ubigeo_v3 (la copia que sobrevivio -- v4 todavia no esta en Athena)
 WITH s AS (
   SELECT cod_tip_doc AS tipdoc, key_value
   FROM e_perm_aws.scr_vcclibnk_rsk
