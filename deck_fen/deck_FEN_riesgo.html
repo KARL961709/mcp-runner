@@ -1,0 +1,470 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FEN · Riesgo de Crédito — geolocalización, engranaje e IBK+</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800;900&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   =========================================== */
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;
+transform-origin:0 0;background:var(--slide-bg,#fff)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;display:block;
+visibility:hidden;opacity:0;pointer-events:none;background:var(--slide-bg,#fff)}
+.slide.active,.slide.visible{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+img,video,canvas,svg{max-width:100%;max-height:100%}
+.deck-controls{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:1000}
+@media print{html,body{width:1920px;height:auto;overflow:visible;background:#fff}
+.deck-viewport{position:static;overflow:visible;background:#fff}
+.deck-stage{position:static;width:auto;height:auto;transform:none!important;background:none}
+.slide{position:relative;display:block!important;visibility:visible!important;opacity:1!important;
+pointer-events:auto!important;width:1920px;height:1080px;break-after:page;page-break-after:always}
+.slide:last-child{break-after:auto;page-break-after:auto}
+.deck-controls{display:none!important}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;
+transition-duration:.2s!important}}
+
+
+:root{--stage-bg:#111;--slide-bg:#fff;--ink:#000;--green:#00A94F;--gray:#6e6e6e;--soft:#d8d8d8}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes drop{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* === CHROME DEL DECK (fuera del sistema de diseño de los slides) === */
+.deck-controls{display:flex;align-items:center;gap:14px;background:rgba(0,0,0,.72);
+border-radius:100px;padding:9px 16px;backdrop-filter:blur(6px)}
+.deck-controls button{all:unset;cursor:pointer;color:#fff;font:600 13px/1 'Nunito',sans-serif;
+padding:5px 9px;border-radius:100px;opacity:.85}
+.deck-controls button:hover{opacity:1;background:rgba(255,255,255,.14)}
+.deck-controls .cnt{color:#fff;font:700 12px/1 'Archivo',sans-serif;letter-spacing:2px;opacity:.9;min-width:44px;text-align:center}
+.dots{display:flex;gap:7px}
+.dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;display:block}
+.dots i.on{background:#00A94F}
+
+/* ===== S1 · slide_puentes_geo_FEN.html ===== */
+.s1 .slide{font-family:'Nunito',sans-serif;color:var(--ink)}
+.s1 .mark{position:absolute;right:0;top:0;width:26px;height:432px;background:var(--green)}
+.s1 .mark::after{content:"";position:absolute;left:-26px;top:432px;width:26px;height:132px;background:var(--ink)}
+.s1 .pad{position:absolute;inset:0;padding:70px 96px 56px;display:flex;flex-direction:column}
+.s1 .kick{display:flex;align-items:center;gap:18px;font-family:'Archivo';font-weight:600;font-size:17px;
+letter-spacing:4.6px;text-transform:uppercase;color:var(--gray)}
+.s1 .kick .sq{width:16px;height:16px;background:var(--green);flex:none}
+.s1 h1{font-family:'Archivo';font-weight:900;font-size:100px;line-height:.95;letter-spacing:-4.2px;
+margin:24px 0 0;max-width:1340px}
+.s1 h1 em{font-style:normal;color:var(--green)}
+.s1 .rule{height:9px;background:var(--ink);margin-top:30px;width:100%}
+.s1 .rule i{display:block;height:9px;width:236px;background:var(--green)}
+.s1 table{width:100%;border-collapse:collapse;margin-top:26px}
+.s1 th{font-family:'Archivo';font-weight:600;font-size:15px;letter-spacing:2.4px;text-transform:uppercase;
+color:var(--gray);text-align:left;padding:0 20px 13px 0;border-bottom:3px solid var(--ink)}
+.s1 th.n{text-align:right;padding-right:0}
+.s1 th em{font-style:normal;display:block;font-size:13px;letter-spacing:1.4px;color:#a5a5a5;margin-top:3px}
+.s1 td{padding:17px 20px 17px 0;border-bottom:1px solid var(--soft);vertical-align:baseline}
+.s1 td.n{text-align:right;padding-right:0}
+.s1 .f{font-family:'Archivo';font-weight:800;font-size:30px;letter-spacing:-.8px;line-height:1}
+.s1 .g{font-size:19px;color:var(--gray);font-weight:600}
+.s1 .g.pt{color:var(--green)}
+.s1 .num{font-family:'Archivo';font-weight:800;font-size:34px;letter-spacing:-1.2px;line-height:1}
+.s1 .num.on{color:var(--green)}
+.s1 .num.off{color:#b4b4b4}
+.s1 .lim{font-size:20px;line-height:1.3;color:#333}
+.s1 .casc{margin-top:26px;border-top:3px solid var(--ink);padding-top:18px}
+.s1 .casc-h{font-family:'Archivo';font-weight:600;font-size:15px;letter-spacing:2.4px;
+text-transform:uppercase;color:var(--gray);margin-bottom:14px}
+.s1 .casc-h b{color:var(--ink);font-weight:800}
+.s1 .steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.s1 .step{padding-right:44px;margin-right:44px;border-right:1px solid var(--soft)}
+.s1 .step:last-child{border-right:none;margin-right:0;padding-right:0}
+.s1 .step.bottleneck{border-left:9px solid var(--green);padding-left:24px;margin-left:-9px}
+.s1 .lvl{font-family:'Archivo';font-weight:800;font-size:22px;letter-spacing:1.8px;text-transform:uppercase;
+margin-bottom:8px}
+.s1 .chain{font-size:18px;color:var(--gray);font-weight:600;line-height:1.3;margin-bottom:11px}
+.s1 .chain b{color:var(--ink)}
+.s1 .vals{display:flex;gap:26px}
+.s1 .vals div{display:flex;flex-direction:column}
+.s1 .vals span{font-family:'Archivo';font-weight:600;font-size:12.5px;letter-spacing:1.6px;
+text-transform:uppercase;color:#a5a5a5}
+.s1 .vals strong{font-family:'Archivo';font-weight:800;font-size:31px;letter-spacing:-1.1px;line-height:1.1}
+.s1 .vals strong.wk{color:#b4b4b4}
+.s1 .prov{margin-top:auto;border-top:1px solid var(--soft);padding-top:16px;font-size:17px;
+color:var(--gray);font-weight:600;letter-spacing:.2px}
+.s1 .prov b{color:var(--ink);font-weight:800}
+.s1 .close{display:flex;align-items:flex-end;justify-content:space-between;gap:56px}
+.s1 .three{display:flex}
+.s1 .three div{padding-right:42px;margin-right:42px;border-right:1px solid var(--soft)}
+.s1 .three div:last-child{border-right:none;margin-right:0;padding-right:0}
+.s1 .three b{display:block;font-family:'Archivo';font-weight:800;font-size:22px;letter-spacing:-.4px;margin-bottom:5px}
+.s1 .three span{font-size:18px;color:var(--gray);line-height:1.3;display:block;max-width:400px}
+.s1 .stamp{font-family:'Archivo';font-weight:600;font-size:15px;letter-spacing:2.8px;text-transform:uppercase;
+color:var(--gray);text-align:right;white-space:nowrap;line-height:1.75}
+.s1 .stamp em{font-style:normal;color:var(--green)}
+.s1 .rv{opacity:0;transform:translateY(24px);animation:rise .74s cubic-bezier(.16,1,.3,1) forwards}
+.s1 .d1{animation-delay:.05s}
+.s1 .d2{animation-delay:.16s}
+.s1 .d3{animation-delay:.28s}
+.s1 .d4{animation-delay:.4s}
+.s1 .d5{animation-delay:.52s}
+.s1 .rule i{transform-origin:0 50%;animation:grow .9s cubic-bezier(.16,1,.3,1) .3s both}
+.s1 .mark{transform-origin:50% 0;animation:drop 1s cubic-bezier(.16,1,.3,1) .15s both}
+/* ===== S2 · slide_engranaje_FEN_IBK.html ===== */
+.s2 .slide{font-family:'Nunito',sans-serif;color:var(--ink)}
+.s2 .mark{position:absolute;right:0;top:0;width:26px;height:432px;background:var(--green)}
+.s2 .mark::after{content:"";position:absolute;left:-26px;top:432px;width:26px;height:132px;background:var(--ink)}
+.s2 .pad{position:absolute;inset:0;padding:72px 96px 58px;display:flex;flex-direction:column}
+.s2 .kick{display:flex;align-items:center;gap:18px;font-family:'Archivo';font-weight:600;font-size:17px;
+letter-spacing:4.6px;text-transform:uppercase;color:var(--gray)}
+.s2 .kick .sq{width:16px;height:16px;background:var(--green);flex:none}
+.s2 h1{font-family:'Archivo';font-weight:900;font-size:100px;line-height:.95;letter-spacing:-4.2px;margin:28px 0 0}
+.s2 h1 em{font-style:normal;color:var(--green)}
+.s2 .rule{height:9px;background:var(--ink);margin-top:30px;width:100%}
+.s2 .rule i{display:block;height:9px;width:236px;background:var(--green)}
+.s2 .eq{background:var(--ink);color:#fff;margin-top:34px;padding:30px 36px;display:flex;
+align-items:center;justify-content:center;gap:26px}
+.s2 .eq .t{font-family:'Archivo';font-weight:800;font-size:39px;letter-spacing:-.9px;white-space:nowrap}
+.s2 .eq .t i{font-style:normal;display:block;font-family:'Nunito';font-weight:600;font-size:15px;
+letter-spacing:2.4px;text-transform:uppercase;color:#8f8f8f;margin-top:5px}
+.s2 .eq .t.g{color:var(--green)}
+.s2 .eq .op{font-family:'Archivo';font-weight:800;font-size:31px;color:#5a5a5a}
+.s2 .eqn{font-family:'JetBrains Mono',monospace;font-size:17px;color:var(--gray);margin-top:13px;text-align:center}
+.s2 .eqn b{color:var(--ink);font-weight:700}
+.s2 .body{display:grid;grid-template-columns:1.02fr 1fr;gap:0;margin-top:40px}
+.s2 .left{padding-right:52px;margin-right:52px;border-right:1px solid var(--soft)}
+.s2 .sc{margin-bottom:36px}
+.s2 .sc:last-child{margin-bottom:0}
+.s2 .scn{font-family:'Archivo';font-weight:800;font-size:27px;letter-spacing:-.5px;display:flex;
+align-items:baseline;gap:13px;margin-bottom:9px}
+.s2 .scn u{text-decoration:none;font-size:15px;letter-spacing:2.2px;text-transform:uppercase;
+font-weight:600;color:var(--gray)}
+.s2 .scf{font-size:23px;line-height:1.35;color:var(--ink);font-weight:600;margin-bottom:7px}
+.s2 .scf b{color:var(--green);font-weight:800}
+.s2 .scd{font-size:20px;line-height:1.35;color:var(--gray)}
+.s2 .scd b{color:var(--ink);font-weight:700}
+.s2 .st{display:inline-block;font-family:'Archivo';font-weight:800;font-size:13px;letter-spacing:1.7px;
+text-transform:uppercase;padding:5px 12px;margin-top:10px}
+.s2 .st.ok{background:var(--green);color:#fff}
+.s2 .st.pend{background:#efefef;color:#8a8a8a}
+.s2 .mth{font-family:'Archivo';font-weight:600;font-size:15px;letter-spacing:2.4px;text-transform:uppercase;
+color:var(--gray);margin-bottom:14px}
+.s2 .mtx{display:grid;grid-template-columns:104px 1fr 1fr;gap:7px}
+.s2 .mh{font-family:'Archivo';font-weight:600;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;
+color:var(--gray);text-align:center;padding-bottom:3px}
+.s2 .ml{font-family:'Archivo';font-weight:800;font-size:20px;display:flex;align-items:center}
+.s2 .mc{padding:25px 20px;font-family:'Archivo';font-weight:800;font-size:25px;letter-spacing:-.4px;line-height:1.14}
+.s2 .mc i{font-style:normal;display:block;font-family:'Nunito';font-weight:600;font-size:16.5px;
+margin-top:5px;opacity:.74}
+.s2 .mc.hot{background:var(--green);color:#fff}
+.s2 .mc.mid{background:#e6e6e6}
+.s2 .mc.low{background:#f5f5f5;color:#a0a0a0}
+.s2 .prov{margin-top:auto;border-top:1px solid var(--soft);padding-top:22px;font-size:20.5px;
+color:var(--gray);font-weight:600;line-height:1.4}
+.s2 .prov b{color:var(--ink);font-weight:800}
+.s2 .rv{opacity:0;transform:translateY(24px);animation:rise .74s cubic-bezier(.16,1,.3,1) forwards}
+.s2 .d1{animation-delay:.05s}
+.s2 .d2{animation-delay:.17s}
+.s2 .d3{animation-delay:.3s}
+.s2 .d4{animation-delay:.43s}
+.s2 .rule i{transform-origin:0 50%;animation:grow .9s cubic-bezier(.16,1,.3,1) .3s both}
+.s2 .mark{transform-origin:50% 0;animation:drop 1s cubic-bezier(.16,1,.3,1) .15s both}
+/* ===== S3 · slide_ibk_ciclo_no_golpe_FEN.html ===== */
+.s3 .slide{font-family:'Nunito',sans-serif;color:var(--ink)}
+.s3 .mark{position:absolute;right:0;top:0;width:26px;height:432px;background:var(--green)}
+.s3 .mark::after{content:"";position:absolute;left:-26px;top:432px;width:26px;height:132px;background:var(--ink)}
+.s3 .pad{position:absolute;inset:0;padding:72px 96px 58px;display:flex;flex-direction:column}
+.s3 .kick{display:flex;align-items:center;gap:18px;font-family:'Archivo';font-weight:600;font-size:17px;
+letter-spacing:4.6px;text-transform:uppercase;color:var(--gray)}
+.s3 .kick .sq{width:16px;height:16px;background:var(--green);flex:none}
+.s3 h1{font-family:'Archivo';font-weight:900;font-size:100px;line-height:.95;letter-spacing:-4.2px;margin:26px 0 0}
+.s3 h1 em{font-style:normal;color:var(--green)}
+.s3 .rule{height:9px;background:var(--ink);margin-top:30px;width:100%}
+.s3 .rule i{display:block;height:9px;width:236px;background:var(--green)}
+.s3 .ev{margin-top:44px;display:grid;grid-template-columns:auto 1fr;gap:0;align-items:start}
+.s3 .evl{padding-right:44px;margin-right:44px;border-right:1px solid var(--soft);max-width:430px}
+.s3 .evl .h{font-family:'Archivo';font-weight:800;font-size:25px;letter-spacing:-.5px;margin-bottom:10px}
+.s3 .evl .p{font-size:21px;line-height:1.4;color:var(--gray)}
+.s3 .evl .p b{color:var(--ink);font-weight:700}
+.s3 .evl .f{font-family:'JetBrains Mono',monospace;font-size:15.5px;color:var(--gray);
+background:#f4f4f4;padding:10px 12px;margin-top:13px;line-height:1.45}
+.s3 table{width:100%;border-collapse:collapse}
+.s3 th{font-family:'Archivo';font-weight:600;font-size:14px;letter-spacing:2px;text-transform:uppercase;
+color:var(--gray);text-align:right;padding:0 0 11px 20px;border-bottom:3px solid var(--ink)}
+.s3 th:first-child{text-align:left;padding-left:0}
+.s3 td{padding:19px 0 19px 20px;border-bottom:1px solid var(--soft);text-align:right;
+font-family:'Archivo';font-weight:800;font-size:35px;letter-spacing:-1px;color:var(--green)}
+.s3 td:first-child{text-align:left;padding-left:0;font-size:21.5px;font-weight:600;
+font-family:'Nunito';color:var(--gray);letter-spacing:0}
+.s3 tr:last-child td{border-bottom:none}
+.s3 .cap{font-size:16px;color:var(--gray);margin-top:11px;font-style:italic}
+.s3 .verd{background:var(--ink);color:#fff;margin-top:36px;padding:26px 34px;text-align:center;
+font-family:'Archivo';font-weight:800;font-size:30px;letter-spacing:-.6px}
+.s3 .verd b{color:#fff}
+.s3 .verd .ok{color:var(--green)}
+.s3 .verd .no{color:#ff6b5a}
+.s3 .two{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:34px}
+.s3 .cbox{padding-right:48px;margin-right:48px;border-right:1px solid var(--soft)}
+.s3 .cbox:last-child{border-right:none;margin-right:0;padding-right:0}
+.s3 .ch{font-family:'Archivo';font-weight:800;font-size:27px;letter-spacing:-.4px;margin-bottom:19px;
+padding-bottom:11px;border-bottom:3px solid var(--ink)}
+.s3 .ch.ok2{border-color:var(--green)}
+.s3 .ch.no2{border-color:var(--ink)}
+.s3 .li{font-size:21px;line-height:1.4;color:var(--gray);margin-bottom:13px;padding-left:22px;position:relative}
+.s3 .li::before{content:"";position:absolute;left:0;top:10px;width:8px;height:8px;background:var(--green)}
+.s3 .li b{color:var(--ink);font-weight:700}
+.s3 .li.ev{margin-top:22px;padding:16px 18px;background:#f4f4f4}
+.s3 .li.ev::before{display:none}
+.s3 .why{margin-top:40px;border-top:3px solid var(--ink);padding-top:18px}
+.s3 .why-h{font-family:'Archivo';font-weight:600;font-size:15px;letter-spacing:2.4px;text-transform:uppercase;
+color:var(--gray);margin-bottom:15px}
+.s3 .why-h b{color:var(--ink);font-weight:800}
+.s3 .wg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.s3 .w{padding-right:42px;margin-right:42px;border-right:1px solid var(--soft)}
+.s3 .w:last-child{border-right:none;margin-right:0;padding-right:0}
+.s3 .w b{display:block;font-family:'Archivo';font-weight:800;font-size:22.5px;letter-spacing:-.3px;margin-bottom:7px}
+.s3 .w span{font-size:19.5px;color:var(--gray);line-height:1.38;display:block}
+.s3 .w span em{font-style:normal;font-family:'Archivo';font-weight:800;color:var(--ink)}
+.s3 .w cite{display:block;font-style:normal;font-family:'Archivo';font-weight:600;font-size:12.5px;
+letter-spacing:1.4px;text-transform:uppercase;color:#a5a5a5;margin-top:9px}
+.s3 .prov{margin-top:auto;border-top:1px solid var(--soft);padding-top:26px;font-size:22.5px;
+color:var(--gray);font-weight:600;line-height:1.4}
+.s3 .prov b{color:var(--ink);font-weight:800}
+.s3 .rv{opacity:0;transform:translateY(24px);animation:rise .74s cubic-bezier(.16,1,.3,1) forwards}
+.s3 .d1{animation-delay:.05s}
+.s3 .d2{animation-delay:.17s}
+.s3 .d3{animation-delay:.3s}
+.s3 .d4{animation-delay:.43s}
+.s3 .rule i{transform-origin:0 50%;animation:grow .9s cubic-bezier(.16,1,.3,1) .3s both}
+.s3 .mark{transform-origin:50% 0;animation:drop 1s cubic-bezier(.16,1,.3,1) .15s both}
+</style></head><body>
+<div class="deck-viewport"><div class="deck-stage">
+<section class="slide s1">
+  <div class="mark"></div>
+  <div class="pad">
+
+    <!-- === HEADER === -->
+    <div class="kick rv d1"><span class="sq"></span>FEN · Riesgo de Crédito · Puentes de geolocalización · Junio 2026</div>
+    <h1 class="rv d1">El distrito está<br>cubierto. <em>El punto, no.</em></h1>
+    <div class="rule rv d1"><i></i></div>
+
+    <!-- === TABLA DE FUENTES === -->
+    <table class="rv d2">
+      <tr>
+        <th style="width:21%">Fuente</th>
+        <th style="width:15%">Granularidad</th>
+        <th class="n" style="width:13%">Admisión<em>12.9 M personas</em></th>
+        <th class="n" style="width:13%">Stock<em>2.5 M personas</em></th>
+        <th style="width:38%;padding-left:52px">Límite</th>
+      </tr>
+      <tr><td><span class="f">Visión Cliente</span></td><td class="g">Distrito · INEI</td>
+        <td class="n"><span class="num off">68.17%</span></td><td class="n"><span class="num on">100%</span></td>
+        <td class="lim" style="padding-left:52px">Solo clientes. No da punto.</td></tr>
+      <tr><td><span class="f">RENIEC</span></td><td class="g">Distrito · nombre</td>
+        <td class="n"><span class="num">98.56%</span></td><td class="n"><span class="num">98.71%</span></td>
+        <td class="lim" style="padding-left:52px">Código no INEI. Domicilio del DNI.</td></tr>
+      <tr><td><span class="f">Censo</span></td><td class="g pt">Punto + manzana</td>
+        <td class="n"><span class="num">67.56%</span></td><td class="n"><span class="num">76.25%</span></td>
+        <td class="lim" style="padding-left:52px">Foto de 2017. Cae 0.4 pp por mes.</td></tr>
+      <tr><td><span class="f">API Cliente</span></td><td class="g">Manzana / lote</td>
+        <td class="n"><span class="num off">31.91%</span></td><td class="n"><span class="num off">47.95%</span></td>
+        <td class="lim" style="padding-left:52px">Sin coordenadas.</td></tr>
+      <tr><td><span class="f">Registro Maestro</span></td><td class="g">Vía + número</td>
+        <td class="n"><span class="num off">21.68%</span></td><td class="n"><span class="num off">26.09%</span></td>
+        <td class="lim" style="padding-left:52px">Sin datos desde marzo 2026.</td></tr>
+    </table>
+
+    <!-- === CASCADA · de la mayor granularidad a la menor === -->
+    <div class="casc rv d3">
+      <div class="casc-h"><b>En cascada</b> — del mayor detalle al menor. Se toma el primer nivel disponible</div>
+      <div class="steps">
+        <div class="step bottleneck">
+          <div class="lvl" style="color:var(--green)">1 · Lote y manzana</div>
+          <div class="chain"><b>API Cliente</b> — texto, sin coordenada.
+            <span style="color:#a5a5a5">Requiere puente al censo</span></div>
+          <div class="vals">
+            <div><span>Admisión</span><strong class="wk">9.5%</strong></div>
+            <div><span>Stock</span><strong class="wk">16.1%</strong></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="lvl">2 · Punto y manzana</div>
+          <div class="chain"><b>Censo</b> — lat/long e id de manzana INEI</div>
+          <div class="vals">
+            <div><span>Admisión</span><strong>67.6%</strong></div>
+            <div><span>Stock</span><strong>76.3%</strong></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="lvl">3 · Distrito</div>
+          <div class="chain"><b>Visión Cliente</b> → RENIEC — el piso, siempre disponible</div>
+          <div class="vals">
+            <div><span>Admisión</span><strong>99.0%</strong></div>
+            <div><span>Stock</span><strong style="color:var(--green)">100%</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === PROCEDENCIA === -->
+    <div class="prov rv d5">
+      Cobertura medida directamente en Athena sobre el corte de <b>junio 2026</b> —
+      Admisión 12,907,800 personas · Stock 2,455,254.
+    </div>
+
+  </div>
+</section>
+<section class="slide s2">
+  <div class="mark"></div>
+  <div class="pad">
+
+    <!-- === HEADER === -->
+    <div class="kick rv d1"><span class="sq"></span>FEN · Riesgo de Crédito · Engranaje del score con la PD</div>
+    <h1 class="rv d1">El score dice <em>dónde</em>.<br>IBK+ dice <em>cuándo y cuánto</em>.</h1>
+    <div class="rule rv d1"><i></i></div>
+
+    <!-- === ECUACION === -->
+    <div class="eq rv d2">
+      <span class="t">PD base<i>quién</i></span>
+      <span class="op">×</span>
+      <span class="t g">Exposición FEN<i>dónde · distrital</i></span>
+      <span class="op">×</span>
+      <span class="t g">Recuperación IBK+<i>cuándo y cuánto · regional</i></span>
+      <span class="op">=</span>
+      <span class="t">PD estresada<i>overlay de escenario</i></span>
+    </div>
+    <div class="eqn rv d2">F<sub>it</sub> = F<sub>t</sub> + θ·G<sub>rt</sub> &nbsp;con&nbsp;
+      Σ w<sub>r</sub>·G<sub>rt</sub> = 0 &nbsp;—&nbsp;
+      <b>ortogonal por construcción: no re-entrena el modelo ni mueve el ancla LRA</b></div>
+
+    <!-- === CUERPO === -->
+    <div class="body rv d3">
+      <div class="left">
+        <div class="sc">
+          <div class="scn">① Directo <u>físico · por distrito</u></div>
+          <div class="scf">Severidad + Recurrencia + Fragilidad + Exposición → <b>R0–R5</b></div>
+          <div class="scd"><b>1,890 distritos</b> · núcleo Alto R4+R5 = <b>198</b> · no usa mora</div>
+          <span class="st ok">Construido</span>
+        </div>
+        <div class="sc">
+          <div class="scn">② Indirecto <u>económico · por región</u></div>
+          <div class="scf">Consumo IBK+ regional − nacional → <b>cuartiles</b></div>
+          <div class="scd"><b>12 departamentos</b> · 11 categorías · desde ene-2022.
+            Cubre <b>151 de 198</b> distritos R4+R5 — <b>falta Tumbes</b></div>
+          <span class="st pend">Por construir</span>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="mth">La regla de graduación</div>
+        <div class="mtx">
+          <div></div><div class="mh">Recuperación lenta</div><div class="mh">Recuperación rápida</div>
+          <div class="ml">R4 · R5</div>
+          <div class="mc hot">Estrés máximo<i>y más prolongado</i></div>
+          <div class="mc mid">Golpe fuerte<i>pero corto</i></div>
+          <div class="ml">R0 – R3</div>
+          <div class="mc low">No es FEN<i>es macro o sectorial</i></div>
+          <div class="mc low">Sin estrés</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === CIERRE === -->
+    <div class="prov rv d4">
+      El consumo no causa la recuperación: <b>la revela antes que la mora</b>.
+      Pero el índice es regional — la interacción se arma por <b>región × zona</b>, nunca por manzana.
+    </div>
+
+  </div>
+</section>
+<section class="slide s3">
+  <div class="mark"></div>
+  <div class="pad">
+
+    <!-- === HEADER === -->
+    <div class="kick rv d1"><span class="sq"></span>FEN · Riesgo de Crédito · ¿Sirve el índice de consumo para graduar el estrés?</div>
+    <h1 class="rv d1">IBK+ mide el ciclo.<br><em>No mide el golpe.</em></h1>
+    <div class="rule rv d1"><i></i></div>
+
+    <!-- === VEREDICTO === -->
+    <div class="verd rv d2">
+      <span class="ok">Adecuado</span> como <b>señal de ciclo regional</b> &nbsp;·&nbsp;
+      <span class="no">No adecuado</span>, en su forma actual, para <b>medir el golpe ni su duración</b>
+    </div>
+
+    <!-- === DOS COLUMNAS === -->
+    <div class="two rv d3">
+      <div class="cbox">
+        <div class="ch ok2">Lo que sí aporta</div>
+        <div class="li">Señal <b>propietaria y mensual</b>, con proyección: no hay fuente pública con
+          consumo regional a esa frecuencia</div>
+        <div class="li"><b>12 departamentos × 11 categorías</b>, desde ene-2022</div>
+        <div class="li"><b>La dirección es correcta</b>: mayor valor = mayor crecimiento del consumo,
+          y ya viene en términos reales — el IPC está descontado</div>
+      </div>
+      <div class="cbox">
+        <div class="ch no2">Lo que no alcanza</div>
+        <div class="li">Es <b>variación interanual, no nivel</b>. Para medir recuperación hace falta el nivel
+          contra su tendencia</div>
+        <div class="li"><b>Arrastra el golpe 12 meses</b>: un shock en marzo deja base baja y el año
+          siguiente finge recuperación</div>
+        <div class="li"><b>No tiene Tumbes</b>: 47 de 198 distritos del núcleo Alto sin serie</div>
+        <div class="li ev"><b>Piura, La Libertad, Áncash e Ica: cero meses de caída real en 56.</b>
+          Ni uno, Yaku incluido — mientras Puno registra 12, Junín 11 y Lambayeque 10</div>
+      </div>
+    </div>
+
+    <!-- === CIERRE === -->
+    <div class="prov rv d4">
+      <b>Pedir el mismo índice en NIVEL, no en variación</b> — es el mismo dato en otra presentación y el
+      nacional ya viene así. Con niveles sí se mide desviación y duración. Y para el <b>daño</b>, el
+      instrumento ya está en casa: el <b>canal de reprogramación</b>, que es por cliente y no por región.
+    </div>
+
+  </div>
+</section>
+</div></div>
+<div class="deck-controls"><button onclick="show(cur-1)">‹ Anterior</button>
+<span class="cnt">1 / 3</span>
+<div class="dots"><i onclick="show(0)"></i><i onclick="show(1)"></i><i onclick="show(2)"></i></div>
+<button onclick="show(cur+1)">Siguiente ›</button></div>
+<script>
+
+/* === STAGE FIJO + NAVEGACION === */
+function fitStage(){
+  const st=document.querySelector('.deck-stage');
+  const s=Math.min(innerWidth/1920,innerHeight/1080);
+  st.style.transform='translate('+((innerWidth-1920*s)/2)+'px,'+((innerHeight-1080*s)/2)+'px) scale('+s+')';
+}
+addEventListener('resize',fitStage);fitStage();
+
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  document.querySelector('.cnt').textContent=(cur+1)+' / '+slides.length;
+  document.querySelectorAll('.dots i').forEach((d,k)=>d.classList.toggle('on',k===cur));
+  // re-dispara la animacion de entrada del slide visible
+  slides[cur].querySelectorAll('.rv').forEach(e=>{e.style.animation='none';e.offsetHeight;e.style.animation='';});
+}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();show(cur+1);}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();show(cur-1);}
+  if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+});
+/* rueda del mouse / trackpad: un gesto = un slide. Sin avance automatico. */
+let wheelLock=false;
+addEventListener('wheel',e=>{
+  if(wheelLock) return;
+  if(Math.abs(e.deltaY)<18) return;
+  wheelLock=true;
+  show(cur+(e.deltaY>0?1:-1));
+  setTimeout(()=>{wheelLock=false;},680);
+},{passive:true});
+
+let x0=null;
+addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;
+  if(Math.abs(dx)>50)show(cur+(dx<0?1:-1));x0=null;},{passive:true});
+show(0);
+
+</script></body></html>

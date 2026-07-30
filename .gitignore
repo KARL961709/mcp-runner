@@ -81,3 +81,12 @@ elnino_ibk/03_deck/mapa_fen_grupos.svg
 # Un push no se deshace: lo que entra queda en el historial.
 !entrega_ree/
 !entrega_ree/**
+
+# --- deck_fen (2026-07-30): entregables HTML que viajan al banco para presentar.
+# Autocontenidos, sin dependencias: se abren con doble clic, no necesitan node.
+#   deck_FEN_riesgo.html   3 slides, solo cifras agregadas
+#   mapa_distrital_web.html  geometria publica (peru_dist) + grado FEN
+#   heatmap_stock_mz.html  densidad de cartera en grilla, guarda BUCKET (0-5),
+#                          no el conteo. Decision del propietario 2026-07-30.
+!deck_fen/
+!deck_fen/*.html
