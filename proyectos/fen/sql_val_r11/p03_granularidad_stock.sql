@@ -19,7 +19,7 @@ dcl AS (
 cen AS (
   SELECT key_value,
          max(CASE WHEN latitud_y IS NOT NULL AND longitud_x IS NOT NULL THEN 1 ELSE 0 END) AS punto,
-         max(CASE WHEN id_mzna IS NOT NULL AND trim(id_mzna) <> '' THEN 1 ELSE 0 END)      AS mzna
+         max(CASE WHEN id_mzna IS NOT NULL AND id_mzna <> 0 THEN 1 ELSE 0 END)             AS mzna
   FROM e_perm_aws.t_agg_censo_enrich_rsk GROUP BY key_value
 ),
 api AS (
