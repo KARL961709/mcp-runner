@@ -36,7 +36,7 @@
 -- Verificado: la cadena reproduce pd_pit del pipeline con diferencia 4.4e-16
 -- y el f_t derivado reproduce el desplegado con 2.3e-07.
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_stk_ree_pp_80_score
+CREATE TABLE disc_model_owner.scr_stk_ree_pp_cal_202607
 WITH (format = 'PARQUET') AS
 WITH d AS (
   SELECT CAST(v.codmes AS VARCHAR) AS codmes,
