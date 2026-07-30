@@ -15,8 +15,8 @@
 -- codmes_mrm del maestro de calibracion, pero se nombra distinto porque aqui no
 -- hay PO: es solo el rezago con el que la calibracion aprendio la pareja
 -- pd_raw(codmes) contra driver(codmes-1), segun 50_pd.sql y H33.
--- PENDIENTE DE MEDIR (c6): H33 conteo ese rezago sobre la tabla hermana
--- ..._itc_reen_reprocesov4, no sobre esta. Aqui se hereda por analogia.
+-- MEDIDO (c6): esta tabla y la hermana ..._itc_reen_reprocesov4 comparten
+-- convencion de codmes. 499,506 pares con PD identica al mismo mes, dif 0.0.
 --
 -- Reglas de cruce que imponen las fuentes:
 --   situacion laboral no tiene key_value: la llave es SUBSTR(subject_id, 3)
@@ -28,26 +28,17 @@
 -- El factor macro se deriva de la serie gobernada, no se escribe como literal:
 --   f_t = clip( (Phi^-1(LRA) - sqrt(1-rho)*(b0 + b1*x_t))/sqrt(rho) - mu )
 --   con x_t = media de porc_ipc sobre t-10 a t-5 (el lag5 + ma6 del modelo).
+--   La espina de meses sale de los meses A PUNTUAR, no de las filas de la tabla
+--   macro: el IPC de 202606 no existe pero su x_t si, porque solo usa hasta
+--   202601. Con ROWS BETWEEN el mes salia sin f_t. El HAVING = 6 exige los seis
+--   meses completos, asi un hueco deja el mes sin f_t en vez de promediar cinco.
 --
 -- Verificado: la cadena reproduce pd_pit del pipeline con diferencia 4.4e-16
 -- y el f_t derivado reproduce el desplegado con 2.3e-07.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_stk_ree_pp_80_score
 WITH (format = 'PARQUET') AS
-WITH ftbl AS (
-  SELECT cod_mes AS codmes_drv,
-         GREATEST(-1.130850, LEAST(0.765684,
-           (-1.7250030205 - sqrt(1.0 - 0.0380301160) * (-1.9001957962 + 0.6583423568 * x_t))
-           / sqrt(0.0380301160) + 0.19111262)) AS f_t
-  FROM (
-    SELECT cod_mes,
-           AVG(porc_ipc) OVER (ORDER BY cod_mes ROWS BETWEEN 10 PRECEDING AND 5 PRECEDING) AS x_t
-    FROM e_perm_aws.t_mst_bcrp_rsk
-    WHERE cod_mes >= '201801'
-  ) m
-  WHERE x_t IS NOT NULL
-),
-d AS (
+WITH d AS (
   SELECT CAST(v.codmes AS VARCHAR) AS codmes,
          DATE_FORMAT(DATE_ADD('month', -1, DATE_PARSE(CAST(v.codmes AS VARCHAR), '%Y%m')), '%Y%m') AS codmes_drv,
          CAST(v.cod_tip_doc AS VARCHAR) AS tip_doc,
@@ -57,6 +48,18 @@ d AS (
   FROM disc_riesgos.t_b39918_scr_stockpp_itc_reprocesov4 v
   WHERE v.pd_comppp_reen_itc IS NOT NULL
   GROUP BY CAST(v.codmes AS VARCHAR), CAST(v.cod_tip_doc AS VARCHAR), CAST(v.key_value AS VARCHAR)
+),
+ftbl AS (
+  SELECT c.codmes_drv,
+         GREATEST(-1.130850, LEAST(0.765684,
+           (-1.7250030205 - sqrt(1.0 - 0.0380301160) * (-1.9001957962 + 0.6583423568 * AVG(m.porc_ipc)))
+           / sqrt(0.0380301160) + 0.19111262)) AS f_t
+  FROM (SELECT DISTINCT codmes_drv FROM d) c
+  JOIN e_perm_aws.t_mst_bcrp_rsk m
+    ON m.cod_mes BETWEEN DATE_FORMAT(DATE_ADD('month', -10, DATE_PARSE(c.codmes_drv, '%Y%m')), '%Y%m')
+                     AND DATE_FORMAT(DATE_ADD('month',  -5, DATE_PARSE(c.codmes_drv, '%Y%m')), '%Y%m')
+  GROUP BY c.codmes_drv
+  HAVING COUNT(m.porc_ipc) = 6
 ),
 po AS (
   SELECT DISTINCT codmes_drv, tip_doc, id_value FROM d
