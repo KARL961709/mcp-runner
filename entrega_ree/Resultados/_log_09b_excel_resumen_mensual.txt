@@ -1,0 +1,13 @@
+============================================================
+  09b — EXCEL RESUMEN MENSUAL Reenganche
+============================================================
+Loaded: 44,393 obs, 29 meses
+  Sheet GLOBAL: 29 rows, 38 cols
+  Sheet tipo_ingreso_dep: 29 rows, 40 cols
+  Sheet tipo_ingreso_cs: 29 rows, 78 cols
+
+Export: C:\Users\CARLOS\Documents\2026\GDM\Calibración\Comportamental PP Reenganche\ENTREGA_REE_FINAL\Reportes\resumen_mensual_Reenganche.xlsx
+
+============================================================
+  09b COMPLETADO — EXCEL RESUMEN MENSUAL Reenganche
+============================================================

@@ -73,3 +73,11 @@ elnino_ibk/03_deck/mapa_fen_grupos.svg
 #   ibk-aws-mcp.js    -> account id, buckets, ARN del rol
 #   output\, *.csv    -> RESULTADOS. Esta es la linea que no se cruza:
 #                        el codigo entra, los datos no salen.
+
+# --- entrega_ree: entrega completa de Comportamental PP Reenganche
+# Sube la carpeta INTEGRA, parquets incluidos, por decision del propietario.
+# Repo PRIVADO (la API sin auth devuelve 404) y key_value viene hasheado a 64
+# chars en origen. Los parquets no llevan importes ni identidad en claro.
+# Un push no se deshace: lo que entra queda en el historial.
+!entrega_ree/
+!entrega_ree/**

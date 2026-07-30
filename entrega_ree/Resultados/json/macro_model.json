@@ -1,0 +1,60 @@
+{
+  "product": "Reenganche",
+  "champion_variables": [
+    "IPC_Lima_var_12m_lag5_ma6"
+  ],
+  "champion_spec": "PROBIT",
+  "betas_estimated": [
+    -1.900195796163702,
+    0.6583423568236846
+  ],
+  "r2": 0.6110491564372638,
+  "r2_adj": 0.604971799506596,
+  "dw": 0.9550874433328326,
+  "adf_resid_pval": 0.0002127606195772209,
+  "mae_rd": 0.009807067570759168,
+  "n_meses_fit": 66,
+  "ft_n_meses": 92,
+  "ft_range": [
+    -1.9084353430726064,
+    -1.2828200727858587
+  ],
+  "ft_source": "estimated_univariate",
+  "regime_filter": {
+    "r2_min": 0.45,
+    "windows": {
+      "full": [
+        "201901",
+        "202506"
+      ],
+      "subida": [
+        "202101",
+        "202305"
+      ],
+      "bajada": [
+        "202306",
+        "202506"
+      ],
+      "reciente": [
+        "202401",
+        "202506"
+      ]
+    },
+    "r2_by_regime": {
+      "full": 0.6110491564372641,
+      "subida": 0.5683375020481777,
+      "bajada": 0.6993305901763603,
+      "reciente": 0.5564218051069545
+    },
+    "regime_pass": true
+  },
+  "inference": {
+    "method": "HAC Newey-West (auto lags)",
+    "se_beta1_ols": 0.06565549731885505,
+    "se_beta1_hac": 0.08285310010885664,
+    "t_beta1_hac": 7.945898897672153,
+    "p_beta1_hac": 1.927876174799205e-15,
+    "se_inflation": 1.2619369815520805,
+    "note": "DW=0.96 indica autocorrelacion positiva. HAC infla SE 1.26x \u2014 beta1 sigue significativo (t=7.9, p<0.001)."
+  }
+}

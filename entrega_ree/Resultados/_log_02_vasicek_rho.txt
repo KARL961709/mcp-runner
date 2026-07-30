@@ -1,0 +1,4 @@
+02 Vasicek rho Reenganche | Var(Phi^-1 RD)=0.039534 | rho_raw=0.038030 | rho_final=0.038030 (raw) | meses=66
+  DEP     rho_raw=0.044421 -> rho_final=0.044421 (42 meses)
+  NO DEP  rho_raw=0.043727 -> rho_final=0.043727 (66 meses)
+  export: vasicek_rho.json

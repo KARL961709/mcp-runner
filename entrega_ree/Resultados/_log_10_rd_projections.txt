@@ -1,0 +1,9 @@
+   [GLOBAL] cohortes sin proyeccion: 4 (fuera_horizonte=4)
+10 Chain-ladder Reenganche | cohortes=88 | factores=11 | proyecciones=6 | RD12_proj media=2.994%
+   [tipo_ingreso_dep=DEP] cohortes sin proyeccion: 4 (fuera_horizonte=4)
+   [tipo_ingreso_dep=NO DEP] cohortes sin proyeccion: 4 (fuera_horizonte=4)
+   [tipo_ingreso_cs=DEP_CS] cohortes sin proyeccion: 4 (fuera_horizonte=4)
+   [tipo_ingreso_cs=DEP_NO_CS] cohortes sin proyeccion: 5 (rd_base_cero=1  fuera_horizonte=4)
+   [tipo_ingreso_cs=INDEPENDIENTE] cohortes sin proyeccion: 6 (rd_base_cero=2  fuera_horizonte=4)
+   [tipo_ingreso_cs=MIXTO] cohortes sin proyeccion: 4 (fuera_horizonte=4)
+  export: rd_projections.json, rd_projections.csv (39 filas)

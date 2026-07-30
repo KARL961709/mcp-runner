@@ -1,0 +1,15 @@
+============================================================
+  09 — EXCEL RESUMEN TRIMESTRAL Reenganche
+============================================================
+Loaded: 44,393 obs, 29 meses, 11 trimestres
+  Sheet COEFICIENTES: 83 rows
+  Sheet GLOBAL: 11 rows, 39 cols
+    Trimestres incompletos: ['2023Q4', '2026Q2']
+  Sheet tipo_ingreso_dep: 11 rows, 41 cols
+  Sheet tipo_ingreso_cs: 11 rows, 79 cols
+
+Export: C:\Users\CARLOS\Documents\2026\GDM\Calibración\Comportamental PP Reenganche\ENTREGA_REE_FINAL\Reportes\resumen_trimestral_Reenganche.xlsx
+
+============================================================
+  09 COMPLETADO — EXCEL RESUMEN TRIMESTRAL Reenganche
+============================================================

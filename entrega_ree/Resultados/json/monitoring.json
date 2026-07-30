@@ -1,0 +1,166 @@
+{
+  "product": "Reenganche",
+  "gini_pit": 0.5400182781448017,
+  "gini_ree": 0.5369480893942922,
+  "brier_pit": 0.030671363631891654,
+  "ece_pit": 0.0027338701238723245,
+  "ec_global": -0.07383897489890552,
+  "ec_global_status": "verde",
+  "ec_bands_mult": 2.0,
+  "ec_bands_mult_status": "PROVISIONAL: definicion formal (x1 vs x2) y validacion Monte Carlo pendientes en Lineamientos de Desarrollo y Monitoreo de Calibracion (deadline Jun-2026)",
+  "ec_bands_pct": {
+    "verde": [
+      -30,
+      20
+    ],
+    "amarillo_neg": [
+      -60,
+      -30
+    ],
+    "amarillo_pos": [
+      20,
+      40
+    ]
+  },
+  "jeffreys_rule": "p>5% bilateral (PD dentro IC95% de Beta(d+0.5, n-d+0.5)) baja un nivel",
+  "ec_by_driver": [
+    {
+      "driver": "tipo_ingreso_dep",
+      "celda": "DEP",
+      "n": 9712,
+      "defaults": 284,
+      "rd": 0.029242174629324547,
+      "pd": 0.029497778086944444,
+      "ec": -0.008665176640305177,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "driver": "tipo_ingreso_dep",
+      "celda": "NO DEP",
+      "n": 16636,
+      "defaults": 589,
+      "rd": 0.03540514546766049,
+      "pd": 0.039439663753854735,
+      "ec": -0.10229596051766336,
+      "jeffreys": "FAIL",
+      "status": "verde"
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "DEP_CS",
+      "n": 6618,
+      "defaults": 179,
+      "rd": 0.02704744635841644,
+      "pd": 0.025290243612280952,
+      "ec": 0.06948144798740456,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "DEP_NO_CS",
+      "n": 3094,
+      "defaults": 105,
+      "rd": 0.033936651583710405,
+      "pd": 0.03849760457476698,
+      "ec": -0.11847368275079706,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "INDEPENDIENTE",
+      "n": 1962,
+      "defaults": 87,
+      "rd": 0.04434250764525994,
+      "pd": 0.04314544224776114,
+      "ec": 0.0277448864847577,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "MIXTO",
+      "n": 14674,
+      "defaults": 502,
+      "rd": 0.034210167643451,
+      "pd": 0.03894417940023306,
+      "ec": -0.12155890378714018,
+      "jeffreys": "FAIL",
+      "status": "verde"
+    }
+  ],
+  "backtesting_trimestral": [
+    {
+      "trim": "2023Q4",
+      "n": 1074,
+      "defaults": 57.0,
+      "pd_pit_mean": 0.06999225457462878,
+      "rd": 0.05307262569832402,
+      "ec": -0.24173573174820814,
+      "jeffreys": "FAIL",
+      "status": "verde"
+    },
+    {
+      "trim": "2024Q1",
+      "n": 4146,
+      "defaults": 137.0,
+      "pd_pit_mean": 0.04373277846513586,
+      "rd": 0.033043897732754464,
+      "ec": -0.24441348360481285,
+      "jeffreys": "FAIL",
+      "status": "verde"
+    },
+    {
+      "trim": "2024Q2",
+      "n": 3669,
+      "defaults": 108.0,
+      "pd_pit_mean": 0.03079184201629878,
+      "rd": 0.029435813573180702,
+      "ec": -0.04403856198016034,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "trim": "2024Q3",
+      "n": 3557,
+      "defaults": 134.0,
+      "pd_pit_mean": 0.03549268866868654,
+      "rd": 0.037672195670508855,
+      "ec": 0.061407210430501694,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "trim": "2024Q4",
+      "n": 3834,
+      "defaults": 141.0,
+      "pd_pit_mean": 0.03930399268076158,
+      "rd": 0.036776212832550864,
+      "ec": -0.0643135639867959,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "trim": "2025Q1",
+      "n": 5361,
+      "defaults": 167.0,
+      "pd_pit_mean": 0.031824944669384736,
+      "rd": 0.03115090468196232,
+      "ec": -0.02117961223262818,
+      "jeffreys": "PASS",
+      "status": "verde"
+    },
+    {
+      "trim": "2025Q2",
+      "n": 4707,
+      "defaults": 129.0,
+      "pd_pit_mean": 0.02668049453940885,
+      "rd": 0.027405991077119184,
+      "ec": 0.027192019871997777,
+      "jeffreys": "PASS",
+      "status": "verde"
+    }
+  ]
+}

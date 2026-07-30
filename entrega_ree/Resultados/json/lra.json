@@ -1,0 +1,84 @@
+{
+  "product": "Reenganche",
+  "lra_method": "median",
+  "lra_global": 0.04226346409008948,
+  "lra_global_mean": 0.04394953736635689,
+  "lra_global_excl_covid_only": 0.04688079359640105,
+  "lra_global_incl_all": 0.04525881417983155,
+  "n_meses": 54,
+  "codmes_range": [
+    "201901",
+    "202506"
+  ],
+  "exclusions": {
+    "covid": [
+      "202001",
+      "202002",
+      "202003",
+      "202004",
+      "202005",
+      "202006",
+      "202007",
+      "202008",
+      "202009",
+      "202010",
+      "202011",
+      "202012"
+    ],
+    "inflation_spike": [
+      "202207",
+      "202208",
+      "202209",
+      "202210",
+      "202211",
+      "202212",
+      "202301",
+      "202302",
+      "202303",
+      "202304",
+      "202305",
+      "202306"
+    ],
+    "total_months_excluded": 24
+  },
+  "lra_by_segment": {
+    "DEP": 0.033157620041753655,
+    "NO DEP": 0.0432837492533351
+  },
+  "lra_by_driver": {
+    "tipo_ingreso_dep": {
+      "DEP": {
+        "lra": 0.033157620041753655,
+        "n_meses": 30,
+        "n_obs_total": 13780
+      },
+      "NO DEP": {
+        "lra": 0.0432837492533351,
+        "n_meses": 54,
+        "n_obs_total": 58688
+      }
+    },
+    "tipo_ingreso_cs": {
+      "DEP_CS": {
+        "lra": 0.028881242831821502,
+        "n_meses": 30,
+        "n_obs_total": 8972
+      },
+      "DEP_NO_CS": {
+        "lra": 0.040462230706299424,
+        "n_meses": 30,
+        "n_obs_total": 4808
+      },
+      "INDEPENDIENTE": {
+        "lra": 0.048679542767047695,
+        "n_meses": 54,
+        "n_obs_total": 33475
+      },
+      "MIXTO": {
+        "lra": 0.0387809368962619,
+        "n_meses": 30,
+        "n_obs_total": 25213
+      }
+    }
+  }
+}

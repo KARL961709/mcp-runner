@@ -1,0 +1,67 @@
+======================================================================
+  MACRO SELECCION F1-F8 — Reenganche IBK
+======================================================================
+RD REE: 66 meses (excl COVID)
+  Rango: 201901 — 202506
+  RD media: 5.05%
+  LRA: 4.2263%, ρ: 0.038030
+  Macro variables: 18880
+  Meses overlap: 66
+  Train: 34m (≤202210), Test: 32m (>202210)
+
+F1 PASS: 16376 / 18880
+F2 PASS: 11806
+F4 PASS: 1210
+F5 PASS: 575
+F6 PASS: 463
+
+  Notable F6 near-misses:
+    Credito_hipotecario_var_anual_lag1_var_12m         R2=0.515 DW=0.568 ADF_r=0.236 FAIL: ['ADF_resid=0.236']
+    Tasa_prestamo_personal_MN_lag1_delta12             R2=0.508 DW=0.570 ADF_r=0.142 FAIL: ['ADF_resid=0.142']
+    Dolarizacion_credito_lag1_var_12m                  R2=0.459 DW=0.550 ADF_r=0.274 FAIL: ['ADF_resid=0.274']
+    Credito_SF_MN_lag1_delta12                         R2=0.455 DW=0.599 ADF_r=0.235 FAIL: ['ADF_resid=0.235']
+    Credito_hipotecario_var_anual_lag2_delta12         R2=0.455 DW=0.451 ADF_r=0.336 FAIL: ['ADF_resid=0.336']
+    Credito_consumo_TC_lag3_ma3                        R2=0.447 DW=0.390 ADF_r=0.238 FAIL: ['ADF_resid=0.238']
+    Tasa_prestamo_personal_MN_lag2_delta12             R2=0.435 DW=0.481 ADF_r=0.203 FAIL: ['ADF_resid=0.203']
+    Dolarizacion_credito_lag1_delta12                  R2=0.432 DW=0.520 ADF_r=0.322 FAIL: ['ADF_resid=0.322']
+    Dolarizacion_credito_lag2_delta12                  R2=0.427 DW=0.460 ADF_r=0.622 FAIL: ['ADF_resid=0.622']
+    Credito_SF_MN_lag4_shock                           R2=0.422 DW=0.531 ADF_r=0.123 FAIL: ['ADF_resid=0.123']
+F7 PASS: 463
+F8 robustez PASS: 463
+F8 regimen PASS: 2 (R2>=0.45 en las 4 ventanas)
+
+======================================================================
+  HOLDOUT OOT EVALUATION
+======================================================================
+
+Rank  Variable                                           R²_full  R²_OOT   MAE_OOT    Bias_OOT   DW     ADF_r    Granger  Sign% 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+1     IPC_Lima_var_12m_lag5_ma6                          0.6110   0.6961   109.7      13.7++++++ 0.955  0.0002   0.0159   100%  
+2     Inflacion_subyacente_var_12m_lag5_ma6              0.5180   0.3435   187.1      139.1+++++ 0.716  0.0039   0.0445   100%  
+
+======================================================================
+  EVALUACION BIVARIADA
+======================================================================
+Pares evaluados: 1
+Bivariados validos: 0
+
+Top 10 bivariados por MAE holdout:
+   1. IPC_Lima_var_12m_lag5_ma6                + Inflacion_subyacente_var_12m_lag5_ma6    MAE=165.1bp R²=0.6177 ✗
+
+======================================================================
+  COMPARISON: CURRENT CONFIG vs NEW
+======================================================================
+Current config (IPC_Lima_var_12m_lag5_ma6):
+  R²_full=0.6110, R²_OOT=0.6961, MAE_OOT=109.7bp, Bias=+13.7bp
+  β₀=-1.900196, β₁=0.658342
+  DW=0.955, ADF_resid=0.0002
+
+New champion by holdout (IPC_Lima_var_12m_lag5_ma6):
+  R²_full=0.6110, R²_OOT=0.6961, MAE_OOT=109.7bp, Bias=+13.7bp
+  β₀=-1.900196, β₁=0.658342
+
+Persistido: C:\Users\CARLOS\Documents\2026\GDM\Calibración\Comportamental PP Reenganche\ENTREGA_REE_FINAL\Resultados\json\macro_selection_f1_f8.json
+
+======================================================================
+  DONE — MACRO SELECCION F1-F8 Reenganche IBK
+======================================================================

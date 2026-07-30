@@ -1,0 +1,47 @@
+{
+  "product": "Reenganche",
+  "master_shape": [
+    119254,
+    47
+  ],
+  "poblacion": {
+    "clean_mode": "clean",
+    "expr": "flg_clean == 1",
+    "master_n": 119254,
+    "master_scope99": 178,
+    "master_dirty": 58,
+    "poblacion_n": 119018
+  },
+  "filters_applied": {
+    "rd_hist": "poblacion & codmes [201901,202506] & target_12m.notna()",
+    "z1": "poblacion & codmes [202312,202506] & pd.notna() & target_12m.notna()",
+    "z2": "poblacion & codmes [202507,202604] & pd.notna()",
+    "note": "El maestro reconstruido NO viene pre-filtrado: trae el perimetro reenganche completo con la poblacion como columna (flg_clean). El recorte se aplica aqui via config.filtro_poblacion(). flg_calib ya no es \"es reenganche\" sino \"entra al fit\", y se verifica contra el recorte de Z1 en vez de asumirse."
+  },
+  "z1_n": 26348,
+  "z2_n": 18045,
+  "rd_hist_n": 100973,
+  "z1_rd": 0.033133444663731595,
+  "z1_gini": null,
+  "z1_score_mean": 0.21095789578280236,
+  "z1_codmes_range": [
+    "202312",
+    "202506"
+  ],
+  "z2_codmes_range": [
+    "202507",
+    "202604"
+  ],
+  "driver_stats": {
+    "tipo_ingreso_dep": {
+      "DEP": {
+        "n": 9712,
+        "rd": 0.029242174629324547
+      },
+      "NO DEP": {
+        "n": 16636,
+        "rd": 0.03540514546766049
+      }
+    }
+  }
+}

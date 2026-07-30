@@ -1,0 +1,4 @@
+07 Monitoring Reenganche | Z1=26,348 | RD=3.3133% | PD_pit=3.5775% | EC=-0.0738 VERDE | Gini pit=0.5400 ree=0.5369 | Brier=0.030671 | ECE=0.0027
+  DEP     RD=2.9242% PD=2.9498% EC=-0.0087 J=PASS VERDE n=9,712
+  NO DEP  RD=3.5405% PD=3.9440% EC=-0.1023 J=FAIL VERDE n=16,636
+  export: monitoring.json

@@ -1,0 +1,110 @@
+# caso_filtros.yaml - v3, EXTRAIDO del SQL (A29). NO transcrito a mano.
+# Generado desde sql_prod/90_gate/60_filtros.sql y 70_cal.sql.
+# v1 y v2 fueron rechazadas por el challenger y quedan como *_rechazado.yaml.
+# Todo expr_ref y join_pin de abajo es texto LEIDO del .sql, no reescrito:
+# por construccion no pueden divergir del codigo que se ejecuta.
+
+procedencia:
+  metodo: extraccion
+  fuente_expr: sql_prod/90_gate/60_filtros.sql
+  fuente_gate: sql_prod/90_gate/70_cal.sql
+  fuente_n_badrate: config/ACUERDOS.md (H1..H99), medidos ANTES de construir
+  nota_grano: >-
+    Los n de gtia_hip y malo_sf se actualizaron al grano del _cal tras S1. Las
+    mediciones previas (J1, J2) armaban el perimetro sin tip_doc, asi que no son
+    comparables: un cliente con dos documentos contaba una vez alli y dos aca.
+    Es la objecion O9 del primer challenger, corregida ahora tambien en filtros.
+
+grano: [codmes_mrm, tip_doc, id_value]
+max_codmes_dato: '202606'
+ventana_construida: ['201901', '202606']   # 90 cohortes, verificado en v1
+
+scope:
+  id: flg_scope_ree
+  expr_ref: "CAST(CASE WHEN mar.id_value IS NOT NULL THEN 1 ELSE 0 END AS INTEGER)"
+  join_pin: "LEFT JOIN ds_stk_ree_pp_11_marca mar ON mar.id_value = po.id_value AND mar.codmes_mrm = po.codmes_mrm"
+  eje_propio: true          # A36: NO alimenta flg_clean
+  n_reenganche: 119255      # H17/H82, delta 0 contra e1b en 2019-2024
+  badrate_reenganche: 0.0342
+  badrate_resto: 0.1697     # H53: el resto es 2.3x-5x peor los 4 anios
+  firmado_por: null
+
+filtros:
+  - id: filtro_gtia_hip
+    expr_ref: "CAST(CASE WHEN gh.codmes = po.codmes_mrm AND gh.flg_gtia_hip = 1 THEN 1 ELSE 0 END AS INTEGER)"
+    join_pin: "LEFT JOIN ds_stk_ree_pp_21_gh gh ON gh.id_value = po.id_value AND gh.tip_doc = po.tip_doc AND gh.codmes = po.codmes_mrm"
+    caso: 3
+    ancla: t0+0
+    en_gate_99: true
+    en_gate_clean: false
+    n: 143
+    n_grano: cal            # medido sobre (codmes_mrm, tip_doc, id_value), el grano del _cal
+    n_j1_otro_grano: 130    # J1 medía sin tip_doc: no comparable (S1/O9)
+    badrate: 0.0
+    evidencia_n: "v9 sobre la tabla construida; J1 daba 130 sin tip_doc en el grano"
+    firmado_por: null
+  - id: filtro_colab
+    expr_ref: "CAST(CASE WHEN cl.codmes = DATE_FORMAT(DATE_ADD('month', -2, DATE_PARSE(po.codmes_mrm, '%Y%m')), '%Y%m') AND cl.flg_colab = 1 THEN 1 ELSE 0 END AS INTEGER)"
+    join_pin: "LEFT JOIN ds_stk_ree_pp_24_colab cl ON cl.id_value = po.id_value AND cl.tip_doc = po.tip_doc AND cl.codmes = DATE_FORMAT(DATE_ADD('month', -2, DATE_PARSE(po.codmes_mrm, '%Y%m')), '%Y%m')"
+    caso: 3
+    ancla: t0-2
+    en_gate_99: true
+    en_gate_clean: false
+    n: 25
+    badrate: 0.0994
+    evidencia_n: "J1/H51 ultimo disparo 202403; K1 br sobre universo n=785"
+    firmado_por: null
+  - id: filtro_malo_sf
+    expr_ref: "CAST(CASE WHEN sf.codmes = po.codmes_mrm AND sf.cond_max > 60 THEN 1 ELSE 0 END AS INTEGER)"
+    join_pin: "LEFT JOIN ds_stk_ree_pp_25_sf sf ON sf.id_value = po.id_value AND sf.tip_doc = po.tip_doc AND sf.codmes = po.codmes_mrm"
+    caso: honesta
+    ancla: t0-1 reestampado a t0
+    en_gate_99: false
+    en_gate_clean: true
+    n: 61
+    n_grano: cal
+    n_j2_otro_grano: 63     # J2 cruzaba sin tip_doc: 4 en 2025 contra 2 aca (S1/O9)
+    badrate: 0.12
+    evidencia_n: "J2 2022 (n=25, el anio con mas n); br_resto 0.0622"
+    firmado_por: null
+  - id: filtro_malo_origen
+    expr_ref: "CAST(CASE WHEN (dm.codmes = po.codmes_mrm AND dm.dm_max > 60) OR (rf.codmes = po.codmes_mrm AND rf.flg_refi = 1) OR (cst.codmes = po.codmes_mrm AND cst.flg_castigo = 1) THEN 1 ELSE 0 END AS INTEGER)"
+    join_pin: "LEFT JOIN ds_stk_ree_pp_20_dm dm ON dm.id_value = po.id_value AND dm.tip_doc = po.tip_doc AND dm.codmes = po.codmes_mrm"
+    caso: honesta
+    ancla: t0+0
+    en_gate_99: false
+    en_gate_clean: true
+    n: 0
+    badrate: null
+    evidencia_n: "J1: 0 en los 87 meses con fuente"
+    firmado_por: null
+  - id: filtro_mto_pend
+    expr_ref: "CAST(CASE WHEN dm.as_of_mes = po.codmes_mrm AND dm.flg_alguna_cta_saldo_cero = 1 THEN 1 ELSE 0 END AS INTEGER)"
+    join_pin: "LEFT JOIN ds_stk_ree_pp_20_dm dm ON dm.id_value = po.id_value AND dm.tip_doc = po.tip_doc AND dm.codmes = po.codmes_mrm"
+    caso: 3
+    ancla: t0+0 via as_of
+    en_gate_99: true
+    en_gate_clean: false
+    n: 10
+    badrate: null
+    evidencia_n: "L1 predicado del Recibido (MAX por cuenta)"
+    firmado_por: null
+  - id: filtro_baja
+    expr_ref: "CAST(CASE WHEN dm.as_of_mes = po.codmes_mrm AND dm.flg_alguna_cta_cuc_nulo = 1 THEN 1 ELSE 0 END AS INTEGER)"
+    join_pin: "LEFT JOIN ds_stk_ree_pp_20_dm dm ON dm.id_value = po.id_value AND dm.tip_doc = po.tip_doc AND dm.codmes = po.codmes_mrm"
+    caso: 3
+    ancla: t0+0 via as_of
+    en_gate_99: false
+    en_gate_clean: false
+    n: 0
+    badrate: null
+    evidencia_n: "L1 + H86: 0 tambien en el UNIVERSO -> fuera del gate (A40)"
+    firmado_por: null
+
+gate:
+  flg_clean_99:    "falla_foto_t0 + filtro_colab + filtro_gtia_hip + filtro_mto_pend"
+  flg_clean_clean: "filtro_malo_origen + filtro_malo_sf = 0"
+  flg_calib:       "WHEN g.flg_clean <> 99 AND g.falla_cruce_pd = 0 AND g.falla_madurez_12 = 0 AND g.falla_dup = 0 THEN 1"
+  fuera_del_gate:  [filtro_baja]   # A40: n=0 tambien en el universo (H86)
+
+controles: [falla_foto_t0, valida_colab, valida_scope, ctrl_asof_igual_codmes, ctrl_n_cuentas, falla_dup]

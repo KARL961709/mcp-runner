@@ -1,0 +1,29 @@
+{
+  "product": "Reenganche",
+  "calibration_method": "beta_cal_additive_probit_driver",
+  "pit_method": "vasicek_individual",
+  "rho_global": 0.038030115964094044,
+  "rho_method": "constant",
+  "rho_basel_ref": 0.059615954138809726,
+  "rho_range": [
+    0.038030115964094044,
+    0.038030115964094044
+  ],
+  "lambda_pit": 1.0,
+  "z1_n": 26348,
+  "z2_n": 18045,
+  "pd_pit_mean_z1": 0.03577503670068057,
+  "pd_pit_mean_z2": 0.02900889413364583,
+  "ft_source": "estimated_univariate",
+  "f_cap_quantile": 0.95,
+  "f_cap_lo": -1.130849559369342,
+  "f_cap_hi": 0.7656842281878754,
+  "f_cap_n_capped": 18,
+  "z1_driver_coefs": {
+    "delta_0": 0.034261721611022956,
+    "driver_betas": {},
+    "selected_drivers": [],
+    "selection_method": "sequential_greedy",
+    "selection_threshold_bps": 30.0
+  }
+}

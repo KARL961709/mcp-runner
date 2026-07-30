@@ -1,0 +1,37 @@
+{
+  "product": "Reenganche",
+  "method": "beta_calibration_kull_2017",
+  "segmentation": "tipo_ingreso_dep",
+  "segments": {
+    "DEP": {
+      "a": 1.4307409240924087,
+      "b": 0.11673242216482149,
+      "m": -1.4235902271832188,
+      "probit_delta": 0.061973725544583,
+      "level_gap_bps": -39.15445412429098,
+      "lra": 0.033157620041753655,
+      "pd_cal_mean": 0.029242174629324557,
+      "pd_ttc_mean": 0.0331576200417536,
+      "n": 9712,
+      "rd_obs": 0.029242174629324547,
+      "monotonic": true,
+      "restriccion_monotona_activa": false
+    },
+    "NO DEP": {
+      "a": 1.12194919105907,
+      "b": 0.5587876581505312,
+      "m": -1.8712301290911784,
+      "probit_delta": 0.10257577255744288,
+      "level_gap_bps": -78.78603785674599,
+      "lra": 0.0432837492533351,
+      "pd_cal_mean": 0.0354051454676605,
+      "pd_ttc_mean": 0.0432837492533351,
+      "n": 16636,
+      "rd_obs": 0.03540514546766049,
+      "monotonic": true,
+      "restriccion_monotona_activa": false
+    }
+  },
+  "level_check_threshold_bps": 0.0,
+  "betacal_monotone": true
+}

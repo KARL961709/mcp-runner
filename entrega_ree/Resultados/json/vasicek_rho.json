@@ -1,0 +1,27 @@
+{
+  "product": "Reenganche",
+  "method": "method_of_moments",
+  "rho_raw": 0.038030115964094044,
+  "rho_final": 0.038030115964094044,
+  "rho_floor": 0.0332,
+  "floor_applied": false,
+  "var_phi_inv_rd": 0.03953358269859782,
+  "n_meses": 66,
+  "covid_excluded": true,
+  "rho_by_segment": {
+    "DEP": {
+      "rho_raw": 0.044421225831895304,
+      "rho_final": 0.044421225831895304,
+      "var_y": 0.04648619981180197,
+      "n_meses": 42,
+      "floor_applied": false
+    },
+    "NO DEP": {
+      "rho_raw": 0.04372668915366505,
+      "rho_final": 0.04372668915366505,
+      "var_y": 0.045726141948859184,
+      "n_meses": 66,
+      "floor_applied": false
+    }
+  }
+}

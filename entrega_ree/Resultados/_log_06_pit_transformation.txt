@@ -1,0 +1,126 @@
+============================================================
+  06 — PIT TRANSFORMATION Reenganche
+============================================================
+Z1: 26,348 | Z2: 18,045
+F centrado sobre 54 meses [201901-202506, excl=lra]  mu=-0.191113
+ρ = 0.038030
+ρ scaling = constant
+PIT method = vasicek_individual
+λ = 1.0
+ρ_eff = 0.038030
+LRA global = 4.2263%
+ft calendario: 92 meses
+F_vasicek mean (pre-center): -0.1911, post-center: -0.021781
+F_vasicek range: [-1.1308, 0.7657]
+F cap [-1.1308, 0.7657] (P5/P95), 18 months capped
+  DEP: a=1.430741, b=0.116732, m=-1.423590, δ=0.061974
+  NO DEP: a=1.121949, b=0.558788, m=-1.871230, δ=0.102576
+
+============================================================
+  CADENA COMPLETA — Z1
+============================================================
+
+  Driver calibration (Z1):
+    Z1 LRA rescale: δ_rescale=+0.010145
+      tipo_ingreso_cs        DEP_CS       2.89% -> 2.96%
+      tipo_ingreso_cs        DEP_NO_CS    4.05% -> 4.14%
+      tipo_ingreso_cs        INDEPENDIENTE 4.87% -> 4.97%
+      tipo_ingreso_cs        MIXTO        3.88% -> 3.96%
+
+    Z1 SEQUENTIAL DRIVER SELECTION (threshold=30.0bps)
+    ────────────────────────────────────────────────────────────
+    R0: RMSE: tipo_ingreso_cs:25   |  max_gap: tipo_ingreso_cs:31
+    STOP R0: RMSE 25.1 < 30.0 y max_gap 30.6 <= 50.0
+    Z1 Selected drivers (0): []
+    Z1 Not selected: ['tipo_ingreso_cs']
+
+    Z1 SIMULTANEOUS OPTIMIZATION (0 drivers)
+
+    Z1 POST-delta0: 1 celda(s) fuera de +-50 bps (peor tipo_ingreso_cs=MIXTO 59.6 bps). DIAGNOSTICO: no se corrige con driver, ver nota abajo. Sobre pd_pit las celdas quedan verdes.
+      delta_0 = +0.034262
+
+    Z1 Calibration check (vs rescaled LRAs):
+      Target                          LRA_adj   Realized  Gap_bps
+      tipo_ingreso_dep=DEP              3.39%      3.55%     +16
+      tipo_ingreso_dep=NO DEP           4.42%      4.62%     +20
+      tipo_ingreso_cs=DEP_CS                  2.96%      3.05%      +9  (monitor)
+      tipo_ingreso_cs=DEP_NO_CS               4.14%      4.62%     +48  (monitor)
+      tipo_ingreso_cs=INDEPENDIENTE           4.97%      5.08%     +11  (monitor)
+      tipo_ingreso_cs=MIXTO                   3.96%      4.56%     +60  (monitor)
+      GLOBAL                            4.23%      4.23%      +0
+
+  pd_ree mean:     21.0958%
+  pd_cal mean:     3.3133%
+  pd_ttc mean:     3.9551%
+  pd_ttc_adj mean: 4.2263%
+  pd_pit mean:     3.5775%
+  RD obs:          3.3133%
+
+  DEP:
+    pd_ttc_adj: 3.5500%
+    pd_pit:     2.9498%
+    RD obs:     2.9242%
+
+  NO DEP:
+    pd_ttc_adj: 4.6212%
+    pd_pit:     3.9440%
+    RD obs:     3.5405%
+
+============================================================
+  CADENA COMPLETA — Z2 (coefs fijos de Z1)
+============================================================
+
+  Applying Z1-fitted driver coefs to Z2:
+    Z2 deltas aplicados: 18,045 de 18,045
+    Z2 pd_ttc mean:     3.4333%
+    Z2 pd_ttc_adj mean: 3.6781%
+
+  pd_ree mean:     18.9021%
+  pd_pit mean:     2.9009%
+  pd_pit asignado: 18,045 de 18,045
+
+Z1+Z2: 44,393
+
+============================================================
+  CONTINUITY CHECK Z1 → Z2
+============================================================
+  codmes     pd_ttc pd_ttc_adj   pd_pit
+  202504      3.56%      3.81%    2.71%
+  202505      3.41%      3.66%    2.58%
+  202506      3.65%      3.91%    2.70%
+  202507      3.77%      4.03%    2.78% <-Z2
+  202508      3.55%      3.80%    3.12% <-Z2
+  202509      3.70%      3.96%    3.55% <-Z2
+
+============================================================
+  TABLA CALIBRACION TTC POR DRIVER (Z1): pd_ttc_adj vs LRA
+============================================================
+  Driver                 Celda                   n      LRA  TTC_adj      Gap    OK
+  ────────────────────── ──────────────── ──────── ──────── ──────── ──────── ─────
+  tipo_ingreso_dep       DEP                 9,712    3.32%    3.55%   +23.4    OK
+  tipo_ingreso_dep       NO DEP             16,636    4.33%    4.62%   +29.3    OK
+  tipo_ingreso_cs        DEP_CS              6,618    2.89%    3.05%   +16.2    OK
+  tipo_ingreso_cs        DEP_NO_CS           3,094    4.05%    4.62%   +57.2     X
+  tipo_ingreso_cs        INDEPENDIENTE       1,962    4.87%    5.08%   +21.2    OK
+  tipo_ingreso_cs        MIXTO              14,674    3.88%    4.56%   +68.2     X
+  GLOBAL                                    26,348    4.23%    4.23%    +0.0    OK
+
+============================================================
+  TABLA PIT POR DRIVER (Z1): pd_pit vs RD_obs
+============================================================
+  Driver                 Celda                   n   RD_obs   PD_pit      Gap    OK
+  ────────────────────── ──────────────── ──────── ──────── ──────── ──────── ─────
+  tipo_ingreso_dep       DEP                 9,712    2.92%    2.95%    +2.6    OK
+  tipo_ingreso_dep       NO DEP             16,636    3.54%    3.94%   +40.3    OK
+  tipo_ingreso_cs        DEP_CS              6,618    2.70%    2.53%   -17.6    OK
+  tipo_ingreso_cs        DEP_NO_CS           3,094    3.39%    3.85%   +45.6    OK
+  tipo_ingreso_cs        INDEPENDIENTE       1,962    4.43%    4.31%   -12.0    OK
+  tipo_ingreso_cs        MIXTO              14,674    3.42%    3.89%   +47.3    OK
+
+Export: C:\Users\CARLOS\Documents\2026\GDM\Calibración\Comportamental PP Reenganche\ENTREGA_REE_FINAL\Resultados\json\pit_transformation.json
+Export: C:\Users\CARLOS\Documents\2026\GDM\Calibración\Comportamental PP Reenganche\ENTREGA_REE_FINAL\Resultados\parquets\full_calibrated.parquet
+Export: C:\Users\CARLOS\Documents\2026\GDM\Calibración\Comportamental PP Reenganche\ENTREGA_REE_FINAL\Resultados\csv\pit_mensual.csv
+
+============================================================
+  06 COMPLETADO — PIT TRANSFORMATION Reenganche
+============================================================

@@ -1,0 +1,3 @@
+03 Macro Reenganche | IPC_Lima_var_12m_lag5_ma6 | meses_fit=66 | R2=0.6110 | DW=0.955 | t_HAC=7.95 | MAE=0.00981
+  F9 regimen (R2 >= 0.45): full=0.611  subida=0.568  bajada=0.699  reciente=0.556  -> PASS
+  export: ft_calendario.csv, macro_model.json

@@ -1,0 +1,5 @@
+00 Load Reenganche | master=119,254 (scope99=178 dirty=58 modo=clean) -> poblacion=119,018
+   rd_hist=100,973 [201901-202506] | Z1=26,348 [202312-202506] (RD=3.31%) | Z2=18,045 [202507-202604]
+  DEP     n= 9,712  RD=2.92%
+  NO DEP  n=16,636  RD=3.54%
+  export: rd_hist/z1/z2.parquet, data_quality.json

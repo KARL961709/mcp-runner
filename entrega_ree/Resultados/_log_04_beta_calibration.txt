@@ -1,0 +1,4 @@
+04 Beta Calibration Reenganche | Z1=26,348 | LRA global=4.2263%
+  DEP     n= 9,712  a=1.4307 b=0.1167 m=-1.4236  pd_cal=2.9242%  LRA=3.3158%  gap=-39.2bps  delta=0.0620  mono=si
+  NO DEP  n=16,636  a=1.1219 b=0.5588 m=-1.8712  pd_cal=3.5405%  LRA=4.3284%  gap=-78.8bps  delta=0.1026  mono=si
+  export: calibracion_beta.json, z1_calibrated.parquet

@@ -1,0 +1,60 @@
+======================================================================
+  11 — CHARTS DOC METODOLOGICO Reenganche
+======================================================================
+Datos cargados: 44,393 obs
+
+  Generando charts...
+  Chart: 01_rd_mensual_ibk
+  Chart: 02_rd_por_driver_dep
+  Chart: 03_rd_por_driver_cs
+  Chart: 04_pit_vs_rd_ibk
+  Chart: 05_cadena_pd_calibracion
+  Chart: 06_backtesting_global
+  Chart: 07_ec_pit_diagnostic
+  Chart: 08_ft_calendario
+  Chart: 09_reliability_ibk
+  Chart: 10_funnel_f1_f8
+  Chart: 11_macro_fitted_vs_observed
+  Chart: 12_monitoring_heatmap
+  Chart: 13_lra_sensitivity
+  Chart: 14_sensibilidad_lambda
+  Chart: 15_profile_ll_lambda
+  Chart: 16_sensibilidad_rho
+  Chart: 17_stress_scenarios
+  Chart: 18_distribucion_pd_raw_vs_pit
+  Chart: 19_stress_macro_curves
+  Chart: 20_sensitivity_backtest
+  Chart: 21_rd_vs_macro
+  Chart: 22_driver_pit_dep
+  Chart: 23_driver_pit_cs
+  Chart: 24_cadena_calibracion_por_driver
+  Chart: 25_rho_desagregado
+
+======================================================================
+  11 COMPLETADO — 25 charts generados
+======================================================================
+  01_rd_mensual_ibk.png (111,481 bytes)
+  02_rd_por_driver_dep.png (167,894 bytes)
+  03_rd_por_driver_cs.png (260,373 bytes)
+  04_pit_vs_rd_ibk.png (195,491 bytes)
+  05_cadena_pd_calibracion.png (207,510 bytes)
+  06_backtesting_global.png (302,241 bytes)
+  07_ec_pit_diagnostic.png (251,100 bytes)
+  08_ft_calendario.png (311,075 bytes)
+  09_reliability_ibk.png (118,940 bytes)
+  10_funnel_f1_f8.png (115,306 bytes)
+  11_macro_fitted_vs_observed.png (230,302 bytes)
+  12_monitoring_heatmap.png (125,571 bytes)
+  13_lra_sensitivity.png (168,821 bytes)
+  14_sensibilidad_lambda.png (118,255 bytes)
+  15_profile_ll_lambda.png (123,242 bytes)
+  16_sensibilidad_rho.png (107,366 bytes)
+  17_stress_scenarios.png (142,511 bytes)
+  18_distribucion_pd_raw_vs_pit.png (119,853 bytes)
+  19_stress_macro_curves.png (202,709 bytes)
+  20_sensitivity_backtest.png (184,436 bytes)
+  21_rd_vs_macro.png (237,783 bytes)
+  22_driver_pit_dep.png (524,219 bytes)
+  23_driver_pit_cs.png (1,009,832 bytes)
+  24_cadena_calibracion_por_driver.png (145,261 bytes)
+  25_rho_desagregado.png (150,442 bytes)

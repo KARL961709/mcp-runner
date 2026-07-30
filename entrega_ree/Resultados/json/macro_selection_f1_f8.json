@@ -1,0 +1,2901 @@
+{
+  "framework": "F1-F8 + Holdout OOT",
+  "universo": "Reenganche IBK",
+  "n_meses": 66,
+  "rango": "201901-202506",
+  "holdout_cutoff": "202210",
+  "n_train": 34,
+  "n_test": 32,
+  "lra": 0.04226346409008948,
+  "rho": 0.038030115964094044,
+  "funnel": {
+    "total": 18880,
+    "F1_relevancia": 16376,
+    "F2_disponibilidad": 11806,
+    "F3_correlacion_signo": 1210,
+    "F4_granger": 575,
+    "F5_cointegracion": 463,
+    "F6_buenos_malos": 463,
+    "F7_robustez": 463,
+    "F8_regimen": 2
+  },
+  "regimen": {
+    "r2_min": 0.45,
+    "windows": {
+      "full": [
+        "201901",
+        "202506"
+      ],
+      "subida": [
+        "202101",
+        "202305"
+      ],
+      "bajada": [
+        "202306",
+        "202506"
+      ],
+      "reciente": [
+        "202401",
+        "202506"
+      ]
+    },
+    "r2_by_var": {
+      "IPC_Lima_indice": {
+        "full": 0.5731655277045458,
+        "subida": 0.6594907622744037,
+        "bajada": 0.7448208719287953,
+        "reciente": 0.018514452259927348
+      },
+      "IPC_sin_alimentos_energia": {
+        "full": 0.43317233628033186,
+        "subida": 0.5296028437804624,
+        "bajada": 0.2795825596921742,
+        "reciente": 0.11483056392007537
+      },
+      "Credito_banca_var_ME": {
+        "full": 0.467372682551781,
+        "subida": 0.6901254046523283,
+        "bajada": 0.23886947821784402,
+        "reciente": 0.18821248401339483
+      },
+      "Inversion_bruta_fija_var_pct_lag2_ma12": {
+        "full": 0.38939595394289206,
+        "subida": 0.3693088955467087,
+        "bajada": 0.7542991711377733,
+        "reciente": 0.015519353130964272
+      },
+      "Inversion_bruta_fija_var_pct_lag3_ma12": {
+        "full": 0.45237270173721306,
+        "subida": 0.4356657579300344,
+        "bajada": 0.7739389586387722,
+        "reciente": 0.0026817743923794354
+      },
+      "Inversion_bruta_fija_var_pct_lag6_ma3": {
+        "full": 0.29691632711429017,
+        "subida": 0.15704882021403152,
+        "bajada": 0.49777005904314925,
+        "reciente": 0.3081646643190341
+      },
+      "Inversion_bruta_fija_var_pct_lag6_ma6": {
+        "full": 0.45707865670716386,
+        "subida": 0.37828090873537656,
+        "bajada": 0.6671320918782166,
+        "reciente": 0.3963986219332241
+      },
+      "Inversion_bruta_fija_var_pct_lag6_ma12": {
+        "full": 0.5348749558650217,
+        "subida": 0.6315772414657123,
+        "bajada": 0.7273600527236131,
+        "reciente": 0.003846617937906252
+      },
+      "IPC_Lima_var_12m_lag2_ma3": {
+        "full": 0.26324187243232416,
+        "subida": 0.2548849547220077,
+        "bajada": 0.14478703558224004,
+        "reciente": 0.10138936646543714
+      },
+      "IPC_Lima_var_12m_lag2_ma6": {
+        "full": 0.49156064258487286,
+        "subida": 0.4789530252725474,
+        "bajada": 0.5697009385264756,
+        "reciente": 0.05326240384183071
+      },
+      "IPC_Lima_var_12m_lag2_ma12": {
+        "full": 0.6053500840266565,
+        "subida": 0.629486685107383,
+        "bajada": 0.7582533042670202,
+        "reciente": 0.035050150079013465
+      },
+      "IPC_Lima_var_12m_lag3_ma3": {
+        "full": 0.3292975541752245,
+        "subida": 0.25694472692253906,
+        "bajada": 0.3283562464951562,
+        "reciente": 0.009018960515155825
+      },
+      "IPC_Lima_var_12m_lag3_ma6": {
+        "full": 0.531258233686382,
+        "subida": 0.47836877819090196,
+        "bajada": 0.6260239427813629,
+        "reciente": 0.06204242980168409
+      },
+      "IPC_Lima_var_12m_lag3_ma12": {
+        "full": 0.5817416233953342,
+        "subida": 0.5872995321230647,
+        "bajada": 0.717649686618171,
+        "reciente": 0.004245402099749092
+      },
+      "IPC_Lima_var_12m_lag6_ma3": {
+        "full": 0.4614989543934432,
+        "subida": 0.4125445300224959,
+        "bajada": 0.4256691267740966,
+        "reciente": 0.15210270252952063
+      },
+      "IPC_Lima_var_12m_lag6_ma6": {
+        "full": 0.5612922654635929,
+        "subida": 0.5527138609632499,
+        "bajada": 0.5949735924315618,
+        "reciente": 0.22874992905664146
+      },
+      "IPC_Lima_var_12m_lag6_ma12": {
+        "full": 0.45155080433837663,
+        "subida": 0.5448809129418742,
+        "bajada": 0.5990368121795985,
+        "reciente": 0.017704138739396493
+      },
+      "IPC_Lima_indice_lag2": {
+        "full": 0.6008205106220543,
+        "subida": 0.6268714821639825,
+        "bajada": 0.760661293557463,
+        "reciente": 0.03471219000555197
+      },
+      "IPC_Lima_indice_lag2_ma3": {
+        "full": 0.5787594421938709,
+        "subida": 0.6040109845402903,
+        "bajada": 0.7249184644306184,
+        "reciente": 0.00611818855985284
+      },
+      "IPC_Lima_indice_lag2_ma6": {
+        "full": 0.5240418291747583,
+        "subida": 0.5856263977433067,
+        "bajada": 0.6687201307958868,
+        "reciente": 0.008982445238651767
+      },
+      "IPC_Lima_indice_lag2_ma12": {
+        "full": 0.34853766992537855,
+        "subida": 0.5701119869698911,
+        "bajada": 0.5214350496471738,
+        "reciente": 0.009010282582446296
+      },
+      "IPC_Lima_indice_lag3": {
+        "full": 0.5707427716562604,
+        "subida": 0.5852639701946805,
+        "bajada": 0.7213664608159347,
+        "reciente": 0.004266531176608275
+      },
+      "IPC_Lima_indice_lag3_ma3": {
+        "full": 0.5381538894092079,
+        "subida": 0.5766344892694466,
+        "bajada": 0.6856565117872935,
+        "reciente": 0.002009574159866987
+      },
+      "IPC_Lima_indice_lag3_ma6": {
+        "full": 0.4689645933915532,
+        "subida": 0.5685725087246339,
+        "bajada": 0.6191483023068252,
+        "reciente": 0.0066350092512686846
+      },
+      "IPC_Lima_indice_lag3_ma12": {
+        "full": 0.2860027841876222,
+        "subida": 0.5526850099716374,
+        "bajada": 0.478167770725919,
+        "reciente": 0.009007297794999623
+      },
+      "IPC_Lima_indice_lag6": {
+        "full": 0.4360324283705091,
+        "subida": 0.5428315239623849,
+        "bajada": 0.6020914325175699,
+        "reciente": 0.01751457095552914
+      },
+      "IPC_Lima_indice_lag6_ma3": {
+        "full": 0.3757889889385004,
+        "subida": 0.5391402007310236,
+        "bajada": 0.542469986858019,
+        "reciente": 0.010711049733324863
+      },
+      "IPC_Lima_indice_lag6_ma6": {
+        "full": 0.2779951809586514,
+        "subida": 0.5381852058022372,
+        "bajada": 0.4637147227109482,
+        "reciente": 0.010716757322265923
+      },
+      "IPC_Lima_indice_lag6_dev_ma12": {
+        "full": 0.3667141559875862,
+        "subida": 0.26472716601426416,
+        "bajada": 0.342613038501134,
+        "reciente": 0.020265028998422977
+      },
+      "IPC_alimentos_var_12m_lag2_ma12": {
+        "full": 0.5597296020520208,
+        "subida": 0.6191608834872293,
+        "bajada": 0.6593272826048847,
+        "reciente": 0.12340681643590959
+      },
+      "IPC_alimentos_var_12m_lag3_ma6": {
+        "full": 0.3023920101219576,
+        "subida": 0.3199738342086544,
+        "bajada": 0.10525810849068351,
+        "reciente": 0.03413650556830985
+      },
+      "IPC_alimentos_var_12m_lag3_ma12": {
+        "full": 0.5896845314360035,
+        "subida": 0.6052564833591361,
+        "bajada": 0.7537020713898516,
+        "reciente": 0.1693545394056517
+      },
+      "IPC_alimentos_var_12m_lag6_ma3": {
+        "full": 0.3762370654132742,
+        "subida": 0.4024887645192144,
+        "bajada": 0.1555414412753878,
+        "reciente": 0.15483180378227263
+      },
+      "IPC_alimentos_var_12m_lag6_ma6": {
+        "full": 0.618183304998379,
+        "subida": 0.6731571217065063,
+        "bajada": 0.4490088623091803,
+        "reciente": 0.4620565162534023
+      },
+      "IPC_alimentos_var_12m_lag6_ma12": {
+        "full": 0.5751502983577239,
+        "subida": 0.584292251058837,
+        "bajada": 0.7484504920951154,
+        "reciente": 0.14597758848474723
+      },
+      "IPC_sin_alimentos_energia_lag2": {
+        "full": 0.5550455102886267,
+        "subida": 0.615935898222306,
+        "bajada": 0.6599939737313434,
+        "reciente": 0.12385233270124336
+      },
+      "IPC_sin_alimentos_energia_lag2_ma3": {
+        "full": 0.591672003297333,
+        "subida": 0.6132964462153876,
+        "bajada": 0.7800157241298834,
+        "reciente": 0.2256191415787023
+      },
+      "IPC_sin_alimentos_energia_lag2_ma6": {
+        "full": 0.6151002710984894,
+        "subida": 0.6101220825181544,
+        "bajada": 0.8351360758143486,
+        "reciente": 0.34143785462091686
+      },
+      "IPC_sin_alimentos_energia_lag2_ma12": {
+        "full": 0.4970266537218447,
+        "subida": 0.5744258356327216,
+        "bajada": 0.7002359887342748,
+        "reciente": 0.0008870822919886904
+      },
+      "IPC_sin_alimentos_energia_lag3": {
+        "full": 0.582086189231821,
+        "subida": 0.6023634086638066,
+        "bajada": 0.7536982040864746,
+        "reciente": 0.17000729418111557
+      },
+      "IPC_sin_alimentos_energia_lag3_ma3": {
+        "full": 0.6047473720863827,
+        "subida": 0.6003808340713352,
+        "bajada": 0.8115655912558412,
+        "reciente": 0.3225341551157356
+      },
+      "IPC_sin_alimentos_energia_lag3_ma6": {
+        "full": 0.5959355467091239,
+        "subida": 0.5955051121548238,
+        "bajada": 0.8098908534344965,
+        "reciente": 0.18297084908351868
+      },
+      "IPC_sin_alimentos_energia_lag3_ma12": {
+        "full": 0.43105935119441896,
+        "subida": 0.5459512165702977,
+        "bajada": 0.6462475908730279,
+        "reciente": 1.0616462591280448e-05
+      },
+      "IPC_sin_alimentos_energia_lag6": {
+        "full": 0.5737349957036175,
+        "subida": 0.5823477530606809,
+        "bajada": 0.7487269498920881,
+        "reciente": 0.14641403435056252
+      },
+      "IPC_sin_alimentos_energia_lag6_ma3": {
+        "full": 0.5303504948773825,
+        "subida": 0.5642851241207902,
+        "bajada": 0.7229155656259889,
+        "reciente": 0.0179693218491024
+      },
+      "IPC_sin_alimentos_energia_lag6_ma6": {
+        "full": 0.43442238046931103,
+        "subida": 0.5487984249807388,
+        "bajada": 0.640122760239431,
+        "reciente": 0.0013422320178096306
+      },
+      "Inflacion_subyacente_var_12m_lag2_ma6": {
+        "full": 0.3577560410049034,
+        "subida": 0.4579349642060516,
+        "bajada": 0.24999950697578077,
+        "reciente": 0.04145061282449125
+      },
+      "Inflacion_subyacente_var_12m_lag2_ma12": {
+        "full": 0.5060714226497804,
+        "subida": 0.566499279125335,
+        "bajada": 0.7617907357594678,
+        "reciente": 0.08890112655423417
+      },
+      "Inflacion_subyacente_var_12m_lag3_ma6": {
+        "full": 0.39677488878818307,
+        "subida": 0.4640246739262303,
+        "bajada": 0.36869101786665565,
+        "reciente": 0.0745791029603985
+      },
+      "Inflacion_subyacente_var_12m_lag3_ma12": {
+        "full": 0.4604249331832963,
+        "subida": 0.5385227300424995,
+        "bajada": 0.7907798672409306,
+        "reciente": 0.1005526514819845
+      },
+      "Inflacion_subyacente_var_12m_lag6_ma3": {
+        "full": 0.3624112837762088,
+        "subida": 0.4560167078512653,
+        "bajada": 0.29144551083200837,
+        "reciente": 0.24420519752499115
+      },
+      "Inflacion_no_subyacente_var_12m_lag2": {
+        "full": 0.34912418914395776,
+        "subida": 0.31499750632175405,
+        "bajada": 0.545607728147086,
+        "reciente": 0.005065190913686874
+      },
+      "Inflacion_no_subyacente_var_12m_lag2_ma3": {
+        "full": 0.4211298868227603,
+        "subida": 0.39889970682978876,
+        "bajada": 0.6862741869746616,
+        "reciente": 0.017313487074894926
+      },
+      "Inflacion_no_subyacente_var_12m_lag2_ma6": {
+        "full": 0.5058197357411459,
+        "subida": 0.47385882346328706,
+        "bajada": 0.7741373869807446,
+        "reciente": 0.0007011904913353687
+      },
+      "Inflacion_no_subyacente_var_12m_lag2_ma12": {
+        "full": 0.6100049365103355,
+        "subida": 0.5529748151272923,
+        "bajada": 0.7126693445135542,
+        "reciente": 0.0016612757760140916
+      },
+      "Inflacion_no_subyacente_var_12m_lag3": {
+        "full": 0.4160713086554991,
+        "subida": 0.4008290399768219,
+        "bajada": 0.6145279043323675,
+        "reciente": 0.021719270737424697
+      },
+      "Inflacion_no_subyacente_var_12m_lag3_ma3": {
+        "full": 0.47782945618353556,
+        "subida": 0.4398056496088076,
+        "bajada": 0.7192078272693786,
+        "reciente": 0.0005578382714953554
+      },
+      "Inflacion_no_subyacente_var_12m_lag3_ma6": {
+        "full": 0.5464596123894776,
+        "subida": 0.49405984677146175,
+        "bajada": 0.7643892848233197,
+        "reciente": 0.0028913451229779677
+      },
+      "Inflacion_no_subyacente_var_12m_lag3_ma12": {
+        "full": 0.6174094285024772,
+        "subida": 0.5468714834570677,
+        "bajada": 0.6832116798660358,
+        "reciente": 0.0011480736849896192
+      },
+      "Inflacion_no_subyacente_var_12m_lag6": {
+        "full": 0.5513810424030503,
+        "subida": 0.48191850624387117,
+        "bajada": 0.7192243658816595,
+        "reciente": 0.011581826166082882
+      },
+      "Inflacion_no_subyacente_var_12m_lag6_ma3": {
+        "full": 0.5717314732407114,
+        "subida": 0.48823223961308965,
+        "bajada": 0.7114042151593459,
+        "reciente": 0.0028038838238611786
+      },
+      "Inflacion_no_subyacente_var_12m_lag6_ma6": {
+        "full": 0.5931326096869955,
+        "subida": 0.5051660072453624,
+        "bajada": 0.6878578677883234,
+        "reciente": 0.0004886344102226005
+      },
+      "Inflacion_no_subyacente_var_12m_lag6_ma12": {
+        "full": 0.5468265915401941,
+        "subida": 0.5190490586831926,
+        "bajada": 0.5789090444225994,
+        "reciente": 0.0022240342309382895
+      },
+      "Tasa_consumo_hasta1a_MN_lag2_dev_ma3": {
+        "full": 0.4828754467641729,
+        "subida": 0.47225036262985026,
+        "bajada": 0.6354597078982536,
+        "reciente": 0.18168901378932087
+      },
+      "Tasa_consumo_hasta1a_MN_lag2_dev_ma12": {
+        "full": 0.4486960214741387,
+        "subida": 0.5912806445170697,
+        "bajada": 0.7029479169188431,
+        "reciente": 0.07954397039382986
+      },
+      "Tasa_consumo_hasta1a_MN_lag2_mom3": {
+        "full": 0.4800540076193712,
+        "subida": 0.5757836947976366,
+        "bajada": 0.7568943331449722,
+        "reciente": 0.21866798052310882
+      },
+      "Tasa_consumo_hasta1a_MN_lag2_mom6": {
+        "full": 0.49504764736919804,
+        "subida": 0.5224001705368412,
+        "bajada": 0.7743016039252092,
+        "reciente": 0.07659512967189569
+      },
+      "Tasa_consumo_hasta1a_MN_lag3_dev_ma3": {
+        "full": 0.5124153230646908,
+        "subida": 0.5296806277007619,
+        "bajada": 0.6559806567077274,
+        "reciente": 0.17167411196265422
+      },
+      "Tasa_consumo_hasta1a_MN_lag3_dev_ma12": {
+        "full": 0.3602663874133044,
+        "subida": 0.5849245673569223,
+        "bajada": 0.6638638960058764,
+        "reciente": 0.0488735928321577
+      },
+      "Tasa_consumo_hasta1a_MN_lag6_mom6": {
+        "full": 0.26279787472608773,
+        "subida": 0.4001700926378308,
+        "bajada": 0.6608688355045189,
+        "reciente": 0.013645911294319394
+      },
+      "Tasa_consumo_mas1a_MN_lag2_mom6": {
+        "full": 0.401945597938349,
+        "subida": 0.47524602769702107,
+        "bajada": 0.7703289775112516,
+        "reciente": 0.03876952388769005
+      },
+      "Tasa_consumo_mas1a_MN_lag3_mom6": {
+        "full": 0.3575412214569859,
+        "subida": 0.4495286364287597,
+        "bajada": 0.7673753057697076,
+        "reciente": 0.03433108976630892
+      },
+      "Tasa_tarjeta_credito_MN_lag2_dev_ma3": {
+        "full": 0.451554674835792,
+        "subida": 0.4688582872821193,
+        "bajada": 0.45827418457923147,
+        "reciente": 0.017561926358289497
+      },
+      "Tasa_tarjeta_credito_MN_lag2_dev_ma12": {
+        "full": 0.4468145033702049,
+        "subida": 0.6252245150376471,
+        "bajada": 0.6334984476303724,
+        "reciente": 0.08121317138671455
+      },
+      "Tasa_tarjeta_credito_MN_lag2_mom3": {
+        "full": 0.3489634569682622,
+        "subida": 0.33726068241110346,
+        "bajada": 0.7397638476758253,
+        "reciente": 0.16306731553515083
+      },
+      "Tasa_tarjeta_credito_MN_lag2_mom6": {
+        "full": 0.41150584096817794,
+        "subida": 0.4177895523900135,
+        "bajada": 0.797475073772767,
+        "reciente": 0.11314080342130604
+      },
+      "Tasa_tarjeta_credito_MN_lag3_dev_ma12": {
+        "full": 0.37331871166866293,
+        "subida": 0.6463217169245177,
+        "bajada": 0.6164926575532004,
+        "reciente": 0.09193083564411159
+      },
+      "Tasa_tarjeta_credito_MN_lag3_mom3": {
+        "full": 0.3654121547299621,
+        "subida": 0.35412932174765294,
+        "bajada": 0.7780383461807967,
+        "reciente": 0.1985191097518172
+      },
+      "Tasa_tarjeta_credito_MN_lag3_mom6": {
+        "full": 0.41498907987462147,
+        "subida": 0.4256265122304893,
+        "bajada": 0.8118604534251683,
+        "reciente": 0.11617152892472833
+      },
+      "Tasa_tarjeta_credito_MN_lag6_dev_ma3": {
+        "full": 0.2985644380624899,
+        "subida": 0.5683859505951646,
+        "bajada": 0.4944159677760566,
+        "reciente": 0.040606027072470414
+      },
+      "Tasa_tarjeta_credito_MN_lag6_mom3": {
+        "full": 0.33103737778272874,
+        "subida": 0.40862563705587746,
+        "bajada": 0.7310026231742649,
+        "reciente": 0.034986285001243116
+      },
+      "Tasa_prestamo_personal_MN_lag2_dev_ma3": {
+        "full": 0.2851833528286445,
+        "subida": 0.31216617365869626,
+        "bajada": 0.14201507331625424,
+        "reciente": 0.009091563021706967
+      },
+      "Tasa_prestamo_personal_MN_lag2_dev_ma12": {
+        "full": 0.5142936069071198,
+        "subida": 0.5837150509557518,
+        "bajada": 0.6605765709921103,
+        "reciente": 0.11178366721732232
+      },
+      "Tasa_prestamo_personal_MN_lag3_dev_ma3": {
+        "full": 0.3233737674012642,
+        "subida": 0.3603701826375663,
+        "bajada": 0.24069215952318634,
+        "reciente": 0.025465339838919267
+      },
+      "Tasa_prestamo_personal_MN_lag3_dev_ma12": {
+        "full": 0.48973257111601354,
+        "subida": 0.6230532114312436,
+        "bajada": 0.703885999981511,
+        "reciente": 0.14241487170360725
+      },
+      "Tasa_prestamo_personal_MN_lag6_dev_ma3": {
+        "full": 0.3096244584073136,
+        "subida": 0.3359362426358159,
+        "bajada": 0.5700764890853979,
+        "reciente": 0.23309925940845916
+      },
+      "Tasa_prestamo_personal_MN_lag6_mom6": {
+        "full": 0.3501057019274802,
+        "subida": 0.34812377113630927,
+        "bajada": 0.7053559081825359,
+        "reciente": 0.2339889450360677
+      },
+      "Tasa_TC_banca_MN_lag2_dev_ma3": {
+        "full": 0.46472145982672564,
+        "subida": 0.43546677832574016,
+        "bajada": 0.44904397803580465,
+        "reciente": 0.0661495032002429
+      },
+      "Tasa_TC_banca_MN_lag2_dev_ma12": {
+        "full": 0.5192512058107372,
+        "subida": 0.543813771525401,
+        "bajada": 0.6982785744943766,
+        "reciente": 0.0370222348501555
+      },
+      "Tasa_TC_banca_MN_lag2_mom3": {
+        "full": 0.43610088177231754,
+        "subida": 0.4395744465652501,
+        "bajada": 0.5734733915160493,
+        "reciente": 0.10372266452436346
+      },
+      "Tasa_TC_banca_MN_lag2_mom6": {
+        "full": 0.4970855079307891,
+        "subida": 0.5120546055644056,
+        "bajada": 0.732697219214981,
+        "reciente": 0.046215738258884746
+      },
+      "Tasa_TC_banca_MN_lag3_dev_ma3": {
+        "full": 0.4720277089593125,
+        "subida": 0.4700404619240822,
+        "bajada": 0.49599932976042244,
+        "reciente": 0.09500464408750023
+      },
+      "Tasa_TC_banca_MN_lag3_dev_ma12": {
+        "full": 0.44566215689640964,
+        "subida": 0.5228383757536592,
+        "bajada": 0.6878898344513062,
+        "reciente": 0.03249262478590328
+      },
+      "Tasa_TC_banca_MN_lag3_mom3": {
+        "full": 0.4415084522987872,
+        "subida": 0.46140438534943884,
+        "bajada": 0.6369499653066542,
+        "reciente": 0.05752928357384692
+      },
+      "Tasa_TC_banca_MN_lag3_mom6": {
+        "full": 0.46500146762002176,
+        "subida": 0.48800159619286065,
+        "bajada": 0.7425624985883323,
+        "reciente": 0.022184869044180166
+      },
+      "Tasa_prestamo_financieras_MN_lag6_z12": {
+        "full": 0.296622581469123,
+        "subida": 0.59068220626206,
+        "bajada": 0.2291550197058437,
+        "reciente": 0.0002950972552588421
+      },
+      "Credito_SF_MN_lag2_accel": {
+        "full": 0.2616522209010145,
+        "subida": 0.44010943280991616,
+        "bajada": 0.02739107502409178,
+        "reciente": 0.051669879918788686
+      },
+      "Credito_SF_MN_lag3_dev_ma12": {
+        "full": 0.4620535298666501,
+        "subida": 0.6950341228742803,
+        "bajada": 0.0006612096517666054,
+        "reciente": 0.09635992073376895
+      },
+      "Credito_SF_MN_lag3_z12": {
+        "full": 0.3538876803090618,
+        "subida": 0.6445254068544378,
+        "bajada": 0.0017482815159804341,
+        "reciente": 0.11590328206206098
+      },
+      "Credito_SF_MN_lag3_accel": {
+        "full": 0.34488062386366913,
+        "subida": 0.5506635385096953,
+        "bajada": 0.0005645560389004854,
+        "reciente": 0.10252722552910179
+      },
+      "Credito_SF_MN_lag6_dev_ma12": {
+        "full": 0.4897274623529981,
+        "subida": 0.5020914345452974,
+        "bajada": 0.5037088839264084,
+        "reciente": 0.039398072197783955
+      },
+      "Credito_SF_MN_lag6_z12": {
+        "full": 0.5687977540392236,
+        "subida": 0.583494655260365,
+        "bajada": 0.47068405354954795,
+        "reciente": 0.03648838847386573
+      },
+      "Credito_SF_var_total_lag6_dev_ma12": {
+        "full": 0.2802470362766205,
+        "subida": 0.4198661016161038,
+        "bajada": 0.01649642967696042,
+        "reciente": 0.04871184181050708
+      },
+      "Dolarizacion_credito_lag2_dev_ma12": {
+        "full": 0.29278646951817267,
+        "subida": 0.5333767053154937,
+        "bajada": 0.0012609795090254175,
+        "reciente": 0.004023663907523164
+      },
+      "Credito_empresas_var_anual_lag2_dev_ma12": {
+        "full": 0.33665521919496727,
+        "subida": 0.24417610565848594,
+        "bajada": 0.4907649801874259,
+        "reciente": 0.0051655856150750286
+      },
+      "Credito_empresas_var_anual_lag2_z12": {
+        "full": 0.44082370233421303,
+        "subida": 0.48445132537119456,
+        "bajada": 0.5540640261620546,
+        "reciente": 0.0164142868813976
+      },
+      "Credito_empresas_var_anual_lag3_z12": {
+        "full": 0.5247356124629219,
+        "subida": 0.666277040198502,
+        "bajada": 0.45168626256578637,
+        "reciente": 0.01817638602187107
+      },
+      "Credito_empresas_var_anual_lag6_z12": {
+        "full": 0.5189306385068813,
+        "subida": 0.6275984740895635,
+        "bajada": 0.3355073153872467,
+        "reciente": 0.012217435813403496
+      },
+      "Credito_hipotecario_var_anual_lag2_dev_ma12": {
+        "full": 0.37267998789037654,
+        "subida": 0.6790998888160918,
+        "bajada": 0.02578610186061489,
+        "reciente": 0.09675866237619155
+      },
+      "Credito_hipotecario_var_anual_lag3_mom6": {
+        "full": 0.2833451965029565,
+        "subida": 0.4930747191757562,
+        "bajada": 0.0003197687279582781,
+        "reciente": 0.023183360540341612
+      },
+      "Credito_hipotecario_var_anual_lag6_dev_ma12": {
+        "full": 0.2840130202195866,
+        "subida": 0.6918590623005196,
+        "bajada": 0.26467987144936295,
+        "reciente": 8.689891608418255e-06
+      },
+      "Credito_hipotecario_var_anual_lag6_mom6": {
+        "full": 0.29717689843002926,
+        "subida": 0.6660028542828546,
+        "bajada": 0.05823234626773405,
+        "reciente": 0.025293852149542887
+      },
+      "Dolarizacion_credito_tipo_lag6_dev_ma12": {
+        "full": 0.49639223173908353,
+        "subida": 0.5121467488136863,
+        "bajada": 0.4730192744949406,
+        "reciente": 0.10902953157626885
+      },
+      "Dolarizacion_credito_tipo_lag6_z12": {
+        "full": 0.4226181806931831,
+        "subida": 0.4283031785979758,
+        "bajada": 0.27132920681780043,
+        "reciente": 0.21403360988808345
+      },
+      "Credito_consumo_TC_lag6": {
+        "full": 0.3590764531576438,
+        "subida": 0.6183309460334389,
+        "bajada": 0.7652158542598781,
+        "reciente": 0.1438542488156943
+      },
+      "Credito_consumo_TC_lag6_z12": {
+        "full": 0.42776873028073586,
+        "subida": 0.6234097805626783,
+        "bajada": 0.030232216160333267,
+        "reciente": 0.41889313092038777
+      },
+      "Credito_banca_total_lag2_z12": {
+        "full": 0.5030074272580275,
+        "subida": 0.4832078204222428,
+        "bajada": 0.4627744089070821,
+        "reciente": 0.010621125440396634
+      },
+      "Credito_banca_var_MN_lag6_ma12": {
+        "full": 0.4041823712026785,
+        "subida": 0.350853517867087,
+        "bajada": 0.7097630523103303,
+        "reciente": 0.05416677717231498
+      },
+      "Credito_banca_var_MN_lag6_dev_ma12": {
+        "full": 0.3105062868934515,
+        "subida": 0.5448364156231681,
+        "bajada": 0.4501631352045322,
+        "reciente": 0.02320162668696146
+      },
+      "Credito_banca_var_MN_lag6_z12": {
+        "full": 0.3329703354523509,
+        "subida": 0.6421951097726538,
+        "bajada": 0.21571348902267548,
+        "reciente": 0.0331544710619681
+      },
+      "Credito_banca_var_ME_lag2_accel": {
+        "full": 0.2505957482987153,
+        "subida": 0.3860899126803433,
+        "bajada": 0.04509706025511138,
+        "reciente": 0.0007134288620406965
+      },
+      "Credito_banca_var_ME_lag3_dev_ma12": {
+        "full": 0.40969747936917,
+        "subida": 0.5824347961788838,
+        "bajada": 0.0013994951821672762,
+        "reciente": 0.06291446152389779
+      },
+      "Credito_banca_var_ME_lag3_z12": {
+        "full": 0.36621607187896665,
+        "subida": 0.601783994709998,
+        "bajada": 0.000587583250402718,
+        "reciente": 0.09340103283075556
+      },
+      "Credito_banca_var_ME_lag3_accel": {
+        "full": 0.3381951114871377,
+        "subida": 0.5011300970611328,
+        "bajada": 0.0037223092786680054,
+        "reciente": 0.02215797483541609
+      },
+      "Credito_banca_var_ME_lag6_dev_ma12": {
+        "full": 0.4720222977696638,
+        "subida": 0.47151144200233414,
+        "bajada": 0.4439467877737484,
+        "reciente": 0.004281120308330707
+      },
+      "Credito_banca_var_ME_lag6_z12": {
+        "full": 0.5628896091537468,
+        "subida": 0.5781072992494043,
+        "bajada": 0.49214315506612694,
+        "reciente": 0.0031543800939229203
+      },
+      "Emision_primaria_lag2_z12": {
+        "full": 0.25549575580802547,
+        "subida": 0.4769158381609849,
+        "bajada": 0.08701430771257435,
+        "reciente": 0.011375854896862126
+      },
+      "Cuasidinero_ME_lag2_z12": {
+        "full": 0.2733846051006639,
+        "subida": 0.23301241490192284,
+        "bajada": 0.5126031484342667,
+        "reciente": 0.03467557967024731
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag2_dev_ma12": {
+        "full": 0.3323797922050488,
+        "subida": 0.5534652970214161,
+        "bajada": 0.559295052387033,
+        "reciente": 0.007029342787965023
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag2_z12": {
+        "full": 0.25420931916819606,
+        "subida": 0.3625910034290761,
+        "bajada": 0.2382519340156459,
+        "reciente": 0.01595384522901206
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag2_mom6": {
+        "full": 0.3361154590827697,
+        "subida": 0.41494954415982116,
+        "bajada": 0.6389749445092263,
+        "reciente": 0.0020336245089971295
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag3_dev_ma12": {
+        "full": 0.3102293389046409,
+        "subida": 0.5908321742039183,
+        "bajada": 0.5377555228714394,
+        "reciente": 0.014991694637545988
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag3_z12": {
+        "full": 0.26741743452810673,
+        "subida": 0.3818216442904441,
+        "bajada": 0.2516836510542392,
+        "reciente": 9.149840410210151e-05
+      },
+      "Ratio_credito_consumo_total_lag6_ma12": {
+        "full": 0.4348216408085897,
+        "subida": 0.37513331711405884,
+        "bajada": 0.677007734719791,
+        "reciente": 0.014528139150310723
+      },
+      "Inversion_bruta_fija_var_pct_lag1_ma12": {
+        "full": 0.33387382093866436,
+        "subida": 0.28393866767471365,
+        "bajada": 0.7322208065632714,
+        "reciente": 0.10540739483708296
+      },
+      "Inversion_bruta_fija_var_pct_lag4_ma6": {
+        "full": 0.2780761193211343,
+        "subida": 0.14794860215591876,
+        "bajada": 0.4537483054265599,
+        "reciente": 0.12711620171963026
+      },
+      "Inversion_bruta_fija_var_pct_lag4_ma12": {
+        "full": 0.43144487180150154,
+        "subida": 0.5031682869705743,
+        "bajada": 0.779467455691832,
+        "reciente": 0.004537356321879718
+      },
+      "Inversion_bruta_fija_var_pct_lag5_ma6": {
+        "full": 0.3892273004393641,
+        "subida": 0.2717772277166603,
+        "bajada": 0.62185045180752,
+        "reciente": 0.3350761026085602
+      },
+      "Inversion_bruta_fija_var_pct_lag5_ma12": {
+        "full": 0.44571679259735747,
+        "subida": 0.5679995944977281,
+        "bajada": 0.7685834819096593,
+        "reciente": 0.00229583010092905
+      },
+      "Inversion_bruta_fija_var_pct_lag7": {
+        "full": 0.26474685148589233,
+        "subida": 0.13572781834438735,
+        "bajada": 0.46523368638201806,
+        "reciente": 0.38500432285732955
+      },
+      "Inversion_bruta_fija_var_pct_lag7_ma3": {
+        "full": 0.3924721731353431,
+        "subida": 0.2747966487600434,
+        "bajada": 0.5572125843983826,
+        "reciente": 0.3680797162204991
+      },
+      "Inversion_bruta_fija_var_pct_lag7_ma6": {
+        "full": 0.4753377669963685,
+        "subida": 0.44028651302944866,
+        "bajada": 0.6138580821490792,
+        "reciente": 0.2497212692630003
+      },
+      "Inversion_bruta_fija_var_pct_lag7_ma12": {
+        "full": 0.4630942156322808,
+        "subida": 0.6818226503498206,
+        "bajada": 0.6976785652618119,
+        "reciente": 0.006581958630878762
+      },
+      "Inversion_bruta_fija_var_pct_lag8": {
+        "full": 0.3305167564651638,
+        "subida": 0.21091602149536284,
+        "bajada": 0.4158698354205832,
+        "reciente": 0.3038694286858969
+      },
+      "Inversion_bruta_fija_var_pct_lag8_ma3": {
+        "full": 0.44607520000439865,
+        "subida": 0.37166565810809804,
+        "bajada": 0.4998245030250463,
+        "reciente": 0.28262561196575564
+      },
+      "Inversion_bruta_fija_var_pct_lag8_ma6": {
+        "full": 0.44180707513114753,
+        "subida": 0.4381939688093745,
+        "bajada": 0.5255895837774552,
+        "reciente": 0.049926985178436925
+      },
+      "Inversion_bruta_fija_var_pct_lag8_ma12": {
+        "full": 0.4321936197397878,
+        "subida": 0.7215322620462993,
+        "bajada": 0.6522431395543913,
+        "reciente": 0.008366537501127782
+      },
+      "Inversion_bruta_fija_var_pct_lag9": {
+        "full": 0.40885055982212487,
+        "subida": 0.32170061822338847,
+        "bajada": 0.4779280982920469,
+        "reciente": 0.22345159842900073
+      },
+      "Inversion_bruta_fija_var_pct_lag9_ma3": {
+        "full": 0.4364999641059221,
+        "subida": 0.40712940390494834,
+        "bajada": 0.42672717317002434,
+        "reciente": 0.1420130681578835
+      },
+      "Inversion_bruta_fija_var_pct_lag9_ma12": {
+        "full": 0.36745638404597236,
+        "subida": 0.754146063563693,
+        "bajada": 0.6026407973306841,
+        "reciente": 0.009212365160940782
+      },
+      "Electricidad_GWH_lag1_shock": {
+        "full": 0.48218306273360395,
+        "subida": 0.6497068607388399,
+        "bajada": 0.2069227543857703,
+        "reciente": 0.07467362127486367
+      },
+      "Electricidad_GWH_lag1_z12": {
+        "full": 0.48218306273360395,
+        "subida": 0.6497068607388399,
+        "bajada": 0.2069227543857703,
+        "reciente": 0.07467362127486367
+      },
+      "IPC_Lima_var_12m_lag1_ma6": {
+        "full": 0.41525228352197985,
+        "subida": 0.466241930579516,
+        "bajada": 0.3842491665848164,
+        "reciente": 0.0007334319179784521
+      },
+      "IPC_Lima_var_12m_lag1_ma12": {
+        "full": 0.6007383620390346,
+        "subida": 0.6460545135518411,
+        "bajada": 0.7797869862058406,
+        "reciente": 0.049362303221979424
+      },
+      "IPC_Lima_var_12m_lag4_ma3": {
+        "full": 0.4097636531420069,
+        "subida": 0.34595501864519795,
+        "bajada": 0.4534659598337519,
+        "reciente": 0.1625946294572317
+      },
+      "IPC_Lima_var_12m_lag4_ma6": {
+        "full": 0.5937232874407014,
+        "subida": 0.551982746265015,
+        "bajada": 0.6625656046406471,
+        "reciente": 0.28794661351861106
+      },
+      "IPC_Lima_var_12m_lag4_ma12": {
+        "full": 0.5442144287070352,
+        "subida": 0.579434530786762,
+        "bajada": 0.672922967894376,
+        "reciente": 3.9841992111010865e-05
+      },
+      "IPC_Lima_var_12m_lag5_ma3": {
+        "full": 0.47173609737880434,
+        "subida": 0.38524186075594485,
+        "bajada": 0.5238493228438836,
+        "reciente": 0.37877242850113746
+      },
+      "IPC_Lima_var_12m_lag5_ma6": {
+        "full": 0.6110491564372641,
+        "subida": 0.5683375020481777,
+        "bajada": 0.6993305901763603,
+        "reciente": 0.5564218051069545
+      },
+      "IPC_Lima_var_12m_lag5_ma12": {
+        "full": 0.49529901807811316,
+        "subida": 0.5476312654496901,
+        "bajada": 0.6390200852945485,
+        "reciente": 0.0034778158591475656
+      },
+      "IPC_Lima_var_12m_lag7_ma3": {
+        "full": 0.4691082742315843,
+        "subida": 0.44896383047565414,
+        "bajada": 0.37499555493670617,
+        "reciente": 0.060141624783677065
+      },
+      "IPC_Lima_indice_lag1": {
+        "full": 0.6002503014316509,
+        "subida": 0.6424741766852985,
+        "bajada": 0.7817628688814936,
+        "reciente": 0.04870690401974797
+      },
+      "IPC_Lima_indice_lag1_ma3": {
+        "full": 0.6003048122755521,
+        "subida": 0.6266402837251795,
+        "bajada": 0.7619523350621084,
+        "reciente": 0.024146528118323376
+      },
+      "IPC_Lima_indice_lag1_ma6": {
+        "full": 0.5648187796919798,
+        "subida": 0.6052179762744019,
+        "bajada": 0.7054541394919612,
+        "reciente": 0.011165619148965368
+      },
+      "IPC_Lima_indice_lag1_ma12": {
+        "full": 0.40738201673210656,
+        "subida": 0.5864583695944972,
+        "bajada": 0.5636358029302003,
+        "reciente": 0.010039258191216791
+      },
+      "IPC_Lima_indice_lag2_delta12": {
+        "full": 0.28027910037206333,
+        "subida": 0.2693254327823796,
+        "bajada": 0.15221212855745128,
+        "reciente": 0.006723020506652692
+      },
+      "IPC_Lima_indice_lag3_delta12": {
+        "full": 0.3318227958647639,
+        "subida": 0.3047024569532378,
+        "bajada": 0.2827601298704737,
+        "reciente": 0.05627031370025144
+      },
+      "IPC_Lima_indice_lag4": {
+        "full": 0.5367319948923692,
+        "subida": 0.5774050891116603,
+        "bajada": 0.6771405520393092,
+        "reciente": 5.484594817319591e-05
+      },
+      "IPC_Lima_indice_lag4_ma3": {
+        "full": 0.4921354940333394,
+        "subida": 0.5624483246215367,
+        "bajada": 0.6464078976909476,
+        "reciente": 0.005447240730967502
+      },
+      "IPC_Lima_indice_lag4_ma6": {
+        "full": 0.40716057853860027,
+        "subida": 0.5569725184032313,
+        "bajada": 0.5679945114998101,
+        "reciente": 0.0070838048257626084
+      },
+      "IPC_Lima_indice_lag4_delta12": {
+        "full": 0.382786544282523,
+        "subida": 0.3447949956518924,
+        "bajada": 0.3612793388904192,
+        "reciente": 0.17355882162926142
+      },
+      "IPC_Lima_indice_lag5": {
+        "full": 0.48208181644680587,
+        "subida": 0.5457747271220567,
+        "bajada": 0.6429997496118044,
+        "reciente": 0.0035630281756018883
+      },
+      "IPC_Lima_indice_lag5_ma3": {
+        "full": 0.437862601318331,
+        "subida": 0.546511511093568,
+        "bajada": 0.6046399918047942,
+        "reciente": 0.010703239775535438
+      },
+      "IPC_Lima_indice_lag5_ma6": {
+        "full": 0.34222424883588604,
+        "subida": 0.5463822493066561,
+        "bajada": 0.516477070839597,
+        "reciente": 0.009804096249433642
+      },
+      "IPC_Lima_indice_lag5_dev_ma12": {
+        "full": 0.2883448494200995,
+        "subida": 0.18974548874952832,
+        "bajada": 0.2309181551509497,
+        "reciente": 0.036660522847273405
+      },
+      "IPC_Lima_indice_lag5_delta12": {
+        "full": 0.42333524107190246,
+        "subida": 0.3313163972194128,
+        "bajada": 0.45160695378853305,
+        "reciente": 0.14659017615337627
+      },
+      "IPC_Lima_indice_lag6_delta12": {
+        "full": 0.47511131361953063,
+        "subida": 0.3968846146958044,
+        "bajada": 0.488977767946411,
+        "reciente": 0.1050664412786858
+      },
+      "IPC_Lima_indice_lag7_ma3": {
+        "full": 0.3076605245513974,
+        "subida": 0.5299661136112611,
+        "bajada": 0.47953485816229285,
+        "reciente": 0.00812545326201386
+      },
+      "IPC_Lima_indice_lag7_dev_ma12": {
+        "full": 0.40790495323620724,
+        "subida": 0.32071287825930794,
+        "bajada": 0.42859541654566863,
+        "reciente": 0.045383575579315175
+      },
+      "IPC_Lima_indice_lag8": {
+        "full": 0.3029715747745577,
+        "subida": 0.5234906225715228,
+        "bajada": 0.4613351866042421,
+        "reciente": 0.0058147669811696254
+      },
+      "IPC_Lima_indice_lag8_dev_ma12": {
+        "full": 0.439215296501808,
+        "subida": 0.3902760114764479,
+        "bajada": 0.4253290892692685,
+        "reciente": 0.0968817037880714
+      },
+      "IPC_Lima_indice_lag8_shock": {
+        "full": 0.4722457023615556,
+        "subida": 0.48079655246732317,
+        "bajada": 0.4808249550016853,
+        "reciente": 0.0012979397725643776
+      },
+      "IPC_Lima_indice_lag8_z12": {
+        "full": 0.4722457023615556,
+        "subida": 0.48079655246732317,
+        "bajada": 0.4808249550016853,
+        "reciente": 0.0012979397725643776
+      },
+      "IPC_Lima_indice_lag9_dev_ma12": {
+        "full": 0.48062149217530187,
+        "subida": 0.4384788178181119,
+        "bajada": 0.4566775266795215,
+        "reciente": 0.09895347984757
+      },
+      "IPC_Lima_indice_lag9_shock": {
+        "full": 0.515795160381701,
+        "subida": 0.4567731311041368,
+        "bajada": 0.5963956975139271,
+        "reciente": 0.0003741511031184035
+      },
+      "IPC_Lima_indice_lag9_z12": {
+        "full": 0.515795160381701,
+        "subida": 0.4567731311041368,
+        "bajada": 0.5963956975139271,
+        "reciente": 0.0003741511031184035
+      },
+      "IPC_Lima_indice_lag12_dev_ma3": {
+        "full": 0.30665650669211547,
+        "subida": 0.22924854847984613,
+        "bajada": 0.25088383648039486,
+        "reciente": 0.004105236609225643
+      },
+      "IPC_alimentos_var_12m_lag1_ma12": {
+        "full": 0.5061195086471325,
+        "subida": 0.6000586425760887,
+        "bajada": 0.5160349171258635,
+        "reciente": 0.13565710229133562
+      },
+      "IPC_alimentos_var_12m_lag4_ma6": {
+        "full": 0.43271647681055314,
+        "subida": 0.4753233164385138,
+        "bajada": 0.19188558636570027,
+        "reciente": 0.15016002086280814
+      },
+      "IPC_alimentos_var_12m_lag4_ma12": {
+        "full": 0.5978692732769675,
+        "subida": 0.5937016627410598,
+        "bajada": 0.7949770532296248,
+        "reciente": 0.3150690159478701
+      },
+      "IPC_alimentos_var_12m_lag5_ma3": {
+        "full": 0.30619700877526895,
+        "subida": 0.34660342438763503,
+        "bajada": 0.08249734009319652,
+        "reciente": 0.31205461708365306
+      },
+      "IPC_alimentos_var_12m_lag5_ma6": {
+        "full": 0.5621465618180664,
+        "subida": 0.6113265985154744,
+        "bajada": 0.35856059953655184,
+        "reciente": 0.5945036782923814
+      },
+      "IPC_alimentos_var_12m_lag5_ma12": {
+        "full": 0.595819418486059,
+        "subida": 0.5818663502157663,
+        "bajada": 0.7896784973267365,
+        "reciente": 0.2929713866775788
+      },
+      "IPC_alimentos_var_12m_lag7_ma3": {
+        "full": 0.44955964178368074,
+        "subida": 0.4329861947340517,
+        "bajada": 0.2134598452674677,
+        "reciente": 0.08465253614401529
+      },
+      "IPC_alimentos_var_12m_lag7_ma6": {
+        "full": 0.6009889301203065,
+        "subida": 0.6241423213421291,
+        "bajada": 0.4717665393035974,
+        "reciente": 0.08679169336399889
+      },
+      "IPC_alimentos_var_12m_lag8_ma3": {
+        "full": 0.5034265157398139,
+        "subida": 0.5250727587511622,
+        "bajada": 0.2831240517512123,
+        "reciente": 0.26119381478802556
+      },
+      "IPC_alimentos_var_12m_lag8_ma6": {
+        "full": 0.5553000183041616,
+        "subida": 0.6059032103610462,
+        "bajada": 0.5106813427239904,
+        "reciente": 0.0027590408003578346
+      },
+      "IPC_alimentos_var_12m_lag8_ma12": {
+        "full": 0.4605190381881335,
+        "subida": 0.5422044468319346,
+        "bajada": 0.6520223198403408,
+        "reciente": 0.0013161555620257108
+      },
+      "IPC_alimentos_var_12m_lag9_ma12": {
+        "full": 0.3839857990372322,
+        "subida": 0.5275907190038048,
+        "bajada": 0.579799400088182,
+        "reciente": 0.006791387319015976
+      },
+      "IPC_sin_alimentos_energia_lag1": {
+        "full": 0.5040389942320046,
+        "subida": 0.5964060083862098,
+        "bajada": 0.5172191920063353,
+        "reciente": 0.13555652606107169
+      },
+      "IPC_sin_alimentos_energia_lag1_ma3": {
+        "full": 0.5593670707237371,
+        "subida": 0.6166163472580283,
+        "bajada": 0.7020164683196093,
+        "reciente": 0.15966958209524512
+      },
+      "IPC_sin_alimentos_energia_lag1_ma6": {
+        "full": 0.6113867560535353,
+        "subida": 0.6213829289746374,
+        "bajada": 0.8328110013518544,
+        "reciente": 0.3449909955069148
+      },
+      "IPC_sin_alimentos_energia_lag1_ma12": {
+        "full": 0.5511787333695006,
+        "subida": 0.5975663047958406,
+        "bajada": 0.747162317576579,
+        "reciente": 0.010838373243410143
+      },
+      "IPC_sin_alimentos_energia_lag4": {
+        "full": 0.597796639878338,
+        "subida": 0.5912308308130023,
+        "bajada": 0.7947049621683343,
+        "reciente": 0.31567755447068835
+      },
+      "IPC_sin_alimentos_energia_lag4_ma3": {
+        "full": 0.60174964215693,
+        "subida": 0.5931900544543134,
+        "bajada": 0.8021906307160991,
+        "reciente": 0.318856345888886
+      },
+      "IPC_sin_alimentos_energia_lag4_ma6": {
+        "full": 0.5572002544101139,
+        "subida": 0.5810807146626958,
+        "bajada": 0.7629842717164622,
+        "reciente": 0.0414421216402955
+      },
+      "IPC_sin_alimentos_energia_lag4_ma12": {
+        "full": 0.3545518709807767,
+        "subida": 0.5172548100135517,
+        "bajada": 0.5891143883649724,
+        "reciente": 5.345048080759614e-05
+      },
+      "IPC_sin_alimentos_energia_lag4_delta12": {
+        "full": 0.2524475766775509,
+        "subida": 0.29987156426946937,
+        "bajada": 0.023007787886022882,
+        "reciente": 0.0028448464663721313
+      },
+      "IPC_sin_alimentos_energia_lag5": {
+        "full": 0.5933204843450183,
+        "subida": 0.5795384678183713,
+        "bajada": 0.7897843587601406,
+        "reciente": 0.29362134293931147
+      },
+      "IPC_sin_alimentos_energia_lag5_ma3": {
+        "full": 0.5771214030078022,
+        "subida": 0.5780415507746469,
+        "bajada": 0.7733778441989947,
+        "reciente": 0.15356522365681918
+      },
+      "IPC_sin_alimentos_energia_lag5_ma6": {
+        "full": 0.5023866496493534,
+        "subida": 0.5678601234637833,
+        "bajada": 0.7026479871365219,
+        "reciente": 0.0026117788084529187
+      },
+      "IPC_sin_alimentos_energia_lag5_ma12": {
+        "full": 0.2824126297858437,
+        "subida": 0.48965601644162454,
+        "bajada": 0.5289841630045727,
+        "reciente": 1.007019938041385e-05
+      },
+      "IPC_sin_alimentos_energia_lag5_var_12m": {
+        "full": 0.2524267874416773,
+        "subida": 0.17747321931725993,
+        "bajada": 0.08595841641094963,
+        "reciente": 0.014679744057725583
+      },
+      "IPC_sin_alimentos_energia_lag5_delta12": {
+        "full": 0.3036838080771396,
+        "subida": 0.335606823112405,
+        "bajada": 0.08080891635903648,
+        "reciente": 0.008041167896729774
+      },
+      "IPC_sin_alimentos_energia_lag6_var_12m": {
+        "full": 0.2929544693551304,
+        "subida": 0.22573925549411286,
+        "bajada": 0.13106182004792805,
+        "reciente": 0.03386322508549188
+      },
+      "IPC_sin_alimentos_energia_lag6_delta12": {
+        "full": 0.36194140346816717,
+        "subida": 0.4167545817681541,
+        "bajada": 0.12730250988613565,
+        "reciente": 0.02444362118617079
+      },
+      "IPC_sin_alimentos_energia_lag7_ma6": {
+        "full": 0.35480360789149806,
+        "subida": 0.5191853838605619,
+        "bajada": 0.5779330931729131,
+        "reciente": 0.006019594009634945
+      },
+      "IPC_sin_alimentos_energia_lag7_dev_ma12": {
+        "full": 0.3085430910314412,
+        "subida": 0.3818678413548853,
+        "bajada": 0.052413635151122955,
+        "reciente": 0.0001086779903831941
+      },
+      "IPC_sin_alimentos_energia_lag8": {
+        "full": 0.4594374640788297,
+        "subida": 0.5410664799128071,
+        "bajada": 0.6542314599166198,
+        "reciente": 0.0012075041449279122
+      },
+      "IPC_sin_alimentos_energia_lag8_ma3": {
+        "full": 0.3911236142908232,
+        "subida": 0.535974978438361,
+        "bajada": 0.5902715022826455,
+        "reciente": 0.005373517917971087
+      },
+      "IPC_sin_alimentos_energia_lag8_dev_ma12": {
+        "full": 0.3589296965530845,
+        "subida": 0.45573708540331326,
+        "bajada": 0.10360464205934736,
+        "reciente": 0.007927759367622857
+      },
+      "IPC_sin_alimentos_energia_lag8_shock": {
+        "full": 0.3386790283130581,
+        "subida": 0.5558932810565494,
+        "bajada": 0.010011716147863023,
+        "reciente": 0.04920925825335308
+      },
+      "IPC_sin_alimentos_energia_lag8_z12": {
+        "full": 0.3386790283130581,
+        "subida": 0.5558932810565494,
+        "bajada": 0.010011716147863023,
+        "reciente": 0.04920925825335308
+      },
+      "IPC_sin_alimentos_energia_lag9": {
+        "full": 0.3842388948384102,
+        "subida": 0.5268943616540798,
+        "bajada": 0.5826792249957201,
+        "reciente": 0.006416900348375975
+      },
+      "IPC_sin_alimentos_energia_lag9_ma3": {
+        "full": 0.31397207613408395,
+        "subida": 0.5127782015418619,
+        "bajada": 0.527880690444037,
+        "reciente": 0.008755311448191248
+      },
+      "IPC_sin_alimentos_energia_lag9_dev_ma12": {
+        "full": 0.40083009062922087,
+        "subida": 0.4974421748967892,
+        "bajada": 0.1548884631517921,
+        "reciente": 0.03183226760145916
+      },
+      "IPC_sin_alimentos_energia_lag9_shock": {
+        "full": 0.3644985001647954,
+        "subida": 0.5473789225815503,
+        "bajada": 0.04287337938668121,
+        "reciente": 0.10513438092611807
+      },
+      "IPC_sin_alimentos_energia_lag9_z12": {
+        "full": 0.3644985001647954,
+        "subida": 0.5473789225815503,
+        "bajada": 0.04287337938668121,
+        "reciente": 0.10513438092611807
+      },
+      "Inflacion_subyacente_var_12m_lag1_ma6": {
+        "full": 0.2655884159568964,
+        "subida": 0.3904130700822467,
+        "bajada": 0.09674728750455708,
+        "reciente": 0.0030425916560644895
+      },
+      "Inflacion_subyacente_var_12m_lag1_ma12": {
+        "full": 0.5247802989943122,
+        "subida": 0.5785395855592662,
+        "bajada": 0.7084210602492732,
+        "reciente": 0.0996085851012538
+      },
+      "Inflacion_subyacente_var_12m_lag4_ma3": {
+        "full": 0.2628414493275263,
+        "subida": 0.39224017045811405,
+        "bajada": 0.1951578054416278,
+        "reciente": 0.058427365161392776
+      },
+      "Inflacion_subyacente_var_12m_lag4_ma6": {
+        "full": 0.47681792862274996,
+        "subida": 0.5298600439308511,
+        "bajada": 0.4364764419202057,
+        "reciente": 0.18968950199031545
+      },
+      "Inflacion_subyacente_var_12m_lag4_ma12": {
+        "full": 0.39459191831412493,
+        "subida": 0.5081905424638548,
+        "bajada": 0.7882748884844925,
+        "reciente": 0.12182570797635917
+      },
+      "Inflacion_subyacente_var_12m_lag5_ma3": {
+        "full": 0.3549954993181847,
+        "subida": 0.4637727853828699,
+        "bajada": 0.2666013625057551,
+        "reciente": 0.3581842979037756
+      },
+      "Inflacion_subyacente_var_12m_lag5_ma6": {
+        "full": 0.5179808644387454,
+        "subida": 0.5499829878481279,
+        "bajada": 0.5538626338071888,
+        "reciente": 0.6014091992104647
+      },
+      "Inflacion_subyacente_var_12m_lag5_ma12": {
+        "full": 0.3306301056036791,
+        "subida": 0.48063081453032036,
+        "bajada": 0.751695662164569,
+        "reciente": 0.13593395515867582
+      },
+      "Inflacion_subyacente_var_12m_lag8_ma3": {
+        "full": 0.35901994259154796,
+        "subida": 0.41887943342159145,
+        "bajada": 0.33284015543030987,
+        "reciente": 0.23266172488010978
+      },
+      "Inflacion_subyacente_var_12m_lag8_ma6": {
+        "full": 0.2715392288131194,
+        "subida": 0.3805334002948742,
+        "bajada": 0.4911686014006601,
+        "reciente": 0.00015170043696701075
+      },
+      "Inflacion_no_subyacente_var_12m_lag1": {
+        "full": 0.26260692970963423,
+        "subida": 0.17601057656754354,
+        "bajada": 0.333839897056322,
+        "reciente": 0.008162087432884609
+      },
+      "Inflacion_no_subyacente_var_12m_lag1_ma3": {
+        "full": 0.3460624423617639,
+        "subida": 0.31127030430609764,
+        "bajada": 0.6118133764199524,
+        "reciente": 0.01762908870522111
+      },
+      "Inflacion_no_subyacente_var_12m_lag1_ma6": {
+        "full": 0.44841757922334646,
+        "subida": 0.4256869668102005,
+        "bajada": 0.7631697263362204,
+        "reciente": 0.0011536555917588313
+      },
+      "Inflacion_no_subyacente_var_12m_lag1_ma12": {
+        "full": 0.5843622673707368,
+        "subida": 0.5482164343936552,
+        "bajada": 0.731684364543163,
+        "reciente": 0.0009986296330331819
+      },
+      "Inflacion_no_subyacente_var_12m_lag4": {
+        "full": 0.4788410478930317,
+        "subida": 0.43003920401031376,
+        "bajada": 0.6918252732456044,
+        "reciente": 0.007507051166342545
+      },
+      "Inflacion_no_subyacente_var_12m_lag4_ma3": {
+        "full": 0.524439630082597,
+        "subida": 0.4660816614919064,
+        "bajada": 0.7487727495783614,
+        "reciente": 0.00616714821752664
+      },
+      "Inflacion_no_subyacente_var_12m_lag4_ma6": {
+        "full": 0.5738948263048963,
+        "subida": 0.5027989818215988,
+        "bajada": 0.7468941689102013,
+        "reciente": 0.00017057817025047965
+      },
+      "Inflacion_no_subyacente_var_12m_lag4_ma12": {
+        "full": 0.6028486971450928,
+        "subida": 0.5376550521922985,
+        "bajada": 0.6514776315702949,
+        "reciente": 0.0015409582657050455
+      },
+      "Inflacion_no_subyacente_var_12m_lag5": {
+        "full": 0.512868366830929,
+        "subida": 0.44449373045304014,
+        "bajada": 0.70632448011673,
+        "reciente": 0.024641291476672406
+      },
+      "Inflacion_no_subyacente_var_12m_lag5_ma3": {
+        "full": 0.5537047969742166,
+        "subida": 0.4812355196834748,
+        "bajada": 0.7372780678509209,
+        "reciente": 0.006449253307114276
+      },
+      "Inflacion_no_subyacente_var_12m_lag5_ma6": {
+        "full": 0.5879410860927602,
+        "subida": 0.506598722568896,
+        "bajada": 0.7167955492607718,
+        "reciente": 7.39288104611259e-05
+      },
+      "Inflacion_no_subyacente_var_12m_lag5_ma12": {
+        "full": 0.5785294244687561,
+        "subida": 0.5281808179853859,
+        "bajada": 0.6148214965184516,
+        "reciente": 0.002218587914599226
+      },
+      "Inflacion_no_subyacente_var_12m_lag7": {
+        "full": 0.5640020361900256,
+        "subida": 0.4802641863732932,
+        "bajada": 0.6857532761870608,
+        "reciente": 0.003651874242445189
+      },
+      "Inflacion_no_subyacente_var_12m_lag7_ma3": {
+        "full": 0.5756823545749064,
+        "subida": 0.4867688117424965,
+        "bajada": 0.6753443189176412,
+        "reciente": 0.004071904276243928
+      },
+      "Inflacion_no_subyacente_var_12m_lag7_ma6": {
+        "full": 0.5840162132109258,
+        "subida": 0.4979864899609442,
+        "bajada": 0.6525805536293602,
+        "reciente": 0.001819547561425458
+      },
+      "Inflacion_no_subyacente_var_12m_lag7_ma12": {
+        "full": 0.5046132809720422,
+        "subida": 0.5067778196344657,
+        "bajada": 0.5465989239518483,
+        "reciente": 0.0034131045734683988
+      },
+      "Inflacion_no_subyacente_var_12m_lag8": {
+        "full": 0.565107177042032,
+        "subida": 0.4721412475427134,
+        "bajada": 0.6553674016249834,
+        "reciente": 0.01772592404477133
+      },
+      "Inflacion_no_subyacente_var_12m_lag8_ma3": {
+        "full": 0.5723571884712194,
+        "subida": 0.48496475012752344,
+        "bajada": 0.644581058931274,
+        "reciente": 0.0006242815872014411
+      },
+      "Inflacion_no_subyacente_var_12m_lag8_ma6": {
+        "full": 0.5622815379283633,
+        "subida": 0.4868541163062024,
+        "bajada": 0.621108836887152,
+        "reciente": 0.0026645402497579226
+      },
+      "Inflacion_no_subyacente_var_12m_lag8_ma12": {
+        "full": 0.45176787364795845,
+        "subida": 0.4931175997446032,
+        "bajada": 0.5213728157071988,
+        "reciente": 0.007039627655245155
+      },
+      "Inflacion_no_subyacente_var_12m_lag9": {
+        "full": 0.5628860671803523,
+        "subida": 0.479180429864036,
+        "bajada": 0.6256168002289455,
+        "reciente": 2.499869038501994e-06
+      },
+      "Inflacion_no_subyacente_var_12m_lag9_ma3": {
+        "full": 0.5636275322753763,
+        "subida": 0.48058490252115127,
+        "bajada": 0.6244013423401416,
+        "reciente": 0.0022904805484247758
+      },
+      "Inflacion_no_subyacente_var_12m_lag9_ma6": {
+        "full": 0.5266277122630216,
+        "subida": 0.4755304711847484,
+        "bajada": 0.5841129073697412,
+        "reciente": 0.002532150269360126
+      },
+      "Inflacion_no_subyacente_var_12m_lag9_ma12": {
+        "full": 0.3877546755501238,
+        "subida": 0.4772132825452454,
+        "bajada": 0.4987564782701744,
+        "reciente": 0.012946977480225491
+      },
+      "Inflacion_no_subyacente_var_12m_lag12": {
+        "full": 0.5002670733567804,
+        "subida": 0.45891309918738676,
+        "bajada": 0.5533298192268576,
+        "reciente": 0.012970371180518078
+      },
+      "Inflacion_no_subyacente_var_12m_lag12_ma6": {
+        "full": 0.37278528509712194,
+        "subida": 0.4450698260204436,
+        "bajada": 0.4653630235539472,
+        "reciente": 0.0030137459482118467
+      },
+      "Tasa_consumo_hasta1a_MN_var_12m": {
+        "full": 0.47986330948460404,
+        "subida": 0.4812251374684369,
+        "bajada": 0.7914990526704099,
+        "reciente": 0.03287728605856123
+      },
+      "Tasa_consumo_hasta1a_MN_delta12": {
+        "full": 0.41015068935511834,
+        "subida": 0.5997288147287961,
+        "bajada": 0.6232894888740534,
+        "reciente": 0.033952144996055936
+      },
+      "Tasa_consumo_hasta1a_MN_lag1_mom3": {
+        "full": 0.4572900161726721,
+        "subida": 0.546856468679016,
+        "bajada": 0.69802104179223,
+        "reciente": 0.16236982909456285
+      },
+      "Tasa_consumo_hasta1a_MN_lag1_mom6": {
+        "full": 0.5113021309189535,
+        "subida": 0.5446532203186794,
+        "bajada": 0.7628470269151901,
+        "reciente": 0.09694408382519402
+      },
+      "Tasa_consumo_hasta1a_MN_lag1_dev_ma3": {
+        "full": 0.44284849411310817,
+        "subida": 0.4319535075480374,
+        "bajada": 0.5211246622801038,
+        "reciente": 0.053915723155537484
+      },
+      "Tasa_consumo_hasta1a_MN_lag1_dev_ma12": {
+        "full": 0.5175148644621484,
+        "subida": 0.6011991319639134,
+        "bajada": 0.7159453096950793,
+        "reciente": 0.07979340643554145
+      },
+      "Tasa_consumo_hasta1a_MN_lag1_var_12m": {
+        "full": 0.45543375635970373,
+        "subida": 0.4743387260702116,
+        "bajada": 0.8092383227200932,
+        "reciente": 0.06031464406200718
+      },
+      "Tasa_consumo_hasta1a_MN_lag1_delta12": {
+        "full": 0.3294349133447379,
+        "subida": 0.5829356325757366,
+        "bajada": 0.60142256212613,
+        "reciente": 0.06442061776044497
+      },
+      "Tasa_consumo_hasta1a_MN_lag2_var_12m": {
+        "full": 0.39843635567904107,
+        "subida": 0.4586102890435139,
+        "bajada": 0.7911839207463026,
+        "reciente": 0.03477345845144562
+      },
+      "Tasa_consumo_hasta1a_MN_lag3_var_12m": {
+        "full": 0.31747368346055377,
+        "subida": 0.44431044935782354,
+        "bajada": 0.7501134560906688,
+        "reciente": 0.016250273929353885
+      },
+      "Tasa_consumo_hasta1a_MN_lag4_mom6": {
+        "full": 0.40387516953034047,
+        "subida": 0.45024440615487804,
+        "bajada": 0.7744318615987704,
+        "reciente": 0.01726245969816401
+      },
+      "Tasa_consumo_hasta1a_MN_lag4_dev_ma12": {
+        "full": 0.25454240641082854,
+        "subida": 0.560897616227754,
+        "bajada": 0.614711404927427,
+        "reciente": 0.024109285715530022
+      },
+      "Tasa_consumo_hasta1a_MN_lag5_mom6": {
+        "full": 0.33162186802402865,
+        "subida": 0.4146204699096456,
+        "bajada": 0.7523842501682871,
+        "reciente": 0.004539125378940463
+      },
+      "Tasa_consumo_mas1a_MN_var_12m": {
+        "full": 0.37638578603532735,
+        "subida": 0.4530866447863545,
+        "bajada": 0.7679354601202197,
+        "reciente": 0.02355855969085776
+      },
+      "Tasa_consumo_mas1a_MN_lag1_mom6": {
+        "full": 0.40923209172400904,
+        "subida": 0.45928853443477896,
+        "bajada": 0.7568657736911207,
+        "reciente": 0.032987946906722215
+      },
+      "Tasa_consumo_mas1a_MN_lag1_dev_ma3": {
+        "full": 0.3047726456589501,
+        "subida": 0.30548896072854553,
+        "bajada": 0.520466537137963,
+        "reciente": 0.0086637696028476
+      },
+      "Tasa_consumo_mas1a_MN_lag1_var_12m": {
+        "full": 0.3183616731617807,
+        "subida": 0.4407061725697581,
+        "bajada": 0.7566333086290743,
+        "reciente": 0.0291445318957929
+      },
+      "Tasa_tarjeta_credito_MN_var_12m": {
+        "full": 0.4910819578119133,
+        "subida": 0.4891061352001446,
+        "bajada": 0.7973604948919404,
+        "reciente": 0.04335466423041099
+      },
+      "Tasa_tarjeta_credito_MN_delta12": {
+        "full": 0.4165547323409683,
+        "subida": 0.6583258284255674,
+        "bajada": 0.5880755375814803,
+        "reciente": 0.047455250980965
+      },
+      "Tasa_tarjeta_credito_MN_lag1_mom3": {
+        "full": 0.30925144385773506,
+        "subida": 0.3025314676699251,
+        "bajada": 0.5868769096174256,
+        "reciente": 0.0458757337410756
+      },
+      "Tasa_tarjeta_credito_MN_lag1_mom6": {
+        "full": 0.39288786055816255,
+        "subida": 0.3885636556641411,
+        "bajada": 0.7897448927481118,
+        "reciente": 0.10781259258297045
+      },
+      "Tasa_tarjeta_credito_MN_lag1_dev_ma3": {
+        "full": 0.40795777881471135,
+        "subida": 0.440001029214152,
+        "bajada": 0.35440556479528873,
+        "reciente": 0.00031163202455146747
+      },
+      "Tasa_tarjeta_credito_MN_lag1_dev_ma12": {
+        "full": 0.49615858634480564,
+        "subida": 0.6032376361602145,
+        "bajada": 0.627465533308598,
+        "reciente": 0.07081384673224382
+      },
+      "Tasa_tarjeta_credito_MN_lag1_var_12m": {
+        "full": 0.47733762328417595,
+        "subida": 0.4919958338481087,
+        "bajada": 0.7944088628629399,
+        "reciente": 0.04259390783759854
+      },
+      "Tasa_tarjeta_credito_MN_lag1_delta12": {
+        "full": 0.34311963738372897,
+        "subida": 0.6782174237617992,
+        "bajada": 0.567370261985337,
+        "reciente": 0.05560206879666497
+      },
+      "Tasa_tarjeta_credito_MN_lag2_var_12m": {
+        "full": 0.4214526104420285,
+        "subida": 0.4757747614478645,
+        "bajada": 0.788774708061423,
+        "reciente": 0.03269107779961617
+      },
+      "Tasa_tarjeta_credito_MN_lag2_delta12": {
+        "full": 0.2535886505578273,
+        "subida": 0.6805530807461664,
+        "bajada": 0.5159843356800796,
+        "reciente": 0.04439649953245546
+      },
+      "Tasa_tarjeta_credito_MN_lag3_var_12m": {
+        "full": 0.33992328957876183,
+        "subida": 0.46292677935197524,
+        "bajada": 0.7710595237629376,
+        "reciente": 0.024045011243825094
+      },
+      "Tasa_tarjeta_credito_MN_lag4_mom3": {
+        "full": 0.37459460757284563,
+        "subida": 0.38549374690568394,
+        "bajada": 0.781236986519805,
+        "reciente": 0.13898544693059012
+      },
+      "Tasa_tarjeta_credito_MN_lag4_mom6": {
+        "full": 0.4114469942260845,
+        "subida": 0.4598574947584605,
+        "bajada": 0.7695434941801048,
+        "reciente": 0.04208597893339109
+      },
+      "Tasa_tarjeta_credito_MN_lag5_mom3": {
+        "full": 0.3555741165625953,
+        "subida": 0.40780156999227946,
+        "bajada": 0.7145381073001957,
+        "reciente": 0.05591751079155284
+      },
+      "Tasa_tarjeta_credito_MN_lag5_mom6": {
+        "full": 0.39493571550561213,
+        "subida": 0.4743066077985976,
+        "bajada": 0.7559317931127006,
+        "reciente": 0.004253404310485731
+      },
+      "Tasa_prestamo_personal_MN_var_12m": {
+        "full": 0.3902961197476771,
+        "subida": 0.41519816087453587,
+        "bajada": 0.6525764948161694,
+        "reciente": 0.06474882194164301
+      },
+      "Tasa_prestamo_personal_MN_delta12": {
+        "full": 0.54165777274044,
+        "subida": 0.6626304305211036,
+        "bajada": 0.6795947248956683,
+        "reciente": 0.06553895477475252
+      },
+      "Tasa_prestamo_personal_MN_lag1_dev_ma12": {
+        "full": 0.49585276056822525,
+        "subida": 0.5337289961002754,
+        "bajada": 0.5697439125232976,
+        "reciente": 0.041671822111202565
+      },
+      "Tasa_prestamo_personal_MN_lag1_var_12m": {
+        "full": 0.4511125879267129,
+        "subida": 0.45278071362052186,
+        "bajada": 0.6412520193142711,
+        "reciente": 0.08644252616656903
+      },
+      "Tasa_prestamo_personal_MN_lag2_var_12m": {
+        "full": 0.46566494399185326,
+        "subida": 0.4318506934430684,
+        "bajada": 0.6676349697916881,
+        "reciente": 0.08668543093112746
+      },
+      "Tasa_prestamo_personal_MN_lag3_delta12": {
+        "full": 0.336224141562088,
+        "subida": 0.7585313759257363,
+        "bajada": 0.6634568263917227,
+        "reciente": 0.10814771444582451
+      },
+      "Tasa_prestamo_personal_MN_lag4_mom6": {
+        "full": 0.2813032348374832,
+        "subida": 0.2965879475063868,
+        "bajada": 0.7839470058250408,
+        "reciente": 0.11996042862641686
+      },
+      "Tasa_prestamo_personal_MN_lag4_dev_ma12": {
+        "full": 0.43104250287181084,
+        "subida": 0.6527982847901808,
+        "bajada": 0.7328730575058773,
+        "reciente": 0.15742992108387116
+      },
+      "Tasa_prestamo_personal_MN_lag5_mom6": {
+        "full": 0.31160727819949574,
+        "subida": 0.33262191064056146,
+        "bajada": 0.8202130906128611,
+        "reciente": 0.15644535161601056
+      },
+      "Tasa_prestamo_personal_MN_lag7_mom6": {
+        "full": 0.36711835618828226,
+        "subida": 0.332680141138164,
+        "bajada": 0.6787776874197972,
+        "reciente": 0.11955343812999315
+      },
+      "Tasa_prestamo_personal_MN_lag7_dev_ma3": {
+        "full": 0.2861087199380833,
+        "subida": 0.41005768322409447,
+        "bajada": 0.5680914549782796,
+        "reciente": 0.22675654324086547
+      },
+      "Tasa_prestamo_personal_MN_lag8_mom6": {
+        "full": 0.3371776787619944,
+        "subida": 0.28085618223706327,
+        "bajada": 0.701736255582315,
+        "reciente": 0.030678971760776167
+      },
+      "Tasa_TC_banca_MN_var_12m": {
+        "full": 0.5362652728619478,
+        "subida": 0.5439492517001316,
+        "bajada": 0.7944937550356815,
+        "reciente": 0.05147234717434646
+      },
+      "Tasa_TC_banca_MN_delta12": {
+        "full": 0.5118223209547099,
+        "subida": 0.5607107355757801,
+        "bajada": 0.6950736850223541,
+        "reciente": 0.04550829643812936
+      },
+      "Tasa_TC_banca_MN_lag1_mom3": {
+        "full": 0.4152661797117297,
+        "subida": 0.39797704736800826,
+        "bajada": 0.5012015588453587,
+        "reciente": 0.09703267284514777
+      },
+      "Tasa_TC_banca_MN_lag1_mom6": {
+        "full": 0.5013330054348797,
+        "subida": 0.5084147938452126,
+        "bajada": 0.7093088610081584,
+        "reciente": 0.05500089544355914
+      },
+      "Tasa_TC_banca_MN_lag1_dev_ma3": {
+        "full": 0.41904845551377673,
+        "subida": 0.3726405739779821,
+        "bajada": 0.36598164664381655,
+        "reciente": 0.0318464361143974
+      },
+      "Tasa_TC_banca_MN_lag1_dev_ma12": {
+        "full": 0.562990599040715,
+        "subida": 0.5540689168642983,
+        "bajada": 0.6898125178496494,
+        "reciente": 0.03845312655579233
+      },
+      "Tasa_TC_banca_MN_lag1_var_12m": {
+        "full": 0.4685778964177136,
+        "subida": 0.5180083764584583,
+        "bajada": 0.7736788295551656,
+        "reciente": 0.05425815792395334
+      },
+      "Tasa_TC_banca_MN_lag1_delta12": {
+        "full": 0.4315421431992712,
+        "subida": 0.531759776051861,
+        "bajada": 0.6662092540304317,
+        "reciente": 0.052989521683590356
+      },
+      "Tasa_TC_banca_MN_lag2_var_12m": {
+        "full": 0.3841754373794046,
+        "subida": 0.49791668340378475,
+        "bajada": 0.7428728004376904,
+        "reciente": 0.04476089470321267
+      },
+      "Tasa_TC_banca_MN_lag2_delta12": {
+        "full": 0.3409640197404444,
+        "subida": 0.5130533713815199,
+        "bajada": 0.6217565399117984,
+        "reciente": 0.04688957015904312
+      },
+      "Tasa_TC_banca_MN_lag3_var_12m": {
+        "full": 0.28965015423957563,
+        "subida": 0.47537606802061794,
+        "bajada": 0.6839484777296095,
+        "reciente": 0.03550827529373556
+      },
+      "Tasa_TC_banca_MN_lag4_mom3": {
+        "full": 0.42539490499369736,
+        "subida": 0.46114523633180105,
+        "bajada": 0.668892408566556,
+        "reciente": 0.014825089123862614
+      },
+      "Tasa_TC_banca_MN_lag4_mom6": {
+        "full": 0.41983581593124003,
+        "subida": 0.4620903208288138,
+        "bajada": 0.7479152059689432,
+        "reciente": 0.0005094733034071476
+      },
+      "Tasa_TC_banca_MN_lag4_dev_ma3": {
+        "full": 0.4480435870400657,
+        "subida": 0.46583544326614573,
+        "bajada": 0.5673296659731022,
+        "reciente": 0.0248203229764873
+      },
+      "Tasa_TC_banca_MN_lag4_dev_ma12": {
+        "full": 0.35322490990030425,
+        "subida": 0.493743692363427,
+        "bajada": 0.6721506252038282,
+        "reciente": 0.019327401484127416
+      },
+      "Tasa_TC_banca_MN_lag5_mom3": {
+        "full": 0.38369017211319684,
+        "subida": 0.43155847077982246,
+        "bajada": 0.6927055717600702,
+        "reciente": 0.004710009723515591
+      },
+      "Tasa_TC_banca_MN_lag5_mom6": {
+        "full": 0.35197295602785517,
+        "subida": 0.42201983762557355,
+        "bajada": 0.7541496374063965,
+        "reciente": 1.962550949585138e-05
+      },
+      "Credito_SF_MN_delta12": {
+        "full": 0.36569820144470594,
+        "subida": 0.6242873410293409,
+        "bajada": 0.02451499151437488,
+        "reciente": 0.17067824006043741
+      },
+      "Credito_SF_MN_lag5_dev_ma12": {
+        "full": 0.5119392721532066,
+        "subida": 0.5901820082020075,
+        "bajada": 0.30028288124747526,
+        "reciente": 0.029158863445876967
+      },
+      "Credito_SF_MN_lag5_shock": {
+        "full": 0.5139522367577173,
+        "subida": 0.6029121257083981,
+        "bajada": 0.28227401014667536,
+        "reciente": 0.019670267571079567
+      },
+      "Credito_SF_MN_lag5_z12": {
+        "full": 0.5139522367577173,
+        "subida": 0.6029121257083981,
+        "bajada": 0.28227401014667536,
+        "reciente": 0.019670267571079567
+      },
+      "Credito_SF_MN_lag7_dev_ma3": {
+        "full": 0.26460408383223327,
+        "subida": 0.4732564485218111,
+        "bajada": 2.0568717011620652e-06,
+        "reciente": 0.06871342281460936
+      },
+      "Credito_SF_MN_lag7_dev_ma12": {
+        "full": 0.44472320482621025,
+        "subida": 0.4182838557915755,
+        "bajada": 0.6229021339994991,
+        "reciente": 0.01482774436290886
+      },
+      "Credito_SF_MN_lag7_shock": {
+        "full": 0.5511597931488312,
+        "subida": 0.5546438327964059,
+        "bajada": 0.5828720546548999,
+        "reciente": 0.02311349893043864
+      },
+      "Credito_SF_MN_lag7_z12": {
+        "full": 0.5511597931488312,
+        "subida": 0.5546438327964059,
+        "bajada": 0.5828720546548999,
+        "reciente": 0.02311349893043864
+      },
+      "Credito_SF_var_total_lag7_shock": {
+        "full": 0.2507542179458313,
+        "subida": 0.49450079360503013,
+        "bajada": 0.022483828647030656,
+        "reciente": 0.0018700930001006135
+      },
+      "Credito_SF_var_total_lag7_z12": {
+        "full": 0.2507542179458313,
+        "subida": 0.49450079360503013,
+        "bajada": 0.022483828647030656,
+        "reciente": 0.0018700930001006135
+      },
+      "Credito_SF_var_total_lag8_shock": {
+        "full": 0.3256064048635552,
+        "subida": 0.5589298221389988,
+        "bajada": 0.007770137201342183,
+        "reciente": 0.08385220003926805
+      },
+      "Credito_SF_var_total_lag8_z12": {
+        "full": 0.3256064048635552,
+        "subida": 0.5589298221389988,
+        "bajada": 0.007770137201342183,
+        "reciente": 0.08385220003926805
+      },
+      "Credito_SF_var_total_lag9_shock": {
+        "full": 0.38119546163638673,
+        "subida": 0.5878791552831113,
+        "bajada": 0.08391077211022105,
+        "reciente": 0.24331747581977076
+      },
+      "Credito_SF_var_total_lag9_z12": {
+        "full": 0.38119546163638673,
+        "subida": 0.5878791552831113,
+        "bajada": 0.08391077211022105,
+        "reciente": 0.24331747581977076
+      },
+      "Dolarizacion_credito_var_12m": {
+        "full": 0.38760292326837914,
+        "subida": 0.7895807211944458,
+        "bajada": 0.006721173009381686,
+        "reciente": 0.01732287733868342
+      },
+      "Dolarizacion_credito_delta12": {
+        "full": 0.3652485648059367,
+        "subida": 0.7985480132295467,
+        "bajada": 0.005576724540448982,
+        "reciente": 0.01995305737475707
+      },
+      "Dolarizacion_credito_lag4_var_12m": {
+        "full": 0.2814899993097621,
+        "subida": 0.6060540765384148,
+        "bajada": 0.543298176119802,
+        "reciente": 0.0567597923407288
+      },
+      "Credito_consumo_saldo_lag5_var_12m": {
+        "full": 0.27205851877684845,
+        "subida": 0.3838428127054469,
+        "bajada": 0.5205259957907299,
+        "reciente": 0.008115412386288563
+      },
+      "Credito_hipotecario_saldo_lag2_delta12": {
+        "full": 0.44293348000778504,
+        "subida": 0.793027110337294,
+        "bajada": 0.02078695469695671,
+        "reciente": 0.0735576644584064
+      },
+      "Credito_hipotecario_saldo_lag5_dev_ma12": {
+        "full": 0.39343798918757045,
+        "subida": 0.7533968849239174,
+        "bajada": 0.13947040318515377,
+        "reciente": 0.5573607673702642
+      },
+      "Credito_hipotecario_saldo_lag5_var_12m": {
+        "full": 0.5022114223853609,
+        "subida": 0.7119898395248152,
+        "bajada": 0.7105203401247603,
+        "reciente": 0.1018683928888752
+      },
+      "Credito_hipotecario_saldo_lag5_delta12": {
+        "full": 0.49072775191541806,
+        "subida": 0.7323771979053502,
+        "bajada": 0.6003333069742537,
+        "reciente": 0.016924308454947155
+      },
+      "Credito_hipotecario_saldo_lag6_var_12m": {
+        "full": 0.5058407034937251,
+        "subida": 0.6183309460334392,
+        "bajada": 0.7652158542598783,
+        "reciente": 0.143854248815697
+      },
+      "Credito_hipotecario_saldo_lag6_delta12": {
+        "full": 0.45386749573856394,
+        "subida": 0.6480575974040208,
+        "bajada": 0.7102536198285607,
+        "reciente": 0.0485488440289314
+      },
+      "Credito_empresas_var_anual_lag1_shock": {
+        "full": 0.3758747824298364,
+        "subida": 0.22093670798546627,
+        "bajada": 0.6018344475365401,
+        "reciente": 0.0037983013326367988
+      },
+      "Credito_empresas_var_anual_lag1_z12": {
+        "full": 0.3758747824298364,
+        "subida": 0.22093670798546627,
+        "bajada": 0.6018344475365401,
+        "reciente": 0.0037983013326367988
+      },
+      "Credito_empresas_var_anual_lag4_shock": {
+        "full": 0.5492102633856298,
+        "subida": 0.7157053500378644,
+        "bajada": 0.3994775985424871,
+        "reciente": 0.08958376622874789
+      },
+      "Credito_empresas_var_anual_lag4_z12": {
+        "full": 0.5492102633856298,
+        "subida": 0.7157053500378644,
+        "bajada": 0.3994775985424871,
+        "reciente": 0.08958376622874789
+      },
+      "Credito_empresas_var_anual_lag5_shock": {
+        "full": 0.5298787300330072,
+        "subida": 0.7072424396089331,
+        "bajada": 0.38387263393233073,
+        "reciente": 0.035999028101134325
+      },
+      "Credito_empresas_var_anual_lag5_z12": {
+        "full": 0.5298787300330072,
+        "subida": 0.7072424396089331,
+        "bajada": 0.38387263393233073,
+        "reciente": 0.035999028101134325
+      },
+      "Credito_empresas_var_anual_lag7_shock": {
+        "full": 0.44642933415251884,
+        "subida": 0.6042156616085012,
+        "bajada": 0.26414089618823094,
+        "reciente": 0.025479271262654018
+      },
+      "Credito_empresas_var_anual_lag7_z12": {
+        "full": 0.44642933415251884,
+        "subida": 0.6042156616085012,
+        "bajada": 0.26414089618823094,
+        "reciente": 0.025479271262654018
+      },
+      "Credito_empresas_var_anual_lag8_shock": {
+        "full": 0.4107843169339041,
+        "subida": 0.6001653358655537,
+        "bajada": 0.2317770299346731,
+        "reciente": 0.018477958815129734
+      },
+      "Credito_empresas_var_anual_lag8_z12": {
+        "full": 0.4107843169339041,
+        "subida": 0.6001653358655537,
+        "bajada": 0.2317770299346731,
+        "reciente": 0.018477958815129734
+      },
+      "Credito_hipotecario_var_anual_var_12m": {
+        "full": 0.46925824198904603,
+        "subida": 0.8478850836702728,
+        "bajada": 0.14859114311314126,
+        "reciente": 0.01602232228161897
+      },
+      "Credito_hipotecario_var_anual_delta12": {
+        "full": 0.44102651613784705,
+        "subida": 0.8476865973912235,
+        "bajada": 0.14309832690390717,
+        "reciente": 0.01835317372653884
+      },
+      "Credito_hipotecario_var_anual_lag1_dev_ma12": {
+        "full": 0.27368144163042907,
+        "subida": 0.45736506026120105,
+        "bajada": 0.01201919876226241,
+        "reciente": 0.0681739409458249
+      },
+      "Dolarizacion_credito_tipo_delta12": {
+        "full": 0.29033580117388796,
+        "subida": 0.34397044202727733,
+        "bajada": 0.011049564577518396,
+        "reciente": 0.1716634004125258
+      },
+      "Dolarizacion_credito_tipo_lag1_delta12": {
+        "full": 0.3646147711733956,
+        "subida": 0.4288377897982594,
+        "bajada": 0.014098231602527173,
+        "reciente": 0.2301955821503223
+      },
+      "Dolarizacion_credito_tipo_lag2_delta12": {
+        "full": 0.4248419414295494,
+        "subida": 0.4870594517900002,
+        "bajada": 0.16858781900519373,
+        "reciente": 0.23347424679108486
+      },
+      "Dolarizacion_credito_tipo_lag3_delta12": {
+        "full": 0.47432346274475107,
+        "subida": 0.5136196813651912,
+        "bajada": 0.38648557491356766,
+        "reciente": 0.19011133138194364
+      },
+      "Dolarizacion_credito_tipo_lag4_dev_ma12": {
+        "full": 0.3866387978901837,
+        "subida": 0.4656305775558814,
+        "bajada": 0.02084597547774367,
+        "reciente": 0.24376601590343458
+      },
+      "Dolarizacion_credito_tipo_lag4_shock": {
+        "full": 0.2915447793107543,
+        "subida": 0.401139929839503,
+        "bajada": 0.009686914654022433,
+        "reciente": 0.15843736660615373
+      },
+      "Dolarizacion_credito_tipo_lag4_z12": {
+        "full": 0.2915447793107543,
+        "subida": 0.401139929839503,
+        "bajada": 0.009686914654022433,
+        "reciente": 0.15843736660615373
+      },
+      "Dolarizacion_credito_tipo_lag4_delta12": {
+        "full": 0.518313967219607,
+        "subida": 0.5034466516852678,
+        "bajada": 0.6113062273229921,
+        "reciente": 0.12399805426401628
+      },
+      "Dolarizacion_credito_tipo_lag5_dev_ma12": {
+        "full": 0.4364006526582573,
+        "subida": 0.4969136125327731,
+        "bajada": 0.22553307227167738,
+        "reciente": 0.1769580632310603
+      },
+      "Dolarizacion_credito_tipo_lag5_shock": {
+        "full": 0.32318071825344824,
+        "subida": 0.4117815082902414,
+        "bajada": 0.08431451729940304,
+        "reciente": 0.15199327196160023
+      },
+      "Dolarizacion_credito_tipo_lag5_z12": {
+        "full": 0.32318071825344824,
+        "subida": 0.4117815082902414,
+        "bajada": 0.08431451729940304,
+        "reciente": 0.15199327196160023
+      },
+      "Dolarizacion_credito_tipo_lag5_delta12": {
+        "full": 0.5256277984792967,
+        "subida": 0.4689516139378858,
+        "bajada": 0.7336313049080172,
+        "reciente": 0.012282628601466746
+      },
+      "Dolarizacion_credito_tipo_lag6_delta12": {
+        "full": 0.5248620248286239,
+        "subida": 0.4318433880594484,
+        "bajada": 0.7784888100499532,
+        "reciente": 0.01256646092876838
+      },
+      "Dolarizacion_credito_tipo_lag7_dev_ma3": {
+        "full": 0.2801335856449034,
+        "subida": 0.38513706222626737,
+        "bajada": 0.00821903590618527,
+        "reciente": 0.0857833116221341
+      },
+      "Dolarizacion_credito_tipo_lag7_dev_ma12": {
+        "full": 0.5056109842158144,
+        "subida": 0.5042369545621174,
+        "bajada": 0.6914894555254846,
+        "reciente": 0.0039318951146896375
+      },
+      "Dolarizacion_credito_tipo_lag7_shock": {
+        "full": 0.3981431456058722,
+        "subida": 0.4489202588590961,
+        "bajada": 0.4607945865026331,
+        "reciente": 0.2033150537622192
+      },
+      "Dolarizacion_credito_tipo_lag7_z12": {
+        "full": 0.3981431456058722,
+        "subida": 0.4489202588590961,
+        "bajada": 0.4607945865026331,
+        "reciente": 0.2033150537622192
+      },
+      "Dolarizacion_credito_tipo_lag8_dev_ma3": {
+        "full": 0.3701452043671447,
+        "subida": 0.46729398198957317,
+        "bajada": 0.09108271731035347,
+        "reciente": 0.003996669687598734
+      },
+      "Dolarizacion_credito_tipo_lag8_dev_ma12": {
+        "full": 0.5195139064353278,
+        "subida": 0.47929469418528453,
+        "bajada": 0.8013562157832053,
+        "reciente": 0.10160468677790303
+      },
+      "Dolarizacion_credito_tipo_lag8_shock": {
+        "full": 0.44878470839806134,
+        "subida": 0.4872038947750495,
+        "bajada": 0.5996310533327759,
+        "reciente": 0.04838765388472786
+      },
+      "Dolarizacion_credito_tipo_lag8_z12": {
+        "full": 0.44878470839806134,
+        "subida": 0.4872038947750495,
+        "bajada": 0.5996310533327759,
+        "reciente": 0.04838765388472786
+      },
+      "Dolarizacion_credito_tipo_lag9_dev_ma3": {
+        "full": 0.4079450776606876,
+        "subida": 0.5275269681667745,
+        "bajada": 0.2889728190633561,
+        "reciente": 0.0028841943712817073
+      },
+      "Dolarizacion_credito_tipo_lag9_dev_ma12": {
+        "full": 0.49811277034264684,
+        "subida": 0.4322451956794192,
+        "bajada": 0.8088093795062239,
+        "reciente": 0.10693051323476652
+      },
+      "Dolarizacion_credito_tipo_lag9_shock": {
+        "full": 0.47484191933713904,
+        "subida": 0.5328984227127617,
+        "bajada": 0.6719347211553743,
+        "reciente": 0.026257760652928324
+      },
+      "Dolarizacion_credito_tipo_lag9_z12": {
+        "full": 0.47484191933713904,
+        "subida": 0.5328984227127617,
+        "bajada": 0.6719347211553743,
+        "reciente": 0.026257760652928324
+      },
+      "Credito_consumo_TC_lag5_ma3": {
+        "full": 0.3640446732479152,
+        "subida": 0.6183982102812321,
+        "bajada": 0.7802022274728436,
+        "reciente": 0.18080412354912873
+      },
+      "Credito_consumo_TC_lag5_delta12": {
+        "full": 0.2875928309731744,
+        "subida": 0.42825131756050105,
+        "bajada": 0.0670812405628032,
+        "reciente": 0.006719627619484675
+      },
+      "Credito_consumo_TC_lag6_delta12": {
+        "full": 0.2829434369469223,
+        "subida": 0.3703549079740461,
+        "bajada": 0.15013148637851642,
+        "reciente": 0.0010616240678773324
+      },
+      "Credito_consumo_TC_lag7_shock": {
+        "full": 0.42751961675680683,
+        "subida": 0.5999247621555887,
+        "bajada": 0.12238303570640559,
+        "reciente": 0.2550450543854164
+      },
+      "Credito_consumo_TC_lag7_z12": {
+        "full": 0.42751961675680683,
+        "subida": 0.5999247621555887,
+        "bajada": 0.12238303570640559,
+        "reciente": 0.2550450543854164
+      },
+      "Credito_consumo_TC_lag8_dev_ma12": {
+        "full": 0.2659161143305214,
+        "subida": 0.4013306337568792,
+        "bajada": 0.13107660459859433,
+        "reciente": 0.00020622119127466253
+      },
+      "Credito_consumo_TC_lag8_shock": {
+        "full": 0.4166582130319605,
+        "subida": 0.5841517537814244,
+        "bajada": 0.15512830954549664,
+        "reciente": 0.003405203080094075
+      },
+      "Credito_consumo_TC_lag8_z12": {
+        "full": 0.4166582130319605,
+        "subida": 0.5841517537814244,
+        "bajada": 0.15512830954549664,
+        "reciente": 0.003405203080094075
+      },
+      "Credito_consumo_TC_lag9_shock": {
+        "full": 0.383700947663712,
+        "subida": 0.554789031179146,
+        "bajada": 0.2557091536760251,
+        "reciente": 0.003225752962290716
+      },
+      "Credito_consumo_TC_lag9_z12": {
+        "full": 0.383700947663712,
+        "subida": 0.554789031179146,
+        "bajada": 0.2557091536760251,
+        "reciente": 0.003225752962290716
+      },
+      "Credito_banca_ME_var_12m": {
+        "full": 0.28782175981292185,
+        "subida": 0.6950581637814465,
+        "bajada": 0.01979907921150204,
+        "reciente": 0.14658658107134676
+      },
+      "Credito_banca_ME_delta12": {
+        "full": 0.26516115082364117,
+        "subida": 0.7102308562907016,
+        "bajada": 0.02370877416642078,
+        "reciente": 0.1547949129595955
+      },
+      "Credito_banca_total_delta12": {
+        "full": 0.37678339236793995,
+        "subida": 0.26244541256920995,
+        "bajada": 0.5715297628196425,
+        "reciente": 1.8181536772798462e-05
+      },
+      "Credito_banca_total_lag1_shock": {
+        "full": 0.4403189480216411,
+        "subida": 0.2502863890812326,
+        "bajada": 0.5540233468512993,
+        "reciente": 0.006063574520386976
+      },
+      "Credito_banca_total_lag1_z12": {
+        "full": 0.4403189480216411,
+        "subida": 0.2502863890812326,
+        "bajada": 0.5540233468512993,
+        "reciente": 0.006063574520386976
+      },
+      "Credito_banca_var_MN_var_12m": {
+        "full": 0.46737268255178116,
+        "subida": 0.6901254046523285,
+        "bajada": 0.23886947821784446,
+        "reciente": 0.18821248401339497
+      },
+      "Credito_banca_var_MN_delta12": {
+        "full": 0.468088775479279,
+        "subida": 0.7171263852355764,
+        "bajada": 0.22678917262755,
+        "reciente": 0.19265357727814522
+      },
+      "Credito_banca_var_MN_lag1_mom6": {
+        "full": 0.275251749376913,
+        "subida": 0.29372930836764105,
+        "bajada": 0.23980203330651004,
+        "reciente": 5.41872184029711e-05
+      },
+      "Credito_banca_var_MN_lag1_dev_ma12": {
+        "full": 0.40275025600748304,
+        "subida": 0.5285265864388552,
+        "bajada": 0.24308406768672508,
+        "reciente": 0.026698875078382336
+      },
+      "Credito_banca_var_MN_lag4_ma12": {
+        "full": 0.2601092194408771,
+        "subida": 0.09216791426679817,
+        "bajada": 0.6019915677088239,
+        "reciente": 0.15712367990564743
+      },
+      "Credito_banca_var_MN_lag5_ma12": {
+        "full": 0.33308915899950314,
+        "subida": 0.2213338654092845,
+        "bajada": 0.668202965473824,
+        "reciente": 0.113691527113454
+      },
+      "Credito_banca_var_MN_lag7_ma6": {
+        "full": 0.2815409546129639,
+        "subida": 0.1297940156586676,
+        "bajada": 0.6382068379123167,
+        "reciente": 0.003178728047705119
+      },
+      "Credito_banca_var_MN_lag7_ma12": {
+        "full": 0.47435481679416386,
+        "subida": 0.4522569125548784,
+        "bajada": 0.7324244005068605,
+        "reciente": 0.026345310537515917
+      },
+      "Credito_banca_var_MN_lag8_ma6": {
+        "full": 0.35960656443531847,
+        "subida": 0.2873498150886867,
+        "bajada": 0.6553851938767168,
+        "reciente": 0.004770356060302845
+      },
+      "Credito_banca_var_MN_lag8_ma12": {
+        "full": 0.53359981198274,
+        "subida": 0.5189349117277362,
+        "bajada": 0.7403776634237572,
+        "reciente": 0.008010143197743493
+      },
+      "Credito_banca_var_MN_lag9_ma3": {
+        "full": 0.32794444683226703,
+        "subida": 0.20908913947263366,
+        "bajada": 0.6068899246645475,
+        "reciente": 0.08497842620582939
+      },
+      "Credito_banca_var_MN_lag9_ma6": {
+        "full": 0.4277863563068962,
+        "subida": 0.42443671058678833,
+        "bajada": 0.6688551000747603,
+        "reciente": 0.010863297128396612
+      },
+      "Credito_banca_var_MN_lag9_ma12": {
+        "full": 0.5790051640997794,
+        "subida": 0.5481727903098752,
+        "bajada": 0.7416623450711428,
+        "reciente": 0.0001412501336490399
+      },
+      "Credito_banca_var_MN_lag12": {
+        "full": 0.4281331159781218,
+        "subida": 0.4759462250345315,
+        "bajada": 0.357184020263077,
+        "reciente": 0.09850128008598195
+      },
+      "Credito_banca_var_MN_lag12_ma3": {
+        "full": 0.4773177850441797,
+        "subida": 0.5046709791065225,
+        "bajada": 0.5418252327870573,
+        "reciente": 0.08299046745600873
+      },
+      "Credito_banca_var_MN_lag12_ma6": {
+        "full": 0.5329493217795772,
+        "subida": 0.5050363505140308,
+        "bajada": 0.6567584072040304,
+        "reciente": 0.0656096490761248
+      },
+      "Credito_banca_var_ME_delta12": {
+        "full": 0.3405907749300374,
+        "subida": 0.5166061439123725,
+        "bajada": 0.037651973217143093,
+        "reciente": 0.140892593572191
+      },
+      "Credito_banca_var_ME_lag1_delta12": {
+        "full": 0.41086512012277443,
+        "subida": 0.5134451593516058,
+        "bajada": 0.020510209175157078,
+        "reciente": 0.03993452703355759
+      },
+      "Credito_banca_var_ME_lag3_delta12": {
+        "full": 0.45694345560008376,
+        "subida": 0.4717420331950389,
+        "bajada": 0.3186588192066955,
+        "reciente": 0.008518751836525475
+      },
+      "Credito_banca_var_ME_lag4_dev_ma12": {
+        "full": 0.45349986766796846,
+        "subida": 0.5691527036559131,
+        "bajada": 0.051690416855558384,
+        "reciente": 0.006430184188664049
+      },
+      "Credito_banca_var_ME_lag4_shock": {
+        "full": 0.42103514481300086,
+        "subida": 0.5907437853143166,
+        "bajada": 0.05629448987777927,
+        "reciente": 0.015470213690656846
+      },
+      "Credito_banca_var_ME_lag4_z12": {
+        "full": 0.42103514481300086,
+        "subida": 0.5907437853143166,
+        "bajada": 0.05629448987777927,
+        "reciente": 0.015470213690656846
+      },
+      "Credito_banca_var_ME_lag4_delta12": {
+        "full": 0.4445330439084597,
+        "subida": 0.4118004874218459,
+        "bajada": 0.47199648925360194,
+        "reciente": 0.0013170469341258941
+      },
+      "Credito_banca_var_ME_lag5_dev_ma12": {
+        "full": 0.48020993027321207,
+        "subida": 0.5268775958861888,
+        "bajada": 0.2408939528464487,
+        "reciente": 0.001925308952419386
+      },
+      "Credito_banca_var_ME_lag5_shock": {
+        "full": 0.5193805790986922,
+        "subida": 0.5760181503062217,
+        "bajada": 0.3495919758565355,
+        "reciente": 0.05613625462926027
+      },
+      "Credito_banca_var_ME_lag5_z12": {
+        "full": 0.5193805790986922,
+        "subida": 0.5760181503062217,
+        "bajada": 0.3495919758565355,
+        "reciente": 0.05613625462926027
+      },
+      "Credito_banca_var_ME_lag7_dev_ma3": {
+        "full": 0.2878214792253353,
+        "subida": 0.4646862500974417,
+        "bajada": 2.968409824881787e-06,
+        "reciente": 0.02634149904913192
+      },
+      "Credito_banca_var_ME_lag7_shock": {
+        "full": 0.5644864873741887,
+        "subida": 0.5715377135185129,
+        "bajada": 0.6051875231623125,
+        "reciente": 0.0009980041110603734
+      },
+      "Credito_banca_var_ME_lag7_z12": {
+        "full": 0.5644864873741887,
+        "subida": 0.5715377135185129,
+        "bajada": 0.6051875231623125,
+        "reciente": 0.0009980041110603734
+      },
+      "Emision_primaria_var_12m": {
+        "full": 0.2907417238906873,
+        "subida": 0.49155951497109035,
+        "bajada": 0.23009542594224588,
+        "reciente": 0.004622715403930108
+      },
+      "Emision_primaria_delta12": {
+        "full": 0.31370759696182193,
+        "subida": 0.4829594326688236,
+        "bajada": 0.23728745946060667,
+        "reciente": 0.0025773861681726413
+      },
+      "Emision_primaria_lag1_dev_ma12": {
+        "full": 0.31968444118825495,
+        "subida": 0.47859029224825594,
+        "bajada": 0.137008309148227,
+        "reciente": 0.029512274497186616
+      },
+      "Emision_primaria_lag1_shock": {
+        "full": 0.26736031245746966,
+        "subida": 0.47442486050459354,
+        "bajada": 0.08760053861293592,
+        "reciente": 0.04360011914685927
+      },
+      "Emision_primaria_lag1_z12": {
+        "full": 0.26736031245746966,
+        "subida": 0.47442486050459354,
+        "bajada": 0.08760053861293592,
+        "reciente": 0.04360011914685927
+      },
+      "Depositos_vista_MN_lag1_var_12m": {
+        "full": 0.2680272892824693,
+        "subida": 0.18047271849394955,
+        "bajada": 0.3582462903669322,
+        "reciente": 0.014230544018718568
+      },
+      "Tasa_prestamo_mas1a_banca_MN_lag1_dev_ma3": {
+        "full": 0.2692066767936844,
+        "subida": 0.42096742633898626,
+        "bajada": 0.01713204786804989,
+        "reciente": 0.2814724962594759
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_var_12m": {
+        "full": 0.41896712370179856,
+        "subida": 0.5657280520985897,
+        "bajada": 0.6638101280441543,
+        "reciente": 0.012893802374011765
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_delta12": {
+        "full": 0.3555287400269113,
+        "subida": 0.6603889622219785,
+        "bajada": 0.5379943826829154,
+        "reciente": 0.012471596714245314
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag1_mom3": {
+        "full": 0.2520624401252405,
+        "subida": 0.21912418165008535,
+        "bajada": 0.5261009115938918,
+        "reciente": 1.2117951798000244e-05
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag1_mom6": {
+        "full": 0.37277008530760036,
+        "subida": 0.40230552503721534,
+        "bajada": 0.6156709669348309,
+        "reciente": 0.0014258135154000403
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag1_dev_ma3": {
+        "full": 0.26462679113680493,
+        "subida": 0.24944245768264028,
+        "bajada": 0.38882683704480364,
+        "reciente": 0.004315287003070648
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag1_shock": {
+        "full": 0.30907419597403846,
+        "subida": 0.37744892776779243,
+        "bajada": 0.2485830318894912,
+        "reciente": 0.028501435265724333
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag1_z12": {
+        "full": 0.30907419597403846,
+        "subida": 0.37744892776779243,
+        "bajada": 0.2485830318894912,
+        "reciente": 0.028501435265724333
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag2_var_12m": {
+        "full": 0.267573562229194,
+        "subida": 0.5291582949127884,
+        "bajada": 0.5474718137114735,
+        "reciente": 0.022603278256448554
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag4_shock": {
+        "full": 0.26491616474945034,
+        "subida": 0.4267822943052766,
+        "bajada": 0.25704538330135096,
+        "reciente": 0.003526990643444576
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag4_z12": {
+        "full": 0.26491616474945034,
+        "subida": 0.4267822943052766,
+        "bajada": 0.25704538330135096,
+        "reciente": 0.003526990643444576
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag5_mom3": {
+        "full": 0.2591802461617899,
+        "subida": 0.3865317001152801,
+        "bajada": 0.5886030223615986,
+        "reciente": 0.00017406088002873808
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag5_shock": {
+        "full": 0.25772807504845996,
+        "subida": 0.48263378930057654,
+        "bajada": 0.26902161159511406,
+        "reciente": 0.008301796836347153
+      },
+      "Tasa_prestamo_hasta1a_banca_ME_lag5_z12": {
+        "full": 0.25772807504845996,
+        "subida": 0.48263378930057654,
+        "bajada": 0.26902161159511406,
+        "reciente": 0.008301796836347153
+      },
+      "Ratio_credito_consumo_total_lag4_ma12": {
+        "full": 0.30259516028698447,
+        "subida": 0.11139045190767662,
+        "bajada": 0.6967850770339238,
+        "reciente": 0.05383710525663284
+      },
+      "Ratio_credito_consumo_total_lag5_ma12": {
+        "full": 0.3681474695153793,
+        "subida": 0.24525599286320837,
+        "bajada": 0.686779160768966,
+        "reciente": 0.03402276684717993
+      },
+      "Ratio_credito_consumo_total_lag7_ma6": {
+        "full": 0.27747176207941165,
+        "subida": 0.06619625191497909,
+        "bajada": 0.6386377933448569,
+        "reciente": 0.15604787783151144
+      },
+      "Ratio_credito_consumo_total_lag7_ma12": {
+        "full": 0.4937738728579639,
+        "subida": 0.4749289281429606,
+        "bajada": 0.664872126524852,
+        "reciente": 0.004011449362584828
+      },
+      "Ratio_credito_consumo_total_lag8_ma6": {
+        "full": 0.35980634731256855,
+        "subida": 0.21470494550982175,
+        "bajada": 0.6634263596342934,
+        "reciente": 0.06481016289168902
+      },
+      "Ratio_credito_consumo_total_lag8_ma12": {
+        "full": 0.5473703821865259,
+        "subida": 0.5434944178616203,
+        "bajada": 0.6526322479482922,
+        "reciente": 0.00020124163621680958
+      },
+      "Ratio_credito_consumo_total_lag9_ma3": {
+        "full": 0.3096138345699961,
+        "subida": 0.11660028685561842,
+        "bajada": 0.6313945977457429,
+        "reciente": 0.11290621474988122
+      },
+      "Ratio_credito_consumo_total_lag9_ma6": {
+        "full": 0.4456247828899065,
+        "subida": 0.3853823402104969,
+        "bajada": 0.6686908886420546,
+        "reciente": 0.014925816184627726
+      },
+      "Ratio_credito_consumo_total_lag9_ma12": {
+        "full": 0.5931240963854979,
+        "subida": 0.584905148128649,
+        "bajada": 0.6419008120003392,
+        "reciente": 0.0009840369280515945
+      },
+      "Ratio_credito_consumo_total_lag12": {
+        "full": 0.49296007820315046,
+        "subida": 0.45178946511277457,
+        "bajada": 0.6734318193565552,
+        "reciente": 5.114233311664861e-06
+      },
+      "Ratio_credito_consumo_total_lag12_ma3": {
+        "full": 0.5659898125238388,
+        "subida": 0.5846357934342491,
+        "bajada": 0.656926234039785,
+        "reciente": 0.0015247703835834857
+      },
+      "Ratio_credito_consumo_total_lag12_ma6": {
+        "full": 0.623234475170594,
+        "subida": 0.6454534940911482,
+        "bajada": 0.6331912089185814,
+        "reciente": 0.0029120340966917596
+      }
+    }
+  },
+  "univariate_ranking": [
+    {
+      "mae_oot": 0.010973273733967035,
+      "mae_oot_bps": 109.73273733967035,
+      "bias_oot": 0.0013661330289807569,
+      "bias_oot_bps": 13.66133028980757,
+      "r2_oot": 0.6960922037587536,
+      "r2_full": 0.6110491564372638,
+      "b0_full": -1.900195796163702,
+      "b1_full": 0.6583423568236846,
+      "p_hac_full": 1.927876174799205e-15,
+      "dw_full": 0.9550874433328326,
+      "adf_resid_full": 0.0002127606195772209,
+      "n_train": 34,
+      "n_test": 32,
+      "variable": "IPC_Lima_var_12m_lag5_ma6",
+      "granger_p": 0.015904051784708932,
+      "granger_lag": 1,
+      "uni": true,
+      "sign_pct": 1.0,
+      "regime_r2": {
+        "full": 0.6110491564372641,
+        "subida": 0.5683375020481777,
+        "bajada": 0.6993305901763603,
+        "reciente": 0.5564218051069545
+      }
+    },
+    {
+      "mae_oot": 0.01871343460250582,
+      "mae_oot_bps": 187.1343460250582,
+      "bias_oot": 0.013907060297911937,
+      "bias_oot_bps": 139.07060297911937,
+      "r2_oot": 0.34351617324876904,
+      "r2_full": 0.5179808644387449,
+      "b0_full": -1.9502105374124943,
+      "b1_full": 1.073142047094667,
+      "p_hac_full": 6.442563947594393e-11,
+      "dw_full": 0.7157930046016874,
+      "adf_resid_full": 0.003925518316254529,
+      "n_train": 34,
+      "n_test": 32,
+      "variable": "Inflacion_subyacente_var_12m_lag5_ma6",
+      "granger_p": 0.04448407080943703,
+      "granger_lag": 1,
+      "uni": true,
+      "sign_pct": 1.0,
+      "regime_r2": {
+        "full": 0.5179808644387454,
+        "subida": 0.5499829878481279,
+        "bajada": 0.5538626338071888,
+        "reciente": 0.6014091992104647
+      }
+    }
+  ],
+  "bivariados_validos": 0,
+  "bivariados_ranking": [],
+  "bivariados_by_holdout": [
+    {
+      "v1": "IPC_Lima_var_12m_lag5_ma6",
+      "v2": "Inflacion_subyacente_var_12m_lag5_ma6",
+      "r2": 0.6176884407102095,
+      "r2_adj": 0.6055515658121209,
+      "r2_improve": 0.010865384892528434,
+      "b0": -1.9220815832972127,
+      "b1": 0.5377380810505469,
+      "b2": 0.24567104623389946,
+      "p1_hac": 0.00020544686201091943,
+      "p2_hac": 0.38266813844186687,
+      "vif": 4.09,
+      "corr12": 0.869,
+      "lrt_p": 0.28642954884379507,
+      "s1_ok": true,
+      "s2_ok": true,
+      "mae_oot": 0.016505213159102243,
+      "mae_oot_bps": 165.05213159102243,
+      "pass": false
+    }
+  ]
+}

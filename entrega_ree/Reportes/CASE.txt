@@ -1,0 +1,16 @@
+CASE
+  WHEN puntuacion_cal IS NULL THEN NULL
+  WHEN puntuacion_cal >= 990  THEN 'G1'
+  WHEN puntuacion_cal >= 978  THEN 'G2'
+  WHEN puntuacion_cal >= 948  THEN 'G3'
+  WHEN puntuacion_cal >= 902  THEN 'G4'
+  ELSE 'R'
+END AS grupo_riesgo_A,
+CASE
+  WHEN puntuacion_cal IS NULL THEN NULL
+  WHEN puntuacion_cal >= 991  THEN 'G1'
+  WHEN puntuacion_cal >= 977  THEN 'G2'
+  WHEN puntuacion_cal >= 944  THEN 'G3'
+  WHEN puntuacion_cal >= 920  THEN 'G4'
+  ELSE 'R'
+END AS grupo_riesgo_B

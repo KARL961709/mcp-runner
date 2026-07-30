@@ -1,0 +1,125 @@
+{
+  "product": "Reenganche",
+  "chain": "pd_ree \u2192 BetaCal(tipo_ingreso) \u2192 probit_\u03b4 \u2192 driver_cal \u2192 Vasicek_PIT",
+  "rho": 0.038030115964094044,
+  "lambda": 1.0,
+  "macro_vars": [
+    "IPC_Lima_var_12m_lag5_ma6"
+  ],
+  "n_z1": 26348,
+  "n_z2": 18045,
+  "n_total": 44393,
+  "pd_pit_mean_z1": 0.03577503670068057,
+  "pd_pit_mean_z2": 0.02900889413364583,
+  "rd_z1": 0.033133444663731595,
+  "calibration_params": {
+    "DEP": {
+      "a": 1.4307409240924087,
+      "b": 0.11673242216482149,
+      "m": -1.4235902271832188,
+      "probit_delta": 0.061973725544583,
+      "level_gap_bps": -39.15445412429098,
+      "lra": 0.033157620041753655,
+      "pd_cal_mean": 0.029242174629324557,
+      "pd_ttc_mean": 0.0331576200417536,
+      "n": 9712,
+      "rd_obs": 0.029242174629324547,
+      "monotonic": true,
+      "restriccion_monotona_activa": false
+    },
+    "NO DEP": {
+      "a": 1.12194919105907,
+      "b": 0.5587876581505312,
+      "m": -1.8712301290911784,
+      "probit_delta": 0.10257577255744288,
+      "level_gap_bps": -78.78603785674599,
+      "lra": 0.0432837492533351,
+      "pd_cal_mean": 0.0354051454676605,
+      "pd_ttc_mean": 0.0432837492533351,
+      "n": 16636,
+      "rd_obs": 0.03540514546766049,
+      "monotonic": true,
+      "restriccion_monotona_activa": false
+    }
+  },
+  "driver_summary": [
+    {
+      "driver": "tipo_ingreso_dep",
+      "celda": "DEP",
+      "n_z1": 9712,
+      "rd_obs": 0.029242174629324547,
+      "pd_ree_mean": 0.20452822901387668,
+      "pd_cal_mean": 0.029242174629324557,
+      "pd_ttc_mean": 0.0331576200417536,
+      "pd_pit_mean": 0.029497778086944444,
+      "gap_bps": 2.5560345761989693,
+      "n_z2": 5568,
+      "pd_pit_z2_mean": 0.025580625416979794
+    },
+    {
+      "driver": "tipo_ingreso_dep",
+      "celda": "NO DEP",
+      "n_z1": 16636,
+      "rd_obs": 0.03540514546766049,
+      "pd_ree_mean": 0.21471149783015786,
+      "pd_cal_mean": 0.0354051454676605,
+      "pd_ttc_mean": 0.0432837492533351,
+      "pd_pit_mean": 0.039439663753854735,
+      "gap_bps": 40.345182861942426,
+      "n_z2": 12477,
+      "pd_pit_z2_mean": 0.030538797172388832
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "DEP_CS",
+      "n_z1": 6618,
+      "rd_obs": 0.02704744635841644,
+      "pd_ree_mean": 0.18221659976188184,
+      "pd_cal_mean": 0.02499895593445235,
+      "pd_ttc_mean": 0.028439570768420606,
+      "pd_pit_mean": 0.025290243612280952,
+      "gap_bps": -17.572027461354896,
+      "n_z2": 3470,
+      "pd_pit_z2_mean": 0.021770170466206003
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "DEP_NO_CS",
+      "n_z1": 3094,
+      "rd_obs": 0.033936651583710405,
+      "pd_ree_mean": 0.2522523280409296,
+      "pd_cal_mean": 0.03831832890297169,
+      "pd_ttc_mean": 0.04324942679382787,
+      "pd_pit_mean": 0.03849760457476698,
+      "gap_bps": 45.60952991056577,
+      "n_z2": 2098,
+      "pd_pit_z2_mean": 0.03188295081220623
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "INDEPENDIENTE",
+      "n_z1": 1962,
+      "rd_obs": 0.04434250764525994,
+      "pd_ree_mean": 0.23354684947445756,
+      "pd_cal_mean": 0.039044774290589376,
+      "pd_ttc_mean": 0.04761964965313294,
+      "pd_pit_mean": 0.04314544224776114,
+      "gap_bps": -11.970653974988018,
+      "n_z2": 1495,
+      "pd_pit_z2_mean": 0.031402921438053504
+    },
+    {
+      "driver": "tipo_ingreso_cs",
+      "celda": "MIXTO",
+      "n_z1": 14674,
+      "rd_obs": 0.034210167643451,
+      "pd_ree_mean": 0.21219310067013905,
+      "pd_cal_mean": 0.0349185057136339,
+      "pd_ttc_mean": 0.04270401389934823,
+      "pd_pit_mean": 0.03894417940023306,
+      "gap_bps": 47.34011756782057,
+      "n_z2": 10982,
+      "pd_pit_z2_mean": 0.03042116233564064
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+01 RD historica Reenganche | meses=78 | LRA global (median, excl COVID+spike)=4.2263% | meses excluidos=24
+  export: rd_mensual.csv, lra.json
