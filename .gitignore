@@ -90,3 +90,14 @@ elnino_ibk/03_deck/mapa_fen_grupos.svg
 #                          no el conteo. Decision del propietario 2026-07-30.
 !deck_fen/
 !deck_fen/*.html
+
+# --- deck_ree (2026-07-31): PPTX de trabajo de Comportamental PP Reenganche.
+# Verificado ANTES del push, no despues: los 14 libros de Excel embebidos en los
+# graficos llevan solo agregados por codmes y segmento (N, defaults, RD, LI/LS),
+# maximo 154 filas por hoja. Cero key_value, cero id_value, cero hashes de 64
+# chars, y los numeros de 8 digitos son internos de OOXML (EMU y angulos), no
+# documentos. OJO: el archivo arrastra ademas las series de PASIVERO / NATURAL /
+# JURIDICA del deck que le sirvio de plantilla.
+# Repo PRIVADO (la API sin auth devuelve 404). Un push no se deshace.
+!deck_ree/
+!deck_ree/*.pptx
