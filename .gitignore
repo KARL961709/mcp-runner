@@ -107,5 +107,3 @@ elnino_ibk/03_deck/mapa_fen_grupos.svg
 # regeneran con `node svg2png.js`. node_modules ya cae en la regla de arriba.
 elnino_ibk/03_deck/img/
 elnino_ibk/03_deck/_check/
-!elnino_ibk/05_entregables/
-!elnino_ibk/05_entregables/*.md
