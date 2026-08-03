@@ -101,3 +101,11 @@ elnino_ibk/03_deck/mapa_fen_grupos.svg
 # Repo PRIVADO (la API sin auth devuelve 404). Un push no se deshace.
 !deck_ree/
 !deck_ree/*.pptx
+
+# --- deck FEN metodologia e2e (2026-08-03): el mazo HTML, el PPTX y sus generadores.
+# Los PNG rasterizados (img/) y los volcados de PowerPoint (_check/) NO viajan: se
+# regeneran con `node svg2png.js`. node_modules ya cae en la regla de arriba.
+elnino_ibk/03_deck/img/
+elnino_ibk/03_deck/_check/
+!elnino_ibk/05_entregables/
+!elnino_ibk/05_entregables/*.md
