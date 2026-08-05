@@ -88,6 +88,14 @@ elnino_ibk/03_deck/mapa_fen_grupos.svg
 #   mapa_distrital_web.html  geometria publica (peru_dist) + grado FEN
 #   heatmap_stock_mz.html  densidad de cartera en grilla, guarda BUCKET (0-5),
 #                          no el conteo. Decision del propietario 2026-07-30.
+#   deck_estres_fen.html   14 slides, estres de PD por FEN. Verificado ANTES del push
+#                          2026-08-05: 661 KB de los 793 son geometria distrital publica
+#                          (peru_dist) y geometria de SJL + cauces (OSM). El resto es IGP/ICEN,
+#                          SENAMHI/ENFEN, danos de INDECI y conteo de DISTRITOS por grado.
+#                          Derivado de cartera hay dos series, ambas agregadas y sin importes:
+#                            grupo  spread alto vs bajo por evento, 5 filas sobre 7 y 17 distritos
+#                            decay  perfil de mora en tiempo de evento, 10 puntos mensuales
+#                          Cero key_value, cero id_value, cero documentos, cero saldos.
 !deck_fen/
 !deck_fen/*.html
 
