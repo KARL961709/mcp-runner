@@ -1,6 +1,6 @@
 CREATE TABLE disc_model_owner.fen_score_v6
 WITH (format = 'PARQUET', external_location = '<S3_DATOS>/fen/fen_score_v6/') AS
-SELECT cod_ubigeo, departamento, provincia, distrito, vertiente, cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, perfil_dominante, tipo_actividad, nivel_actividad, altitud, piso, pea_ocupada FROM (VALUES
+SELECT CAST(cod_ubigeo AS VARCHAR) AS cod_ubigeo, CAST(departamento AS VARCHAR) AS departamento, CAST(provincia AS VARCHAR) AS provincia, CAST(distrito AS VARCHAR) AS distrito, CAST(vertiente AS VARCHAR) AS vertiente, CAST(cuenca AS VARCHAR) AS cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, CAST(perfil_dominante AS VARCHAR) AS perfil_dominante, CAST(tipo_actividad AS VARCHAR) AS tipo_actividad, CAST(nivel_actividad AS VARCHAR) AS nivel_actividad, altitud, CAST(piso AS VARCHAR) AS piso, pea_ocupada FROM (VALUES
 ('100101','HUANUCO','HUANUCO','HUANUCO','AMAZONAS','ALTO HUALLAGA',0,1,0.8136,0.4795,'B','COMERCIAL','A1',1921,'YUNGA_FLUVIAL',37683),
 ('100102','HUANUCO','HUANUCO','AMARILIS','AMAZONAS','ALTO HUALLAGA',0,0,0.771,0.4896,'D','SERV_PLURAL','A1',1950,'YUNGA_FLUVIAL',33541),
 ('100103','HUANUCO','HUANUCO','CHINCHAO','AMAZONAS','ALTO HUALLAGA',0,0,1.6761,2.9783,'A','AGRICOLA','A4',2122,'YUNGA_FLUVIAL',4256),

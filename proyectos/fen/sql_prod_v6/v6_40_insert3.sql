@@ -1,5 +1,5 @@
 INSERT INTO disc_model_owner.fen_score_v6
-SELECT cod_ubigeo, departamento, provincia, distrito, vertiente, cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, perfil_dominante, tipo_actividad, nivel_actividad, altitud, piso, pea_ocupada FROM (VALUES
+SELECT CAST(cod_ubigeo AS VARCHAR) AS cod_ubigeo, CAST(departamento AS VARCHAR) AS departamento, CAST(provincia AS VARCHAR) AS provincia, CAST(distrito AS VARCHAR) AS distrito, CAST(vertiente AS VARCHAR) AS vertiente, CAST(cuenca AS VARCHAR) AS cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, CAST(perfil_dominante AS VARCHAR) AS perfil_dominante, CAST(tipo_actividad AS VARCHAR) AS tipo_actividad, CAST(nivel_actividad AS VARCHAR) AS nivel_actividad, altitud, CAST(piso AS VARCHAR) AS piso, pea_ocupada FROM (VALUES
 ('040608','AREQUIPA','CONDESUYOS','YANAQUIHUA','PACIFICO','OCONA',3,1,0.6329,0.9419,'D','SERVICIOS','A1',3006,'QUECHUA',1955),
 ('090310','HUANCAVELICA','ANGARAES','SAN ANTONIO DE ANTAPARCO','AMAZONAS','MANTARO',0,4,1.5488,2.8156,'A','AGRICOLA','A4',2767,'QUECHUA',738),
 ('090404','HUANCAVELICA','CASTROVIRREYNA','CAPILLAS','PACIFICO','SAN JUAN',4,2,1.2452,2.3993,'A','AGRICOLA','A3',3224,'QUECHUA',334),

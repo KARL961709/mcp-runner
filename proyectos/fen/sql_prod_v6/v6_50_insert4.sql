@@ -1,5 +1,5 @@
 INSERT INTO disc_model_owner.fen_score_v6
-SELECT cod_ubigeo, departamento, provincia, distrito, vertiente, cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, perfil_dominante, tipo_actividad, nivel_actividad, altitud, piso, pea_ocupada FROM (VALUES
+SELECT CAST(cod_ubigeo AS VARCHAR) AS cod_ubigeo, CAST(departamento AS VARCHAR) AS departamento, CAST(provincia AS VARCHAR) AS provincia, CAST(distrito AS VARCHAR) AS distrito, CAST(vertiente AS VARCHAR) AS vertiente, CAST(cuenca AS VARCHAR) AS cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, CAST(perfil_dominante AS VARCHAR) AS perfil_dominante, CAST(tipo_actividad AS VARCHAR) AS tipo_actividad, CAST(nivel_actividad AS VARCHAR) AS nivel_actividad, altitud, CAST(piso AS VARCHAR) AS piso, pea_ocupada FROM (VALUES
 ('040504','AREQUIPA','CAYLLOMA','CALLALLI','PACIFICO','CAMANA',2,1,1.1382,1.9562,'A','AGRICOLA','A2',3887,'SUNI',766),
 ('010310','AMAZONAS','BONGARA','SHIPASBAMBA','AMAZONAS','UTCUBAMBA',0,1,1.5679,2.7397,'A','AGRICOLA','A4',1668,'YUNGA_FLUVIAL',617),
 ('030214','APURIMAC','ANDAHUAYLAS','SAN MIGUEL DE CHACCRAMPA','AMAZONAS','PAMPAS',0,1,1.5451,2.9205,'A','AGRICOLA','A4',3681,'SUNI',354),

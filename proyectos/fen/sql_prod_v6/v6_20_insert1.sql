@@ -1,5 +1,5 @@
 INSERT INTO disc_model_owner.fen_score_v6
-SELECT cod_ubigeo, departamento, provincia, distrito, vertiente, cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, perfil_dominante, tipo_actividad, nivel_actividad, altitud, piso, pea_ocupada FROM (VALUES
+SELECT CAST(cod_ubigeo AS VARCHAR) AS cod_ubigeo, CAST(departamento AS VARCHAR) AS departamento, CAST(provincia AS VARCHAR) AS provincia, CAST(distrito AS VARCHAR) AS distrito, CAST(vertiente AS VARCHAR) AS vertiente, CAST(cuenca AS VARCHAR) AS cuenca, r_nivel, d_nivel, f_lluvia, f_sequia, CAST(perfil_dominante AS VARCHAR) AS perfil_dominante, CAST(tipo_actividad AS VARCHAR) AS tipo_actividad, CAST(nivel_actividad AS VARCHAR) AS nivel_actividad, altitud, CAST(piso AS VARCHAR) AS piso, pea_ocupada FROM (VALUES
 ('150203','LIMA','BARRANCA','PATIVILCA','PACIFICO','PATIVILCA',2,1,1.1849,1.401,'A','AGRO_PLURAL','A2',95,'CHALA',6859),
 ('150204','LIMA','BARRANCA','SUPE','PACIFICO','137579',2,0,1.2499,1.7268,'A','AGRO_PLURAL','A3',69,'CHALA',10030),
 ('150205','LIMA','BARRANCA','SUPE PUERTO','PACIFICO','137579',2,0,1.1671,1.0648,'B','PESQUERO','A2',41,'CHALA',5027),
