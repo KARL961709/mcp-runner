@@ -1,1 +1,0 @@
-SHOW COLUMNS FROM disc_model_owner.scr_origenpp_altas_backtest
