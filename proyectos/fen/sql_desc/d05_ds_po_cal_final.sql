@@ -1,0 +1,1 @@
+SHOW COLUMNS FROM disc_model_owner.ds_po_origpp_CS_cal_final

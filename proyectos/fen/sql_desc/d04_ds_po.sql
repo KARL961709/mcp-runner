@@ -1,0 +1,1 @@
+SHOW COLUMNS FROM disc_model_owner.pp_vc_ds_po_origpp
