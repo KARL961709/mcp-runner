@@ -2,7 +2,8 @@
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_cal_202607
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
 WITH ft (trim_ft, fhat) AS (
-    VALUES (20223, -0.38935742968535247),
+    VALUES (20222, 0.74132125871317922),
+         (20223, -0.38935742968535247),
          (20224, -0.92891552347195483),
          (20231, -1.06092313681836292),
          (20232, -1.15686885926677885),
