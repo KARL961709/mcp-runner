@@ -1,4 +1,4 @@
--- 6a_scr_calibrado.sql | PD calibrada y puntuacion sobre la FUENTE DEL SCORE, p_codmes 202206-202607. personeria sale de tip_doc, fhat va embebido por trimestre del codmes_alta = p_codmes+1. Particionada por p_codmes: son ~4.5M filas por mes
+-- 6a_scr_calibrado.sql | scr_admbankbpe_rsk COMPLETA mas tres columnas de calibracion. Una fila de entrada, una de salida: no deduplica. flg_clean va en 1 porque no hay tabla de flags con los 13 criterios ex-ante, y con bloque unico no afecta la PD
 CREATE TABLE disc_model_owner.scr_admbankbpe_calibrado_202607
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY', partitioned_by = ARRAY['p_codmes']) AS
 WITH ft (trim_ft, fhat) AS (
@@ -22,58 +22,92 @@ WITH ft (trim_ft, fhat) AS (
          (20263, -0.03459445072099430)
 ),
 b AS (
-    SELECT CAST(tip_doc AS VARCHAR)                                          AS tip_doc,
-           key_value,
-           CAST(p_codmes AS INT)                                             AS pm,
-           max(TRY_CAST(probabilidad AS DOUBLE))                             AS pd_raw
-    FROM e_perm_aws.scr_admbankbpe_rsk
-    WHERE p_codmes BETWEEN '202206' AND '202607'
-    GROUP BY CAST(tip_doc AS VARCHAR), key_value, CAST(p_codmes AS INT)
-),
-c AS (
-    SELECT b.tip_doc, b.key_value, b.pm, b.pd_raw,
-           CASE WHEN b.tip_doc = '2' THEN 'PJJ' ELSE 'PNN' END               AS personeria,
-           CAST(DATE_FORMAT(DATE_ADD('month', 1, DATE_PARSE(CAST(b.pm AS VARCHAR), '%Y%m')), '%Y%m') AS INT) AS codmes_alta,
-           greatest(1e-6, least(1 - 1e-6, b.pd_raw))                         AS p
-    FROM b
-    WHERE b.pd_raw IS NOT NULL
+    SELECT a.*,
+           greatest(1e-6, least(1 - 1e-6, TRY_CAST(a.probabilidad AS DOUBLE)))  AS p,
+           (CAST(DATE_FORMAT(DATE_ADD('month', 1, DATE_PARSE(CAST(a.p_codmes AS VARCHAR), '%Y%m')), '%Y') AS INT)) * 10
+             + ((CAST(DATE_FORMAT(DATE_ADD('month', 1, DATE_PARSE(CAST(a.p_codmes AS VARCHAR), '%Y%m')), '%m') AS INT) - 1) / 3 + 1) AS trim_c
+    FROM e_perm_aws.scr_admbankbpe_rsk a
+    WHERE a.p_codmes BETWEEN '202206' AND '202607'
+      AND a.probabilidad IS NOT NULL
 ),
 n AS (
-    SELECT c.*, f.fhat,
+    SELECT b.*, f.fhat,
            greatest(1e-6, least(1 - 1e-6,
-             CASE WHEN c.personeria = 'PNN'
-                  THEN 1.0 / (1.0 + exp(-( -0.66018848026577570 + 0.59389236895322650 * ln(c.p) + 0.10766439295961687 * ln(1.0 - c.p) )))
-                  ELSE 1.0 / (1.0 + exp(-( -0.15993259962662906 + 0.96753989187205014 * (ln(c.p) - ln(1.0 - c.p)) )))
+             CASE WHEN b.tip_doc = '2'
+                  THEN 1.0 / (1.0 + exp(-( -0.15993259962662906 + 0.96753989187205014 * (ln(b.p) - ln(1.0 - b.p)) )))
+                  ELSE 1.0 / (1.0 + exp(-( -0.66018848026577570 + 0.59389236895322650 * ln(b.p) + 0.10766439295961687 * ln(1.0 - b.p) )))
              END )) AS pd_cal
-    FROM c
-    LEFT JOIN ft f
-      ON f.trim_ft = (c.codmes_alta / 100) * 10 + ((mod(c.codmes_alta, 100) - 1) / 3 + 1)
+    FROM b
+    LEFT JOIN ft f ON f.trim_ft = b.trim_c
 ),
-r AS (
+s AS (
     SELECT n.*,
            greatest(0.001, least(0.999,
              0.03597881726832541 * ( 0.03 * ((1 - exp(-35 * n.pd_cal)) / (1 - exp(-35.0)))
                         + 0.16 * (1 - (1 - exp(-35 * n.pd_cal)) / (1 - exp(-35.0))) )
-             / CASE WHEN n.personeria = 'PNN' THEN 0.03424207361820211 ELSE 0.03868433725325406 END )) AS rho_i
+             / CASE WHEN n.tip_doc = '2' THEN 0.03868433725325406 ELSE 0.03424207361820211 END )) AS rho_i
     FROM n
 )
-SELECT r.tip_doc,
-       r.key_value,
-       r.codmes_alta,
-       r.personeria,
-       r.pd_raw                                            AS prob_modelo,
-       r.pd_cal,
-       r.rho_i,
-       r.fhat,
+SELECT s.codmes,
+       s.tip_doc,
+       s.key_value,
+       s.puntuacion,
+       s.probabilidad,
+       s.modelo,
+       s.fec_replica,
+       s.segmento,
+       s.var1,
+       s.var2,
+       s.var3,
+       s.var4,
+       s.var5,
+       s.woe_beta_sldoppcomer,
+       s.woe_prm_decresldo12m,
+       s.woe_nro_decresldo12m,
+       s.woe_beta_nroenti,
+       s.woe_max_nrocredsldo06m,
+       s.woe_prm_porcsldoimpa12m,
+       s.woe_peor_clasicony09m,
+       s.woe_prm_decresldopp12m,
+       s.woe_prm_usotcfueraibk12m,
+       s.woe_prm_decresldotc12m,
+       s.woe_beta_sldopp12m,
+       s.woe_max_dismsldonoprinc12m,
+       s.woe_max_nroentinegocny06m,
+       s.woe_nro_mesesatrasmay8dias09m,
+       s.woe_max_dismsldoretail03m,
+       s.woe_beta_sldotc12m,
+       s.woe_rat_sldo09msobre12mrl,
+       s.woe_max_diasatras09mrl,
+       s.woe_nro_dismsaldonormal12mcny,
+       s.woe_max_dismsldo12rl,
+       s.woe_nro_mesesdismsldoretail12m,
+       s.woe_rat_sldonormal3msobre12mrl,
+       s.woe_porc_messldogiro06m,
+       s.woe_prm_ratdispefect03m,
+       s.woe_nro_mesesdicmsldoprinc12m,
+       s.woe_prm_valorexpimp12m,
+       s.woe_min_sldopasi06m,
+       s.woe_cant_entireportsisnoreg,
+       s.woe_prm_deudatelco12m,
+       s.woe_cant_vehi,
+       s.woe_anti_negmeses,
+       s.woe_prm_nrotrxcashout06m,
+       s.woe_nro_mesescastin06m,
+       s.woe_edad,
+       s.woe_dpt_grupo_v2,
+       s.woe_ciiu_grupo_v2,
+       s.rat_promsldnegdecreprin3y6m,
+       s.rat_promsldnegdecre03y06m,
+       s.woe_avg_porcsald_otrasent12m,
        greatest(1e-6, least(1 - 1e-6,
-         normal_cdf(0, 1, (inverse_normal_cdf(0, 1, r.pd_cal)
-                           - sqrt(r.rho_i) * 0.34999999999999998 * r.fhat) / sqrt(1.0 - r.rho_i))
-         * CASE WHEN r.personeria = 'PNN' THEN 1.16299104583772395 ELSE 1.13685059874822714 END )) AS prob_modelo_cal,
+        normal_cdf(0, 1, (inverse_normal_cdf(0, 1, s.pd_cal)
+                          - sqrt(s.rho_i) * 0.34999999999999998 * s.fhat) / sqrt(1.0 - s.rho_i))
+        * CASE WHEN s.tip_doc = '2' THEN 1.13685059874822714 ELSE 1.16299104583772395 END ))                                                                AS prob_modelo_cal,
        CAST(round((1.0 - greatest(1e-6, least(1 - 1e-6,
-         normal_cdf(0, 1, (inverse_normal_cdf(0, 1, r.pd_cal)
-                           - sqrt(r.rho_i) * 0.34999999999999998 * r.fhat) / sqrt(1.0 - r.rho_i))
-         * CASE WHEN r.personeria = 'PNN' THEN 1.16299104583772395 ELSE 1.13685059874822714 END ))) * 1000) AS INTEGER) AS puntuacion_modelo,
-       CAST(1 AS INTEGER)                                  AS flg_clean,
-       'SIN_FLAGS_DEFAULT_CLEAN'                           AS flg_clean_fuente,
-       CAST(r.pm AS VARCHAR)                               AS p_codmes
-FROM r
+        normal_cdf(0, 1, (inverse_normal_cdf(0, 1, s.pd_cal)
+                          - sqrt(s.rho_i) * 0.34999999999999998 * s.fhat) / sqrt(1.0 - s.rho_i))
+        * CASE WHEN s.tip_doc = '2' THEN 1.13685059874822714 ELSE 1.16299104583772395 END ))) * 1000) AS INTEGER)                                           AS puntuacion_modelo,
+       CAST(1 AS INTEGER)                                                       AS flg_clean,
+       s.p_codmes
+FROM s
