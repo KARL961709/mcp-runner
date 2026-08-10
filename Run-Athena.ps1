@@ -76,7 +76,7 @@ if (-not (Test-Path $SqlDir)) {
 # correr un CTAS de varios minutos cuesta un viaje humano completo.
 if ($Bajar) {
   if (-not $S3Datos)    { Abortar "-Bajar necesita `$S3Datos."    "Ponelo en config.ps1, o pasalo con -S3Datos ""s3://...""" }
-  if (-not $LocalDatos) { Abortar "-Bajar necesita `$LocalDatos." "Ponelo en config.ps1, o pasalo con -LocalDatos ""C:uta""" }
+  if (-not $LocalDatos) { Abortar "-Bajar necesita `$LocalDatos." "Ponelo en config.ps1, o pasalo con -LocalDatos ""C:\ruta""" }
 }
 
 $archivos = @(Get-ChildItem -Path $SqlDir -Filter "*.sql" -File | Sort-Object Name)

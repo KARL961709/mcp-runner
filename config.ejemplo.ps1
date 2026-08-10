@@ -12,4 +12,4 @@ $Database   = "<nombre-de-la-base>"
 # Export de parquets (solo si usas -Bajar). El path S3 y la carpeta local NO se
 # versionan: el .sql lleva el placeholder <S3_DATOS> y el runner lo sustituye.
 # $S3Datos    = "s3://<bucket>/proyectos/bankbn/datos"
-# $LocalDatos = "C:uta\local\delancoankbn_datos"
+# $LocalDatos = "C:\ruta\local\del\banco\bankbn_datos"
