@@ -36,8 +36,8 @@ FROM (
     FROM n, f
     UNION ALL
     SELECT 2, 'sin PD calibrada teniendo pd_raw', CAST(n.pd_null_con_raw AS DOUBLE),
-           CAST(n.raw_202206 AS VARCHAR) || ' (los de 202206, sin fhat)',
-           CASE WHEN n.pd_null_con_raw = n.raw_202206 THEN 1 ELSE 0 END
+           '0 (regla: donde hay pd_raw hay PD calibrada)',
+           CASE WHEN n.pd_null_con_raw = 0 THEN 1 ELSE 0 END
     FROM n
     UNION ALL
     SELECT 3, 'puntuacion fuera de [0, 1000]', CAST(n.punt_fuera AS DOUBLE), '0',
