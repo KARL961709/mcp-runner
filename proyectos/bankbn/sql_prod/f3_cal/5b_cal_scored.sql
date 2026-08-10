@@ -32,8 +32,8 @@ niv AS (
     SELECT b.*, f.fhat,
            greatest(1e-6, least(1 - 1e-6,
              CASE WHEN b.personeria = 'PNN'
-                  THEN 1.0 / (1.0 + exp(-( -0.65687342292803830 + 0.59875703554922588 * ln(b.p) + 0.07094297192462927 * ln(1.0 - b.p) )))
-                  ELSE 1.0 / (1.0 + exp(-( -0.11970310819429554 + 0.97984738934227134 * (ln(b.p) - ln(1.0 - b.p)) )))
+                  THEN 1.0 / (1.0 + exp(-( -0.66018848026577570 + 0.59389236895322650 * ln(b.p) + 0.10766439295961687 * ln(1.0 - b.p) )))
+                  ELSE 1.0 / (1.0 + exp(-( -0.15993259962662906 + 0.96753989187205014 * (ln(b.p) - ln(1.0 - b.p)) )))
              END )) AS pd_cal
     FROM b
     LEFT JOIN ft f ON f.trim_ft = b.trim_c
@@ -43,7 +43,7 @@ rho AS (
            greatest(0.001, least(0.999,
              0.03597881726832541 * ( 0.03 * ((1 - exp(-35 * n.pd_cal)) / (1 - exp(-35.0)))
                          + 0.16 * (1 - (1 - exp(-35 * n.pd_cal)) / (1 - exp(-35.0))) )
-             / CASE WHEN n.personeria = 'PNN' THEN 0.03429261520706808 ELSE 0.03891832914207297 END )) AS rho_i
+             / CASE WHEN n.personeria = 'PNN' THEN 0.03424207361820211 ELSE 0.03868433725325406 END )) AS rho_i
     FROM niv n
 ),
 pit AS (
@@ -51,7 +51,7 @@ pit AS (
            greatest(1e-6, least(1 - 1e-6,
              normal_cdf(0, 1, (inverse_normal_cdf(0, 1, r.pd_cal)
                                - sqrt(r.rho_i) * 0.34999999999999998 * r.fhat) / sqrt(1.0 - r.rho_i))
-             * CASE WHEN r.personeria = 'PNN' THEN 1.16330065495620971 ELSE 1.13781855024548495 END )) AS pd_pit
+             * CASE WHEN r.personeria = 'PNN' THEN 1.16299104583772395 ELSE 1.13685059874822714 END )) AS pd_pit
     FROM rho r
 )
 SELECT c.codmes,
