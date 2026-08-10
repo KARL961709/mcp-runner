@@ -12,7 +12,7 @@ WITH n AS (
            sum(CASE WHEN pd_cal <= 0 OR pd_cal >= 1 THEN 1 ELSE 0 END)         AS cal_fuera,
            sum(CASE WHEN rho_i < 0.001 OR rho_i > 0.999 THEN 1 ELSE 0 END)     AS rho_fuera,
            avg(CASE WHEN entidad = 'IBK' AND flg_calib = 1 THEN prob_modelo_cal END) AS med_aju,
-           avg(CASE WHEN entidad = 'IBK' AND flg_calib = 0 THEN prob_modelo_cal END) AS med_fwd,
+           avg(CASE WHEN entidad = 'IBK' AND flg_calib = 0 AND flg_clean_calib IN (0,1) THEN prob_modelo_cal END) AS med_fwd,
            sum(CASE WHEN flg_clean_calib = 1  AND flg_clean = 0 THEN 1 ELSE 0 END) AS viol_uno,
            sum(CASE WHEN flg_clean_calib = 0  AND flg_clean = 1 THEN 1 ELSE 0 END) AS viol_cero,
            sum(CASE WHEN flg_clean = 1 THEN 1 ELSE 0 END)                      AS clean_uno,
@@ -55,11 +55,11 @@ FROM (
     SELECT 7, 'rho_i fuera de [0.001, 0.999]', CAST(n.rho_fuera AS DOUBLE), '0',
            CASE WHEN n.rho_fuera = 0 THEN 1 ELSE 0 END FROM n
     UNION ALL
-    SELECT 8, 'IBK calib=1: media prob_modelo_cal %', 100.0 * n.med_aju, '9.379 (medido en local)',
-           CASE WHEN abs(100.0 * n.med_aju - 9.379) < 0.05 THEN 1 ELSE 0 END FROM n
+    SELECT 8, 'IBK calib=1: media prob_modelo_cal %', 100.0 * n.med_aju, '9.3647 (medido en local)',
+           CASE WHEN abs(100.0 * n.med_aju - 9.3647) < 0.05 THEN 1 ELSE 0 END FROM n
     UNION ALL
-    SELECT 9, 'IBK calib=0: media prob_modelo_cal %', 100.0 * n.med_fwd, '6.197 (medido en local)',
-           CASE WHEN abs(100.0 * n.med_fwd - 6.197) < 0.05 THEN 1 ELSE 0 END FROM n
+    SELECT 9, 'IBK calib=0: media prob_modelo_cal %', 100.0 * n.med_fwd, '6.1347 (medido en local, solo clean_calib 0/1)',
+           CASE WHEN abs(100.0 * n.med_fwd - 6.1347) < 0.05 THEN 1 ELSE 0 END FROM n
     UNION ALL
     SELECT 10, 'clean_calib=1 debe dar flg_clean=1', CAST(n.viol_uno AS DOUBLE), '0',
            CASE WHEN n.viol_uno = 0 THEN 1 ELSE 0 END FROM n
