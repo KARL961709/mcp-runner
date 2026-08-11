@@ -1,4 +1,4 @@
--- 13_curva_maduracion.sql | curva de maduracion del target por trimestre y poblacion. Mismo target de calibracion a 1, 2, 3, 6, 9 y 12 meses, para ver a que horizonte aparece señal y comparar tendencia sin cambiar de metrica
+-- 13_curva_maduracion.sql | curva de maduracion del target por trimestre y poblacion. Mismo target de calibracion a 1, 2, 3, 6, 9 y 12 meses, para ver a que horizonte aparece senal y comparar tendencia sin cambiar de metrica
 SELECT pob,
        trimestre,
        count(*)                                                                    AS n,
