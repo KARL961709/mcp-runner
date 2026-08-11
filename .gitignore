@@ -43,6 +43,18 @@
 !proyectos/**/
 !proyectos/**/*.sql
 
+# PAQUETE DE ANALISIS (2026-08-10): la maquina de ejecucion ahora tambien CORRE
+# analisis, no solo queries, asi que necesita el .py y su brief .md junto al .sql.
+# Excepcion por EXTENSION y no por carpeta, a proposito: .py y .md son codigo y
+# documentacion. Los resultados siguen bloqueados por el `*` de arriba (.csv,
+# .parquet, output/) -- esa linea no se mueve.
+!proyectos/**/*.py
+!proyectos/**/*.md
+# El artefacto del modelo NO viaja: es IP del banco y ya vive en esa maquina.
+# Redundante con el `*` de arriba, explicito para que se lea como decision.
+proyectos/**/*.sav
+proyectos/**/*.pkl
+
 # Proyecto El Nino / FEN (2026-07-21): codigo + queries que viajan al banco.
 # Curado a mano: SIN node_modules, SIN datos (out/, intermedios/, resultados/).
 # Se re-incluye todo el arbol y luego se re-ignoran las carpetas de data/deps por
