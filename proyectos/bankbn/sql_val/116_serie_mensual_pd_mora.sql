@@ -1,4 +1,4 @@
--- 116_serie_mensual_pd_mora.sql | una fila por codmes con pd_raw, pd_pit y mora 30d a 3 meses para IBK, TOP 4 completo y SSFF. Bloque TOTAL, clean y dirty juntos. Columnas por poblacion para que entren las 39 filas sin que el resumen las trunque
+-- 116_serie_mensual_pd_mora.sql | una fila por codmes con pd_raw, pd_pit y mora 30d a 3 meses para IBK, TOP 4 completo y SSFF. GLOBAL: clean y dirty juntos, sin abrir, excluyendo el bucket 99 de exclusion estructural. OJO flg_clean_calib es el flag de la calibracion, no el binario que redefine 5b_cal_scored
 SELECT codmes,
        sum(CASE WHEN pob = 'IBK'  THEN 1 ELSE 0 END)                                        AS ibk_n,
        round(100.0 * avg(CASE WHEN pob = 'IBK'  THEN pd_crudo END), 4)                      AS ibk_pd_raw,
@@ -40,6 +40,7 @@ FROM (
                TRY_CAST(prob_modelo_cal AS DOUBLE)    AS pd_pit
         FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607
         WHERE pd_raw IS NOT NULL
+          AND flg_clean_calib <> 99
           AND codmes BETWEEN '202301' AND '202603'
     ) p
     LEFT JOIN (
