@@ -50,10 +50,20 @@
 # .parquet, output/) -- esa linea no se mueve.
 !proyectos/**/*.py
 !proyectos/**/*.md
-# El artefacto del modelo NO viaja: es IP del banco y ya vive en esa maquina.
-# Redundante con el `*` de arriba, explicito para que se lea como decision.
+# Los artefactos de modelo NO viajan por defecto. Redundante con el `*` de arriba,
+# explicito para que se lea como decision y no como olvido.
 proyectos/**/*.sav
 proyectos/**/*.pkl
+
+# EXCEPCION, decision del propietario 2026-08-10 tras plantearle el reparo: el
+# LightGBM de admision Bank BPE viaja para que la maquina de ejecucion pueda correr
+# TreeSHAP sin depender de tener a mano el paquete de MLOps. Es UNA RUTA EXACTA, no
+# una extension -- cualquier otro .sav sigue bloqueado.
+# Binario del modelo: 4,000 arboles, 39 features, 2.7 MB. Lleva umbrales de corte
+# aprendidos, no registros de cliente. Verificado que carga y predice antes del push.
+# sha256 b39855fa3406886ad107a13952d1343a6a66543ec71430c1a5f2b0ca0b183a19
+# Repo PRIVADO (la API sin auth devuelve 404). Un push no se deshace.
+!proyectos/bankbn/shap/artefacto/model_ligthbm_admbank.sav
 
 # Proyecto El Nino / FEN (2026-07-21): codigo + queries que viajan al banco.
 # Curado a mano: SIN node_modules, SIN datos (out/, intermedios/, resultados/).

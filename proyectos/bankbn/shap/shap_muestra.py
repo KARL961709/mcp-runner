@@ -95,6 +95,29 @@ FN = list(bst.feature_name())
 
 X = pd.DataFrame({PROD2MOD[v]: pd.to_numeric(df[v], errors="coerce") for v in VARS})[FN]
 
+# ------------------------------------------------------ 0  COHERENCIA DEL JOIN
+# pd_raw viene de la tabla de calibracion, probabilidad viene de la tabla de score.
+# Son la MISMA cifra por dos caminos: si no coinciden, el join score <-> altas esta
+# desfasado y nada de lo que sigue se puede leer. Es gratis, asi que se chequea.
+print("\n" + "=" * 78)
+print("PASO 0  COHERENCIA  --  pd_raw (calibracion) vs probabilidad (score)")
+print("=" * 78)
+_a = pd.to_numeric(df["pd_raw"], errors="coerce")
+_b = pd.to_numeric(df["probabilidad"], errors="coerce")
+_m = _a.notna() & _b.notna()
+if _m.sum() == 0:
+    print("  no hay filas comparables: pd_raw o probabilidad vienen todas nulas")
+else:
+    _d = (_a[_m] - _b[_m]).abs()
+    print(f"  n comparables       {_m.sum():,}")
+    print(f"  max abs(dif)        {_d.max():.3e}")
+    print(f"  iguales a 1e-9      {100*(_d < 1e-9).mean():.2f}%")
+    if _d.max() > 1e-6:
+        print("  >>> OJO: no coinciden. El join score <-> altas puede estar desfasado")
+        print("      (el 95 asume +1 mes). Reportalo ANTES de leer los pasos 2 y 3.")
+    else:
+        print("  >>> coinciden: el join score <-> altas quedo bien alineado.")
+
 # ---------------------------------------------------------------- 1  ESCALA
 print("\n" + "=" * 78)
 print("PASO 1  TEST DE ESCALA  --  el modelo reproduce la columna `probabilidad`?")
