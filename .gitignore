@@ -121,3 +121,10 @@ elnino_ibk/03_deck/_check/
 # convierta en una puerta por la que salgan salidas con datos de cliente.
 !entregables/
 !entregables/*.pptx
+
+# --- rd_vs_pd_driver.xlsx (2026-08-10). Tres hojas de AGREGADOS por codmes x poblacion x
+# personeria: n, pd_raw, pd_pit, RD 12m y las tres proyecciones. Maximo 294 filas por hoja.
+# Cero key_value, cero tip_doc, cero identificadores. El insumo es el RCC, que es registro
+# compartido de la industria, y las cifras van agregadas por entidad -- decision del usuario
+# 2026-08-10 tras plantearle el reparo. Repo PRIVADO. Un push no se deshace.
+!entregables/*.xlsx
