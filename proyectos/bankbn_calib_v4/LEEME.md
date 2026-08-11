@@ -49,9 +49,12 @@ cuanto pesa el parquet **antes** de generarlo.
 
 `-S3Datos` tiene que apuntar a un prefijo **nuevo y vacio**: el `-Bajar` sincroniza el
 prefijo entero. La tabla es externa, asi que el `DROP` no limpia S3 — por eso el
-`external_location` va versionado (`calib_v4/`).
+`external_location` va versionado. **Va en `calib_v4b/`** desde que se agregaron
+`target_01m/02m/03m`: cada cambio de esquema del insumo obliga a un prefijo nuevo, o el
+`CREATE` responde `HIVE_PATH_ALREADY_EXISTS`. El prefijo viejo `calib_v4/` se puede borrar
+a mano cuando convenga.
 
-El parquet cae en `$LocalDatos\calib_v4\`.
+El parquet cae en `$LocalDatos\calib_v4b\`.
 
 **3 · Verificar el insumo**
 

@@ -1,9 +1,9 @@
--- 11_insumo_calibracion.sql | insumo unico para re-ajustar la cadena: una fila por operacion con lo minimo que la cadena necesita, sin key_value ni tip_doc. Incluye SSFF para poder backtestear sobre el 87% del libro
+-- 11_insumo_calibracion.sql | v4b: agrega target 01/02/03m. Prefijo nuevo porque la tabla es EXTERNA y el DROP no limpia S3 | insumo unico para re-ajustar la cadena: una fila por operacion con lo minimo que la cadena necesita, sin key_value ni tip_doc. Incluye SSFF para poder backtestear sobre el 87% del libro
 CREATE TABLE disc_model_owner.ds_adm_bpe_insumo_calib_v4
 WITH (
     format               = 'PARQUET',
     parquet_compression  = 'SNAPPY',
-    external_location    = '<S3_DATOS>/calib_v4/'
+    external_location    = '<S3_DATOS>/calib_v4b/'
 ) AS
 SELECT codmes,
        CAST(substr(CAST(codmes AS VARCHAR), 1, 4) AS INTEGER) * 10
