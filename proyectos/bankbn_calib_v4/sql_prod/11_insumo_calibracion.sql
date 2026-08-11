@@ -32,3 +32,4 @@ SELECT codmes,
        TRY_CAST(target_12m AS INTEGER)                     AS target_12m
 FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607
 WHERE pd_raw IS NOT NULL
+  AND fhat IS NOT NULL

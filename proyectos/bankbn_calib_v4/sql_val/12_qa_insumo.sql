@@ -2,7 +2,7 @@
 SELECT chequeo, valor, referencia
 FROM (
     SELECT 1 AS ord, 'A  filas insumo' AS chequeo, CAST(count(*) AS VARCHAR) AS valor,
-           CAST((SELECT count(*) FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607 WHERE pd_raw IS NOT NULL) AS VARCHAR) AS referencia
+           CAST((SELECT count(*) FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607 WHERE pd_raw IS NOT NULL AND fhat IS NOT NULL) AS VARCHAR) AS referencia
     FROM disc_model_owner.ds_adm_bpe_insumo_calib_v4
     UNION ALL
     SELECT 2, 'B  poblaciones distintas', CAST(count(DISTINCT pob) AS VARCHAR), '3 esperadas'

@@ -52,7 +52,7 @@ def nivel(p, forma, b):
     return 1.0 / (1.0 + np.exp(-z))
 
 
-def cadena(praw, pers, fhat, C, iso=None):
+def cadena(praw, pers, fhat, C, iso=None, lam=LAM):
     """pd_raw -> pd_pit. Devuelve (pd_cal, rho_i, pd_pit)."""
     pdc = np.empty_like(praw, dtype=float)
     ri = np.empty_like(praw, dtype=float)
@@ -64,7 +64,7 @@ def cadena(praw, pers, fhat, C, iso=None):
         pc = nivel(praw[m], cf["forma"], cf["b"])
         r = np.clip(RHO * rho_basel(pc) / rho_basel(cf["lra"]), 0.001, 0.999)
         f = np.clip(fhat[m], CAP[0], CAP[1])
-        pit = norm.cdf((norm.ppf(np.clip(pc, 1e-12, 1 - 1e-12)) - np.sqrt(r) * LAM * f) / np.sqrt(1 - r))
+        pit = norm.cdf((norm.ppf(np.clip(pc, 1e-12, 1 - 1e-12)) - np.sqrt(r) * lam * f) / np.sqrt(1 - r))
         pdc[m], ri[m], out[m] = pc, r, pit * cf["reancla"]
     if iso is not None:
         out = np.clip(iso.predict(out), 1e-6, 1 - 1e-6)
@@ -88,7 +88,7 @@ def fit_nivel(p, y, w, forma):
     return [float(x) for x in r.x]
 
 
-def ajustar(g, w, con_iso=False):
+def ajustar(g, w, con_iso=False, lam=LAM):
     """Ajusta nivel + LRA + re-ancla sobre g. La re-ancla fuerza pd_pit insesgado."""
     C = {}
     for k, forma in [("PNN", "beta"), ("PJJ", "logit")]:
@@ -99,7 +99,7 @@ def ajustar(g, w, con_iso=False):
         C[k] = dict(forma=forma,
                     b=fit_nivel(s.pd_raw.values, s.target_12m.values, ws, forma),
                     lra=float(np.average(s.target_12m, weights=ws)), reancla=1.0)
-    _, _, pit = cadena(g.pd_raw.values, g.pers.values, g.fhat.values, C)
+    _, _, pit = cadena(g.pd_raw.values, g.pers.values, g.fhat.values, C, lam=lam)
     for k in ["PNN", "PJJ"]:
         m = (g.pers.values == k)
         if m.sum() < 200:
@@ -108,7 +108,7 @@ def ajustar(g, w, con_iso=False):
                                 np.average(pit[m], weights=w[m]))
     iso = None
     if con_iso:
-        _, _, pit2 = cadena(g.pd_raw.values, g.pers.values, g.fhat.values, C)
+        _, _, pit2 = cadena(g.pd_raw.values, g.pers.values, g.fhat.values, C, lam=lam)
         iso = IsotonicRegression(y_min=1e-6, y_max=0.999, out_of_bounds="clip")
         iso.fit(pit2, g.target_12m.values, sample_weight=w)
     return C, iso
@@ -176,33 +176,79 @@ if peor > 1e-9:
     sys.exit("\n>>> NO REPRODUCE (max|dif| = %.3e). Reviso los coeficientes antes de seguir." % peor)
 print("\n  >>> reproduce. La cadena implementada es la misma que corre en produccion.")
 
+# ------------------------------------------------------------- 0B  EL CICLO
+# La ventana de ajuste (202206-202506) tiene una mora muy superior a la de las cosechas
+# recientes. Quien tiene que cerrar esa brecha es el ajuste PIT: f_t con lambda. Antes de
+# tocar la poblacion de ajuste hay que saber si el f_t sigue al ciclo y si su amplitud alcanza.
+print("\n" + "=" * 88)
+print("PASO 0B  EL CICLO   f_t sigue a la mora realizada? y le alcanza la amplitud?")
+print("=" * 88)
+EV0 = df.target_12m.notna() & df.pd_raw.notna() & df.fhat.notna()
+q = (df[EV0 & df.flg_clean.eq(1)]
+     .groupby("trimestre")
+     .agg(n=("target_12m", "size"), rd=("target_12m", "mean"),
+          fhat=("fhat", "mean"), praw=("pd_raw", "mean")).reset_index())
+q = q[q.n >= 200]
+print(f"\n{'trim':>8}{'n':>9}{'RD 12m':>9}{'pd_raw':>9}{'fhat':>9}")
+for _, r in q.iterrows():
+    print(f"{int(r.trimestre):>8}{int(r.n):>9,}{100*r.rd:>8.2f}%{100*r.praw:>8.2f}%{r.fhat:>9.3f}")
+MIN_TRIM = 8   # con menos trimestres la correlacion y el lambda implicito son ruido
+if len(q) < MIN_TRIM:
+    print(f"\n  solo {len(q)} trimestres con muestra suficiente: NO alcanza para leer el ciclo.")
+    print(f"  Hacen falta al menos {MIN_TRIM}. Con la ventana completa (202206-202506) deberian")
+    print("  ser ~13. Si esto aparece con el insumo real, algo se filtro de mas.")
+else:
+    cc = float(np.corrcoef(q.fhat, LO(q.rd))[0, 1])
+    print(f"\n  correlacion fhat vs logit(RD) sobre {len(q)} trimestres: {cc:+.3f}")
+    print("  el signo esperado es NEGATIVO: f_t entra restando en el shift de Vasicek,")
+    print("  asi que f_t alto = ciclo benigno = menos mora.")
+    if cc > 0:
+        print("  >>> SIGNO INVERTIDO. Antes de tocar lambda hay que revisar el f_t.")
+    amp_f = float(q.fhat.max() - q.fhat.min())
+    amp_rd = float(abs(LO(q.rd.max()) - LO(q.rd.min())))
+    rr = np.clip(RHO * rho_basel(q.praw.values) / rho_basel(0.09), 0.001, 0.999)
+    esc = float(np.mean(np.sqrt(rr) / np.sqrt(1 - rr)))
+    lam_imp = amp_rd / max(amp_f * esc, 1e-9)
+    print(f"\n  amplitud de fhat {amp_f:6.3f}   amplitud del ciclo en logit(RD) {amp_rd:6.3f}")
+    print(f"  lambda vigente {LAM:.2f}   |   lambda que igualaria esa amplitud ~ {lam_imp:.2f}")
+    if cc < 0 and lam_imp > LAM * 1.5:
+        print("\n  >>> el ajuste macro es MAS CHICO que el ciclo que tiene que absorber.")
+        print("      Parte del sesgo de nivel no es poblacion de ajuste: es lambda.")
+        print("      Las variantes F, G y H miden eso.")
+    elif cc < 0:
+        print("\n  >>> la amplitud de lambda alcanza. El sesgo de nivel es de poblacion, no de ciclo.")
+
 # ------------------------------------------------------------- 1  VARIANTES
 EV = df.target_12m.notna() & df.pd_raw.notna() & df.fhat.notna()
 CLEAN = df.flg_clean.eq(1)
 NOIMP = ~df.codmes.between(*IMPULSA)
 POB = {"IBK": df.pob.eq("IBK"), "TOP4": df.pob.isin(["IBK", "RESTO_TOP4"]), "TODO": df.pob.notna()}
 
+#                nombre                          poblacion de ajuste            iso    lambda
 VARIANTES = [
-    ("A  IBK, ex-Impulsa",        EV & CLEAN & NOIMP & POB["IBK"],  False),
-    ("B  IBK+TOP4, ex-Impulsa",   EV & CLEAN & NOIMP & POB["TOP4"], False),
-    ("C  IBK+TOP4 con Impulsa",   EV & CLEAN & POB["TOP4"],         False),
-    ("D  todo el libro",          EV & CLEAN & NOIMP & POB["TODO"], False),
-    ("E  IBK+TOP4 + isotonica",   EV & CLEAN & NOIMP & POB["TOP4"], True),
+    ("A  IBK, ex-Impulsa",        EV & CLEAN & NOIMP & POB["IBK"],  False, LAM),
+    ("B  IBK+TOP4, ex-Impulsa",   EV & CLEAN & NOIMP & POB["TOP4"], False, LAM),
+    ("C  IBK+TOP4 con Impulsa",   EV & CLEAN & POB["TOP4"],         False, LAM),
+    ("D  todo el libro",          EV & CLEAN & NOIMP & POB["TODO"], False, LAM),
+    ("E  IBK+TOP4 + isotonica",   EV & CLEAN & NOIMP & POB["TOP4"], True,  LAM),
+    ("F  IBK, lambda 0.55",       EV & CLEAN & NOIMP & POB["IBK"],  False, 0.55),
+    ("G  IBK+TOP4, lambda 0.55",  EV & CLEAN & NOIMP & POB["TOP4"], False, 0.55),
+    ("H  IBK+TOP4, lambda 0.75",  EV & CLEAN & NOIMP & POB["TOP4"], False, 0.75),
 ]
 
 print("\n" + "=" * 108)
 print("PASO 1 y 2  AJUSTE Y BACKTEST      ratio = PD asignada / mora observada.  1.00 = insesgado")
 print("=" * 108)
-print(f"{'variante':<26}{'n ajuste':>10}{'PNN b1':>8}{'PJJ b1':>8}{'ra PNN':>8}{'ra PJJ':>8}"
+print(f"{'variante':<26}{'lam':>6}{'n ajuste':>10}{'PNN b1':>8}{'PJJ b1':>8}{'ra PNN':>8}{'ra PJJ':>8}"
       f"{'IBK':>7}{'TOP4':>7}{'SSFF':>7}{'SSFF>=10%':>11}{'b SSFF':>8}")
-print("-" * 108)
+print("-" * 114)
 RES = {}
-for nom, mask, iso_on in VARIANTES:
+for nom, mask, iso_on, lam in VARIANTES:
     g = df[mask]
     if len(g) < 500:
         print(f"{nom:<26}  muestra insuficiente ({len(g)})"); continue
-    C, iso = ajustar(g, g.w.values, con_iso=iso_on)
-    _, _, p = cadena(df.pd_raw.values, df.pers.values, df.fhat.values, C, iso)
+    C, iso = ajustar(g, g.w.values, con_iso=iso_on, lam=lam)
+    _, _, p = cadena(df.pd_raw.values, df.pers.values, df.fhat.values, C, iso, lam=lam)
     df["px"] = p
     rr = []
     for pb in ["IBK", "RESTO_TOP4", "SSFF"]:
@@ -212,8 +258,8 @@ for nom, mask, iso_on in VARIANTES:
     hi = s[s.px >= .10]
     alto = np.average(hi.px, weights=hi.w) / np.average(hi.target_12m, weights=hi.w) if len(hi) > 50 else np.nan
     bs = pendiente(s, "px", s.w.values)
-    RES[nom] = dict(C=C, iso=iso_on, ratios=rr, alto=float(alto), b_ssff=float(bs), n=int(len(g)))
-    print(f"{nom:<26}{len(g):>10,}{C['PNN']['b'][1]:>8.3f}{C['PJJ']['b'][1]:>8.3f}"
+    RES[nom] = dict(C=C, iso=iso_on, lam=lam, ratios=rr, alto=float(alto), b_ssff=float(bs), n=int(len(g)))
+    print(f"{nom:<26}{lam:>6.2f}{len(g):>10,}{C['PNN']['b'][1]:>8.3f}{C['PJJ']['b'][1]:>8.3f}"
           f"{C['PNN']['reancla']:>8.3f}{C['PJJ']['reancla']:>8.3f}"
           f"{rr[0]:>7.2f}{rr[1]:>7.2f}{rr[2]:>7.2f}{alto:>11.2f}{bs:>8.2f}")
 
@@ -232,12 +278,12 @@ else:
     print(f"  ajuste hasta {int(corte)}  |  evaluacion desde {int(corte)}  ({len(tr)} trimestres)")
     print(f"\n{'variante':<26}{'IBK':>8}{'TOP4':>8}{'SSFF':>8}{'SSFF>=10%':>12}")
     print("-" * 62)
-    for nom, mask, iso_on in VARIANTES:
+    for nom, mask, iso_on, lam in VARIANTES:
         g = df[mask & df.trimestre.lt(corte)]
         if len(g) < 500:
             continue
-        C, iso = ajustar(g, g.w.values, con_iso=iso_on)
-        _, _, p = cadena(df.pd_raw.values, df.pers.values, df.fhat.values, C, iso)
+        C, iso = ajustar(g, g.w.values, con_iso=iso_on, lam=lam)
+        _, _, p = cadena(df.pd_raw.values, df.pers.values, df.fhat.values, C, iso, lam=lam)
         df["px"] = p
         out = df[EV & CLEAN & df.trimestre.ge(corte)]
         fila = f"{nom:<26}"
@@ -251,7 +297,7 @@ else:
 # ------------------------------------------------------------- salida
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
 os.makedirs(OUT, exist_ok=True)
-json.dump({k: {"coeficientes": v["C"], "isotonica": v["iso"], "n_ajuste": v["n"],
+json.dump({k: {"coeficientes": v["C"], "isotonica": v["iso"], "lambda": v["lam"], "n_ajuste": v["n"],
                "ratio_IBK": v["ratios"][0], "ratio_TOP4": v["ratios"][1],
                "ratio_SSFF": v["ratios"][2], "ratio_SSFF_alto": v["alto"],
                "pendiente_SSFF": v["b_ssff"]} for k, v in RES.items()},

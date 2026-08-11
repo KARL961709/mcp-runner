@@ -80,16 +80,40 @@ Sin esa compuerta estariamos comparando una reimplementacion distinta contra si 
 
 *(Verificado sobre la muestra del 2026-08-11: reproduce a 1e-16, y la puntuacion al entero.)*
 
-**PASOS 1 y 2** ajustan cinco variantes con la misma cadena, cambiando solo la poblacion
-de ajuste, y backtestean las tres poblaciones:
+**PASO 0B mide el ciclo, y esto se agrego despues de dimensionar.** El `00_dimension_insumo`
+mostro algo que reordena el diagnostico: la ventana de ajuste (202206-202506) tiene una
+mora muy superior a la de las cosechas recientes.
 
-| | poblacion de ajuste |
-|---|---|
-| A | IBK, ex-Impulsa — reproduce el diseno vigente |
-| B | IBK + TOP 4, ex-Impulsa — **la propuesta** |
-| C | IBK + TOP 4 con Impulsa — mide cuanto pesa excluirla |
-| D | todo el libro, SSFF incluido |
-| E | B mas una isotonica encima — precedente: el bloque dirty de REMEDIACION la usaba |
+| | RD en la ventana de ajuste | RD en 202407-202506 |
+|---|---:|---:|
+| IBK clean | **8.84%** | 3.55% |
+| RESTO TOP 4 clean | **8.62%** | 4.94% |
+
+Eso es correcto por diseno: el LRA de PNN vale 0.0978 y coincide con ese 8.84%. Es una
+calibracion through-the-cycle. **Quien tiene que cerrar la brecha es el ajuste PIT**, o sea
+`f_t` con `lambda = 0.35`. Y hay razones para dudar de que alcance: el rango completo que
+el cap permite mueve la PD de 10.01% a 6.75% — **3.26 pp de amplitud** — contra una brecha
+de 5.3 pp entre la ventana de ajuste y la cosecha actual.
+
+El PASO 0B lo mide sobre el dato: correlacion de `f_t` contra la mora realizada por
+trimestre, y el `lambda` que igualaria la amplitud observada. **Necesita al menos 8
+trimestres**; con menos, avisa y no opina.
+
+**PASOS 1 y 2** ajustan ocho variantes con la misma cadena y backtestean las tres poblaciones:
+
+| | poblacion de ajuste | lambda |
+|---|---|---|
+| A | IBK, ex-Impulsa — reproduce el diseno vigente | 0.35 |
+| B | IBK + TOP 4, ex-Impulsa — **la propuesta** | 0.35 |
+| C | IBK + TOP 4 con Impulsa — mide cuanto pesa excluirla | 0.35 |
+| D | todo el libro, SSFF incluido | 0.35 |
+| E | B mas una isotonica encima — precedente: el bloque dirty de REMEDIACION la usaba | 0.35 |
+| F | IBK con lambda mayor — aisla el efecto ciclo del efecto poblacion | 0.55 |
+| G | IBK + TOP 4 con lambda mayor | 0.55 |
+| H | IBK + TOP 4 con lambda alto | 0.75 |
+
+**A contra F** es la comparacion que separa las dos causas: misma poblacion, distinto
+lambda. Si F corrige buena parte del sesgo, el problema era el ciclo. Si no, era la poblacion.
 
 **PASO 3** es out-of-time: ajusta con el 70% viejo de los trimestres y evalua en el 30%
 nuevo. Una variante que solo se ve bien in-sample no sirve.
