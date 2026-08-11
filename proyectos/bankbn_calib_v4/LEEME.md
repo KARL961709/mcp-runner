@@ -5,6 +5,20 @@ Sucede a `PROPUESTA_FINAL_V2.md` y ataca sus decisiones 1, 2 y 4, que seguian ab
 
 ---
 
+## Nomenclatura, para no confundirse
+
+**El top 4 son BCP (00001), IBK (00002), SCOTIA (00004) y BBVA (00006). IBK esta adentro.**
+La etiqueta `RESTO_TOP4` que usan las queries es **el top 4 sin IBK**. Cuando aca se dice
+"TOP 4 completo" es la union de `IBK` + `RESTO_TOP4`, que son los cuatro. Nunca se suma IBK dos veces.
+
+| etiqueta en las queries | quienes son | % del libro |
+|---|---|---:|
+| `IBK` | Interbank | 1.3% |
+| `RESTO_TOP4` | BCP, BBVA, Scotiabank | 11.4% |
+| `SSFF` | todo lo demas: cajas, financieras, edpymes | 87.2% |
+
+---
+
 ## Por que existe
 
 Medido sobre la poblacion completa (query `bankbn/sql_val/113`), la calibracion vigente
@@ -21,7 +35,7 @@ el 94.5% de la muestra vive debajo de `pd_raw` 13%. Arriba de 13% la curva se ap
 **190 registros con 14 defaults**, y ahi vive el 35.5% del SSFF.
 
 Dato operativo que lo hace barato de arreglar: **`flg_calib = 1` ya es exactamente
-IBK + top 4** — el SSFF tiene `flg_calib = 0` en el 100% de los casos. El cambio es
+el TOP 4 completo** (BCP, IBK, SCOTIA, BBVA) — el SSFF tiene `flg_calib = 0` en el 100% de los casos. El cambio es
 quitar el filtro `IBK` que se aplica encima, no construir un flag nuevo.
 
 ---
@@ -106,14 +120,14 @@ trimestres**; con menos, avisa y no opina.
 
 | | poblacion de ajuste | lambda |
 |---|---|---|
-| A | IBK, ex-Impulsa — reproduce el diseno vigente | 0.35 |
-| B | IBK + TOP 4, ex-Impulsa — **la propuesta** | 0.35 |
-| C | IBK + TOP 4 con Impulsa — mide cuanto pesa excluirla | 0.35 |
+| A | **solo IBK**, ex-Impulsa — reproduce el diseno vigente | 0.35 |
+| B | **TOP 4 completo** (BCP+IBK+SCOTIA+BBVA), ex-Impulsa — **la propuesta** | 0.35 |
+| C | TOP 4 completo con Impulsa — mide cuanto pesa excluirla | 0.35 |
 | D | todo el libro, SSFF incluido | 0.35 |
-| E | B mas una isotonica encima — precedente: el bloque dirty de REMEDIACION la usaba | 0.35 |
-| F | IBK con lambda mayor — aisla el efecto ciclo del efecto poblacion | 0.55 |
-| G | IBK + TOP 4 con lambda mayor | 0.55 |
-| H | IBK + TOP 4 con lambda alto | 0.75 |
+| E | TOP 4 completo mas una isotonica encima — precedente: el bloque dirty de REMEDIACION la usaba | 0.35 |
+| F | solo IBK con lambda mayor — aisla ciclo de poblacion | 0.55 |
+| G | TOP 4 completo con lambda mayor | 0.55 |
+| H | TOP 4 completo con lambda alto | 0.75 |
 
 **A contra F** es la comparacion que separa las dos causas: misma poblacion, distinto
 lambda. Si F corrige buena parte del sesgo, el problema era el ciclo. Si no, era la poblacion.

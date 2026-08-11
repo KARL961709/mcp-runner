@@ -222,31 +222,34 @@ else:
 EV = df.target_12m.notna() & df.pd_raw.notna() & df.fhat.notna()
 CLEAN = df.flg_clean.eq(1)
 NOIMP = ~df.codmes.between(*IMPULSA)
+# OJO con los nombres: el TOP 4 INCLUYE a IBK (BCP 00001, IBK 00002, SCOTIA 00004, BBVA 00006).
+# La etiqueta RESTO_TOP4 de las queries es el top 4 SIN IBK. Por eso "TOP4" aca es la union
+# de las dos, y no existe ninguna variante que sume IBK dos veces.
 POB = {"IBK": df.pob.eq("IBK"), "TOP4": df.pob.isin(["IBK", "RESTO_TOP4"]), "TODO": df.pob.notna()}
 
 #                nombre                          poblacion de ajuste            iso    lambda
 VARIANTES = [
-    ("A  IBK, ex-Impulsa",        EV & CLEAN & NOIMP & POB["IBK"],  False, LAM),
-    ("B  IBK+TOP4, ex-Impulsa",   EV & CLEAN & NOIMP & POB["TOP4"], False, LAM),
-    ("C  IBK+TOP4 con Impulsa",   EV & CLEAN & POB["TOP4"],         False, LAM),
-    ("D  todo el libro",          EV & CLEAN & NOIMP & POB["TODO"], False, LAM),
-    ("E  IBK+TOP4 + isotonica",   EV & CLEAN & NOIMP & POB["TOP4"], True,  LAM),
-    ("F  IBK, lambda 0.55",       EV & CLEAN & NOIMP & POB["IBK"],  False, 0.55),
-    ("G  IBK+TOP4, lambda 0.55",  EV & CLEAN & NOIMP & POB["TOP4"], False, 0.55),
-    ("H  IBK+TOP4, lambda 0.75",  EV & CLEAN & NOIMP & POB["TOP4"], False, 0.75),
+    ("A  solo IBK, ex-Impulsa",        EV & CLEAN & NOIMP & POB["IBK"],  False, LAM),
+    ("B  TOP 4 completo, ex-Impulsa",   EV & CLEAN & NOIMP & POB["TOP4"], False, LAM),
+    ("C  TOP 4 completo, con Impulsa",   EV & CLEAN & POB["TOP4"],         False, LAM),
+    ("D  todo el libro (TOP 4 + SSFF)",          EV & CLEAN & NOIMP & POB["TODO"], False, LAM),
+    ("E  TOP 4 completo + isotonica",   EV & CLEAN & NOIMP & POB["TOP4"], True,  LAM),
+    ("F  solo IBK, lambda 0.55",       EV & CLEAN & NOIMP & POB["IBK"],  False, 0.55),
+    ("G  TOP 4 completo, lambda 0.55",  EV & CLEAN & NOIMP & POB["TOP4"], False, 0.55),
+    ("H  TOP 4 completo, lambda 0.75",  EV & CLEAN & NOIMP & POB["TOP4"], False, 0.75),
 ]
 
 print("\n" + "=" * 108)
 print("PASO 1 y 2  AJUSTE Y BACKTEST      ratio = PD asignada / mora observada.  1.00 = insesgado")
 print("=" * 108)
-print(f"{'variante':<26}{'lam':>6}{'n ajuste':>10}{'PNN b1':>8}{'PJJ b1':>8}{'ra PNN':>8}{'ra PJJ':>8}"
+print(f"{'variante':<32}{'lam':>6}{'n ajuste':>10}{'PNN b1':>8}{'PJJ b1':>8}{'ra PNN':>8}{'ra PJJ':>8}"
       f"{'IBK':>7}{'TOP4':>7}{'SSFF':>7}{'SSFF>=10%':>11}{'b SSFF':>8}")
-print("-" * 114)
+print("-" * 120)
 RES = {}
 for nom, mask, iso_on, lam in VARIANTES:
     g = df[mask]
     if len(g) < 500:
-        print(f"{nom:<26}  muestra insuficiente ({len(g)})"); continue
+        print(f"{nom:<32}  muestra insuficiente ({len(g)})"); continue
     C, iso = ajustar(g, g.w.values, con_iso=iso_on, lam=lam)
     _, _, p = cadena(df.pd_raw.values, df.pers.values, df.fhat.values, C, iso, lam=lam)
     df["px"] = p
@@ -259,7 +262,7 @@ for nom, mask, iso_on, lam in VARIANTES:
     alto = np.average(hi.px, weights=hi.w) / np.average(hi.target_12m, weights=hi.w) if len(hi) > 50 else np.nan
     bs = pendiente(s, "px", s.w.values)
     RES[nom] = dict(C=C, iso=iso_on, lam=lam, ratios=rr, alto=float(alto), b_ssff=float(bs), n=int(len(g)))
-    print(f"{nom:<26}{lam:>6.2f}{len(g):>10,}{C['PNN']['b'][1]:>8.3f}{C['PJJ']['b'][1]:>8.3f}"
+    print(f"{nom:<32}{lam:>6.2f}{len(g):>10,}{C['PNN']['b'][1]:>8.3f}{C['PJJ']['b'][1]:>8.3f}"
           f"{C['PNN']['reancla']:>8.3f}{C['PJJ']['reancla']:>8.3f}"
           f"{rr[0]:>7.2f}{rr[1]:>7.2f}{rr[2]:>7.2f}{alto:>11.2f}{bs:>8.2f}")
 
@@ -276,7 +279,7 @@ if corte is None:
     print("  trimestres insuficientes para partir")
 else:
     print(f"  ajuste hasta {int(corte)}  |  evaluacion desde {int(corte)}  ({len(tr)} trimestres)")
-    print(f"\n{'variante':<26}{'IBK':>8}{'TOP4':>8}{'SSFF':>8}{'SSFF>=10%':>12}")
+    print(f"\n{'variante':<32}{'IBK':>8}{'TOP4':>8}{'SSFF':>8}{'SSFF>=10%':>12}")
     print("-" * 62)
     for nom, mask, iso_on, lam in VARIANTES:
         g = df[mask & df.trimestre.lt(corte)]
@@ -286,7 +289,7 @@ else:
         _, _, p = cadena(df.pd_raw.values, df.pers.values, df.fhat.values, C, iso, lam=lam)
         df["px"] = p
         out = df[EV & CLEAN & df.trimestre.ge(corte)]
-        fila = f"{nom:<26}"
+        fila = f"{nom:<32}"
         for pb in ["IBK", "RESTO_TOP4", "SSFF"]:
             s = out[out.pob == pb]
             fila += f"{np.average(s.px,weights=s.w)/np.average(s.target_12m,weights=s.w):>8.2f}" if len(s) > 100 else f"{'.':>8}"
