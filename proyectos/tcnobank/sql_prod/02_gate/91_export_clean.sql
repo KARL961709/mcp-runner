@@ -3,7 +3,7 @@
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_px_clean
 WITH (format = 'PARQUET', write_compression = 'SNAPPY',
-      external_location = '<S3_DATOS>/clean/') AS
+      external_location = 's3://ibk-discovery-riesgos-us-east-1-339712995012-data/discovery/model_owner/B46029/tcnb/clean/') AS
 SELECT
        to_hex(md5(to_utf8(tip_doc || '|' || id_value || '|' || entidad)))              AS id_hash,
        entidad, prelacion_cod, prelacion_sld, saldo_tc_ori,
