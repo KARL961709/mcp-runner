@@ -349,3 +349,49 @@ Viaja como `ctrl_solo_linea`. El efecto entidad que ve el modelo hoy es en parte
    tabla. IBK es 16 % de la base, asi que el sesgo podria llegar a ~1 pp.
 2. **De 201902 a 202112 no hay arbitro.** `tng_altas` arranca en 202201. La regla de linea se
    calibra en el solape y se asume valida hacia atras. Eso es firma, no medicion.
+
+---
+## N. El digito 3 de la subcuenta 14 no existe: f_ree_ori esta muerto
+
+Medido sobre 202412, cuenta 14, tipo_credito 11 y 12. La estructura es
+`14` + moneda + estado + `03`:
+
+    141103  10,385,201  47.9 %   normal 91.8 %                 soles,   vigente
+    142103     849,006   3.9 %   normal 94.2 %                 dolares, vigente
+    141403     154,808   0.7 %   dudoso y perdida 53.9 %       refinanciado
+    141503     658,252   3.0 %   mora mayor a 60  76.9 %       vencido
+    141603      36,540   0.2 %   perdida 99.7 %                judicial
+    141803   7,118,421  32.8 %   mora 0 %                      devengados
+    141903   1,845,441   8.5 %   dudoso y perdida 43.8 %
+
+**No hay 1413xx.** `05_rcc_agg.sld_ree` lee `substr(cod_cuenta_rcc,4,1) = '3'`, un digito que
+no aparece nunca, y por eso `f_ree_ori` dispara **1 vez en 13,520,090 filas**. `sld_ref` lee
+el digito 4 y captura refinanciados y reestructurados juntos.
+
+**No es desviacion propia: viene de la PO de produccion.** En `88_qa` la etiqueta
+`REFINANCIADOS EN EL ORIGEN` aparece con 120 casos y `REESTRUCTURADOS EN EL ORIGEN` no
+aparece nunca, asi que el filtro tampoco corre en produccion. Se replica tal cual y se
+documenta. Cambiarlo seria una desviacion R11 que hay que firmar aparte.
+
+## O. Decision sobre BCP 2020 y 2021
+
+`86_qa_regla_linea` fallo en BCP 2020 con 48.7 % sin linea contra 1.0 % en 2019. Medido:
+
+    anio  sin_linea      n       pct_d4    sld_usado_medio    rd_12m
+    2019      1        2,916     0.240 %        7,235         30.25 %
+    2020      1      147,634     0.091 %          689         68.84 %
+    2021      1       57,523     0.217 %        1,380         60.46 %
+    2022      1       42,216     1.206 %        1,988         71.37 %
+
+**No son reestructuraciones**: `d4` es 0.09 a 1.2 %. La hipotesis COVID queda refutada.
+
+Pero el perfil de 2020 y 2021 es identico al de 2022 —saldo chico, sin linea, rd 60 a 71 %—
+y 2022 SI esta en la ventana de `tng`, donde el 98.8 % de ellos resulta no-originacion. Lo
+que cambia entre anios es el VOLUMEN, no la naturaleza.
+
+**Decision: la regla se aplica en los 88 meses.** No porque este identificado el mecanismo
+—no lo esta— sino porque la firma coincide con la poblacion que `tng` confirma. El anio
+atipico es 2019, no 2020, y son 2,916 registros: inmaterial en cualquier direccion.
+
+`86_qa` se conserva como esta, fallando en BCP 2020. Un gate que falla y esta firmado con
+evidencia es informacion; subirle el umbral para que pase seria esconderlo.
