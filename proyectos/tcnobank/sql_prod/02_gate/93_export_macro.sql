@@ -1,46 +1,28 @@
--- 93_export_macro.sql | serie mensual para la seleccion de variable macro contra el target largo. Grano codmes, no
--- cliente. Trae las SIETE variables de t_fact_bpe_vars_macro y no solo las dos que usaba la calibracion vigente,
--- porque la seleccion es una cascada y no una eleccion previa.
--- La tabla macro trae cerca de 8 filas por cod_mes (la q98 conto 96 meses por anio), asi que se dedupea con
--- ROW_NUMBER de orden total sobre fec_proceso. RANK no dedupea.
--- Se emiten las dos tasas: la del universo limpio y la de la variante macro, que suelta fraude y swaps para ganar
--- los meses en que esas fuentes no existen.
-CREATE TABLE disc_model_owner.ds_adm_tcnb_px_macro
+-- ============================================================================
+-- 93. EXPORT MACRO
+-- ============================================================================
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_px_macro
 WITH (
     format              = 'PARQUET',
     parquet_compression = 'SNAPPY',
-    external_location   = '<S3_DATOS>/adm_tcnb_px_macro/'
+    partitioned_by      = ARRAY['codmes_mrm'],
+    external_location   = '<S3_DATOS>/adm_vcnbank_tc_px_macro/'
 ) AS
-WITH m AS (
-    SELECT CAST(cod_mes AS VARCHAR) AS codmes,
-           TRY_CAST(rat_ipc              AS DOUBLE) AS rat_ipc,
-           TRY_CAST(rat_pbi              AS DOUBLE) AS rat_pbi,
-           TRY_CAST(rat_tasa_desempleo   AS DOUBLE) AS rat_tasa_desempleo,
-           TRY_CAST(rat_tasa_referencia  AS DOUBLE) AS rat_tasa_referencia,
-           TRY_CAST(rat_expect_inflacion AS DOUBLE) AS rat_expect_inflacion,
-           TRY_CAST(rat_term_intercambio AS DOUBLE) AS rat_term_intercambio
-    FROM (
-        SELECT cod_mes, rat_ipc, rat_pbi, rat_tasa_desempleo, rat_tasa_referencia,
-               rat_expect_inflacion, rat_term_intercambio,
-               row_number() OVER (PARTITION BY cod_mes ORDER BY fec_proceso DESC) AS rn
-        FROM e_perm_aws.t_fact_bpe_vars_macro) x
-    WHERE x.rn = 1
-),
-s AS (
-    SELECT codmes_mrm                                                                   AS codmes,
-           count(*)                                                                     AS n_universo,
-           sum(CASE WHEN flg_clean = 1 AND flg_calib = 1 THEN 1 ELSE 0 END)             AS n_clean,
-           sum(CASE WHEN flg_clean_macro = 1 AND flg_calib = 1 THEN 1 ELSE 0 END)       AS n_clean_macro,
-           avg(CASE WHEN flg_clean = 1 AND flg_calib = 1
-                    THEN CAST(target_12m_corr AS DOUBLE) END)                           AS rd_clean,
-           avg(CASE WHEN flg_clean_macro = 1 AND flg_calib = 1
-                    THEN CAST(target_12m_corr AS DOUBLE) END)                           AS rd_macro,
-           avg(CASE WHEN flg_clean = 1 AND flg_calib = 1 THEN pd_raw END)               AS pd_raw_clean
-    FROM disc_model_owner.ds_adm_tcnb_cal
-    GROUP BY codmes_mrm
-)
-SELECT s.codmes, s.n_universo, s.n_clean, s.n_clean_macro,
-       s.rd_clean, s.rd_macro, s.pd_raw_clean,
-       m.rat_ipc, m.rat_pbi, m.rat_tasa_desempleo, m.rat_tasa_referencia,
-       m.rat_expect_inflacion, m.rat_term_intercambio
-FROM s LEFT JOIN m ON m.codmes = s.codmes
+SELECT
+       to_hex(md5(to_utf8(tip_doc || '|' || id_value || '|' || entidad)))              AS id_hash,
+       entidad, prelacion_cod, prelacion_sld, saldo_tc_ori,
+       f_edad_rango, f_edad_nomatch, f_banc_u12m, f_cast_ori, f_jud_ori, f_ref_ori, f_ree_ori, f_malo_ori, f_cast_u24m, f_jud_u24m, f_ref_u6m, f_mayor_cpp, f_gar_conv, f_fraude, f_entidades, f_swap_u12m, f_swap_p12m, f_repro_p12m,
+       ctrl_cast_ori_m0, ctrl_jud_ori_m0, ctrl_ref_ori_m0, ctrl_ree_ori_m0, ctrl_malo_ori_m0,
+       ctrl_sin_fraude, ctrl_sin_swap, ctrl_no_consumo, ctrl_inca_sin_dato, ctrl_fuente_nueva,
+       falla_sin_sbs, falla_sin_cuc, falla_sin_historia, falla_sin_tipo_ingreso,
+       falla_sin_score, falla_madurez,
+       missing_12, max_dm_fut, f_evento_fut,
+       target_01m, target_02m, target_03m, target_04m, target_05m, target_06m, target_07m, target_08m, target_09m, target_10m, target_11m, target_12m,
+       tipo_ingreso, tipo_ingreso_dep, sit_lab_crudo, fuente_ingreso,
+       seg_arq_salud, region_12m_prio, var_cuali_far_rubrofrec_9m_v3, flg_hosp_12m,
+       pd_raw, puntuacion, pd_cal_vigente, puntuacion_cal_vigente, grupo_cal_vigente, sitlab_score,
+       macro_inflacion, macro_desempleo, macro_desempleo_6,
+       flg_clean, flg_clean_sin_ent, flg_clean_macro, flg_calib,
+       codmes_mrm
+FROM disc_model_owner.ds_adm_vcnbank_tc_cal
+WHERE flg_calib = 1 AND flg_clean_macro = 1

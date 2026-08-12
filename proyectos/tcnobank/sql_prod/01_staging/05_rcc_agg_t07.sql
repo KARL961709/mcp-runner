@@ -1,9 +1,7 @@
--- 05_rcc_agg_t07.sql | colapsa el RCC al grano cliente x entidad x mes con las medidas que los 20 filtros
--- y el target necesitan, para que ningun paso posterior vuelva a escanear 114 particiones de 60M filas.
--- Tramo 7 de 10 (202301 a 202312). Fuente por el mapa R9 medido con la q62, que probo que las dos copias del RCC
--- coinciden al decimal en el solape: d_perm [201701,201812] y e_perm [201901,202606]. Ningun tramo cruza
--- esa frontera, asi la fuente sale del mapa y no de una asignacion a mano.
-INSERT INTO disc_model_owner.ds_adm_tcnb_05_rcc_agg
+-- ============================================================================
+-- 05. CAPA AGREGADA DEL RCC - TRAMO 7 DE 10 (202301 A 202312)
+-- ============================================================================
+INSERT INTO disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg
 SELECT a.tip_doc,
        a.key_value,
        ltrim(rtrim(a.cod_instit_financiera))                                          AS entidad,

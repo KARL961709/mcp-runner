@@ -1,14 +1,12 @@
--- 05_rcc_agg_t01.sql | colapsa el RCC al grano cliente x entidad x mes con las medidas que los 20 filtros
--- y el target necesitan, para que ningun paso posterior vuelva a escanear 114 particiones de 60M filas.
--- Tramo 1 de 10 (201701 a 201712). Fuente por el mapa R9 medido con la q62, que probo que las dos copias del RCC
--- coinciden al decimal en el solape: d_perm [201701,201812] y e_perm [201901,202606]. Ningun tramo cruza
--- esa frontera, asi la fuente sale del mapa y no de una asignacion a mano.
-CREATE TABLE disc_model_owner.ds_adm_tcnb_05_rcc_agg
+-- ============================================================================
+-- 05. CAPA AGREGADA DEL RCC - TRAMO 1 DE 10 (201701 A 201712)
+-- ============================================================================
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg
 WITH (
     format              = 'PARQUET',
     parquet_compression = 'SNAPPY',
     partitioned_by      = ARRAY['codmes'],
-    external_location   = '<S3_DATOS>/adm_tcnb_05_rcc_agg/'
+    external_location   = '<S3_DATOS>/adm_vcnbank_tc_05_rcc_agg/'
 ) AS
 SELECT a.tip_doc,
        a.key_value,
