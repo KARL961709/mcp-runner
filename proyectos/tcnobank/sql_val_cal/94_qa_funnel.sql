@@ -11,7 +11,7 @@ SELECT f.filtro,
                                                                                        AS bad_rate
 FROM disc_model_owner.ds_adm_vcnbank_tc_cal c
 CROSS JOIN UNNEST(
-    ARRAY['f_edad_rango', 'f_edad_nomatch', 'f_banc_u12m', 'f_cast_ori', 'f_jud_ori', 'f_ref_ori', 'f_ree_ori', 'f_malo_ori', 'f_cast_u24m', 'f_jud_u24m', 'f_ref_u6m', 'f_mayor_cpp', 'f_gar_conv', 'f_fraude', 'f_entidades', 'f_swap_u12m', 'f_swap_p12m', 'f_repro_p12m'],
-    ARRAY[c.f_edad_rango, c.f_edad_nomatch, c.f_banc_u12m, c.f_cast_ori, c.f_jud_ori, c.f_ref_ori, c.f_ree_ori, c.f_malo_ori, c.f_cast_u24m, c.f_jud_u24m, c.f_ref_u6m, c.f_mayor_cpp, c.f_gar_conv, c.f_fraude, c.f_entidades, c.f_swap_u12m, c.f_swap_p12m, c.f_repro_p12m]) AS f (filtro, dispara)
+    ARRAY['f_edad_rango', 'f_edad_nomatch', 'f_banc_u12m', 'f_cast_ori', 'f_jud_ori', 'f_ref_ori', 'f_ree_ori', 'f_malo_ori', 'f_cast_u24m', 'f_jud_u24m', 'f_ref_u6m', 'f_mayor_cpp', 'f_gar_conv', 'f_fraude', 'f_entidades', 'f_sin_linea', 'f_swap_u12m', 'f_swap_p12m', 'f_repro_p12m'],
+    ARRAY[c.f_edad_rango, c.f_edad_nomatch, c.f_banc_u12m, c.f_cast_ori, c.f_jud_ori, c.f_ref_ori, c.f_ree_ori, c.f_malo_ori, c.f_cast_u24m, c.f_jud_u24m, c.f_ref_u6m, c.f_mayor_cpp, c.f_gar_conv, c.f_fraude, c.f_entidades, c.f_sin_linea, c.f_swap_u12m, c.f_swap_p12m, c.f_repro_p12m]) AS f (filtro, dispara)
 GROUP BY f.filtro
 ORDER BY n_aislado DESC

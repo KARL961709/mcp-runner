@@ -10,6 +10,9 @@ UNION ALL
 SELECT '11_po_key' AS paso, count(*) AS n_filas, count(DISTINCT codmes_mrm) AS meses
 FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key
 UNION ALL
+SELECT '12_saldo_perfil', count(*), count(DISTINCT codmes_mrm)
+FROM disc_model_owner.ds_adm_vcnbank_tc_12_saldo_perfil
+UNION ALL
 SELECT '20_rcc_base' AS paso, count(*) AS n_filas, count(DISTINCT codmes_mrm) AS meses
 FROM disc_model_owner.ds_adm_vcnbank_tc_20_rcc_base
 UNION ALL

@@ -1,10 +1,13 @@
 -- ============================================================================
 -- 60. FILTROS - UNA COLUMNA POR FILTRO, NUNCA NULL
---   scan: 20_rcc_base U 21_rcc_flags U t_mst_reniec_rsk U t_consolidado_rsk U t_mst_fraude_rsk U t_cob_facilidades_ejecutadas
+--   scan: 20_rcc_base U 21_rcc_flags U 12_saldo_perfil U t_mst_reniec_rsk U t_consolidado_rsk U t_mst_fraude_rsk U t_cob_facilidades_ejecutadas
 --   ancla: fraude p_codmes<=m-2, garantia m-2, edad k=0. Los 18 filtros con COALESCE, nunca NULL
 --   malo_ori va en m0: la cuenta es un alta y en m-2 no existe fila de esa entidad, asi que
 --   la variante m2 es cero por construccion. Es el unico origen que no se puede reanclar
 --   fac se agrega al grano de la po ANTES de unir: unir por rango de meses multiplica filas
+--   f_sin_linea es de alcance, no de riesgo: un alta real trae linea 81-923. Medido contra
+--   tng_altas en BCP y BBVA da precision 99.7 y recall 98.8, y solo 191 de 909,588 altas
+--   reconocidas quedan sin linea. sld_usado sale por resta porque saldo_tc suma ambas
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_60_filtros AS
 WITH po AS (
@@ -75,6 +78,11 @@ SELECT p.tip_doc,
        CAST(coalesce(CASE WHEN fr.p_codmes_min <= p.m02 THEN 1 ELSE 0 END, 0) AS INTEGER) AS f_fraude,
        CAST(CASE WHEN p.entidad IN ('00001','00002','00004','00006','00142')
                  THEN 0 ELSE 1 END AS INTEGER)                                         AS f_entidades,
+       CAST(CASE WHEN coalesce(sl.sld_linea, 0) > 0 THEN 0 ELSE 1 END AS INTEGER)      AS f_sin_linea,
+       coalesce(sl.sld_linea, 0)                                                        AS sld_linea,
+       p.saldo_tc_ori - coalesce(sl.sld_linea, 0)                                       AS sld_usado,
+       CAST(CASE WHEN p.saldo_tc_ori - coalesce(sl.sld_linea, 0) > 0
+                 THEN 0 ELSE 1 END AS INTEGER)                                         AS ctrl_solo_linea,
        CAST(coalesce(sw.swap_u12m,  0) AS INTEGER)                                     AS f_swap_u12m,
        CAST(coalesce(sw.swap_p12m,  0) AS INTEGER)                                     AS f_swap_p12m,
        CAST(coalesce(sw.repro_p12m, 0) AS INTEGER)                                     AS f_repro_p12m,
@@ -99,3 +107,5 @@ LEFT JOIN e_perm_aws.t_mst_reniec_rsk r ON r.tip_doc = p.tip_doc AND r.key_value
 LEFT JOIN gar g  ON g.sbs_value = p.sbs_value AND g.p_codmes = p.m02
 LEFT JOIN fra fr ON fr.tip_doc  = p.tip_doc   AND fr.key_value = p.id_value
 LEFT JOIN sw     ON sw.codmes_mrm = p.codmes_mrm AND sw.cod_cuc = p.cod_cuc
+LEFT JOIN disc_model_owner.ds_adm_vcnbank_tc_12_saldo_perfil sl ON sl.tip_doc = p.tip_doc AND sl.id_value = p.id_value
+                              AND sl.entidad = p.entidad AND sl.codmes_mrm = p.codmes_mrm

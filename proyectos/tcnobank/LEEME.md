@@ -278,3 +278,74 @@ exigia `pd_raw IS NOT NULL`, asi que la serie de RD para el modelo macro quedaba
 La madurez por horizonte la gobierna el NULL de cada `target_0Nm`: los horizontes cortos compran
 ventana sin necesitar flag propio. `81_macro_serie` y `93_export_macro` pasan a `flg_hist`;
 `pd_raw_clean` se queda en `flg_calib` porque si necesita el score.
+
+---
+## K. La poblacion tenia no-originaciones y la regla que las saca
+
+`tng_altas` es el reporte de ORIGINACIONES de cada entidad; el RCC es un reporte de SALDOS.
+Derivar el alta como "primera aparicion en 13 meses" confunde originar con adquirir o
+reanudar reporte. Medido en la ventana [202201,202506] sobre las 5 entidades de alcance:
+
+    entidad  origen      n         rd_12m   pct_malo_ori
+    00001    en ambas    909,588    7.12 %     0.07 %
+    00001    solo rcc     64,555   67.07 %    77.31 %
+    00006    solo rcc      4,001   65.91 %     9.32 %
+    00004    solo rcc        518   27.41 %    33.40 %
+    00142    solo rcc         83   12.05 %     2.41 %
+    00002    solo tng    269,115      -          -        <- el RCC no ve 25 % de IBK
+
+Lo que las delata NO es el estado contable (98.4 % aparece vigente), NI la ventana del alta
+(tc_13_24m da 41.70 contra 40.58: no separa), sino el SALDO. Un alta real de BCP llega con
+10,004 entre saldo y linea; una no-originacion llega con 32. Son cuentas muriendo: resto en
+14-x, linea 81-923 ya cancelada.
+
+    BCP    en_tng=1   con linea 909,397   sin linea    191
+           en_tng=0   con linea     757   sin linea 63,798
+           precision 99.70 %   recall 98.83 %
+    BBVA   precision 97.6 %    recall 95.5 %
+
+`f_sin_linea = 1` cuando `sld_linea = 0`, y va a **99**: no es sucio, es otra poblacion. Se
+suma a los dos de alcance que ya existian y entra en `flg_hist = 0`.
+
+Con la regla, el RCC limpio reproduce `tng` (BCP recall 99.6 %, precision 99.9 %), asi que NO
+hace falta cambiar de fuente ni partir el uso entre calibracion y macro. Cambiar de fuente en
+202201 metia un escalon de ~1 pp en la serie de RD que el modelo macro leeria como ciclo.
+
+**Por que importa mas para macro que para calibrar.** En la ventana de calibracion la
+contaminacion son 2,850 registros, +0.26 pp. Pero decae en el tiempo (0.82 % en 202303 a
+0.15 % en 202506), asi que inyecta una TENDENCIA falsa en la serie con la que se elige la
+variable macro. Eso no lo absorbe un intercepto.
+
+**Riesgo asumido, con gate.** La regla se midio en BCP y BBVA. Si alguna entidad no reportara
+81-923 le borraria toda la poblacion. `86_qa_regla_linea` falla si alguna entidad supera 25 %
+sin linea en algun anio.
+
+## L. f_malo_ori cambio de motivo, no de decision
+
+Se aplica porque limpia poblacion, no porque saque malos: 98.8 % de los malo_ori de BCP son
+altas que tng no reconoce. Sigue en dirty anclado en m0. Su recall como detector es 77.3 %
+contra 98.8 % de la regla de linea, asi que ahora es redundante en su mayor parte.
+
+## M. sld_usado y sld_linea entran como columnas
+
+`05_rcc_agg.saldo_tc` sumaba 14-x de TC junto con 81-923 en el mismo campo, asi que
+`prelacion_sld` ordenaba mezclando deuda con linea disponible. `12_saldo_perfil` lee el RCC
+crudo solo para las llaves de la po (solo rama e_perm: la po arranca en 201902) y saca la
+linea; el usado sale por resta. `prelacion_sld` pasa a ordenar por `sld_usado`.
+
+Ademas es la segmentacion mas fuerte del dato, y no estaba en ninguna columna:
+
+    entidad   solo linea no utilizada        con saldo usado
+    00001     54.3 %   rd  2.17 %            45.7 %   rd  8.10 %
+    00002     21.6 %   rd  6.69 %            78.4 %   rd 11.29 %
+    00006     54.1 %   rd  4.68 %            45.9 %   rd 15.64 %
+    00142     36.6 %   rd  7.07 %            63.4 %   rd 19.84 %
+
+Viaja como `ctrl_solo_linea`. El efecto entidad que ve el modelo hoy es en parte esta mezcla.
+
+## Limitaciones que no son corregibles midiendo
+
+1. **IBK pierde 25 % de sus altas en el RCC.** No se puede medir su rd porque no estan en la
+   tabla. IBK es 16 % de la base, asi que el sesgo podria llegar a ~1 pp.
+2. **De 201902 a 202112 no hay arbitro.** `tng_altas` arranca en 202201. La regla de linea se
+   calibra en el solape y se asume valida hacia atras. Eso es firma, no medicion.
