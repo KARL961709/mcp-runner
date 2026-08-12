@@ -1,6 +1,6 @@
 -- ============================================================================
 -- 89. VALIDA LA POBLACION DERIVADA CONTRA TNG_ALTAS
---   scan: __T___10_po U tng_altas_ssff_rsk U tng_altas_ibk_rsk [202201,202605]
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_10_po U tng_altas_ssff_rsk U tng_altas_ibk_rsk [202201,202605]
 --   ancla: tng_altas solo existe desde 202201, asi que el contraste cubre 52 de los 88 meses
 -- ============================================================================
 WITH derivada AS (
