@@ -5,8 +5,7 @@ CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_21_rcc_flags
 WITH (
     format              = 'PARQUET',
     parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm'],
-    external_location   = '<S3_DATOS>/adm_vcnbank_tc_21_rcc_flags/'
+    partitioned_by      = ARRAY['codmes_mrm']
 ) AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad,

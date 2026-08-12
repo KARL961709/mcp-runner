@@ -5,8 +5,7 @@ CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_30_drivers
 WITH (
     format              = 'PARQUET',
     parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm'],
-    external_location   = '<S3_DATOS>/adm_vcnbank_tc_30_drivers/'
+    partitioned_by      = ARRAY['codmes_mrm']
 ) AS
 WITH po AS (
     SELECT DISTINCT codmes_mrm, tip_doc, id_value, date_format(date_add('month', -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m02

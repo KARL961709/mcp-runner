@@ -5,8 +5,7 @@ CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_40_pdraw
 WITH (
     format              = 'PARQUET',
     parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm'],
-    external_location   = '<S3_DATOS>/adm_vcnbank_tc_40_pdraw/'
+    partitioned_by      = ARRAY['codmes_mrm']
 ) AS
 WITH po AS (
     SELECT DISTINCT codmes_mrm, tip_doc, id_value FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key

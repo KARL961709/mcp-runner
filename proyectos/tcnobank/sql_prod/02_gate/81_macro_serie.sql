@@ -4,8 +4,7 @@
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_81_macro
 WITH (
     format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    external_location   = '<S3_DATOS>/adm_vcnbank_tc_81_macro/'
+    parquet_compression = 'SNAPPY'
 ) AS
 WITH m AS (
     SELECT CAST(cod_mes AS VARCHAR)                    AS codmes,
