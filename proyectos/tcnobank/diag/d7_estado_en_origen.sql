@@ -47,5 +47,12 @@ SELECT CASE WHEN f_malo_ori = 1 THEN '2.malo en el origen' ELSE '1.clean vigente
        round(100.0 * count(*) / sum(count(*)) OVER (PARTITION BY f_malo_ori), 3)         AS pct_del_grupo,
        round(100.0 * avg(CAST(target_12m AS DOUBLE)), 4)                                 AS rd_12m
 FROM r
-GROUP BY 1, 2
+GROUP BY f_malo_ori,
+         CASE WHEN judicial      = 1 THEN '6.judicial'
+              WHEN castigo       = 1 THEN '5.castigado'
+              WHEN vencido       = 1 THEN '4.vencido'
+              WHEN ref_ree       = 1 THEN '3.refinanciado o reestructurado'
+              WHEN vigente       = 1 THEN '2.vigente'
+              WHEN linea_no_util = 1 THEN '1.solo linea no utilizada'
+              ELSE                        '7.otro' END
 ORDER BY 1, 2
