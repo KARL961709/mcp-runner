@@ -1,4 +1,4 @@
--- 57_formato_llaves.sql | mide el formato de las DOS llaves antes de cruzar RCC contra altas. Un largo distinto o ceros a la izquierda hacen que el cruce devuelva vacio sin dar error, y el diagnostico se paga en otro viaje
+-- 57_formato_llaves.sql | mide el formato de las llaves de los DOS lados antes de cruzar RCC contra altas. Un largo distinto o ceros a la izquierda devuelven un cruce vacio SIN dar error, y ese diagnostico se paga en otro viaje
 SELECT campo, largo, count(*) AS n
 FROM (
     SELECT 'A.rcc.cod_instit_financiera' AS campo, length(cod_instit_financiera) AS largo

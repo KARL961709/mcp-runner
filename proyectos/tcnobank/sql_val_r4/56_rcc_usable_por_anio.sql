@@ -1,4 +1,4 @@
--- 56_rcc_usable_por_anio.sql | un diciembre por anio para confirmar que el RCC no solo existe sino que sirve: que traiga linea de tarjeta, mora poblada y clientes en volumen razonable. Una particion por anio, no la serie entera
+-- 56_rcc_usable_por_anio.sql | un diciembre por anio para confirmar que el RCC no solo existe sino que sirve: que traiga linea de tarjeta, mora y clasificacion pobladas. Una particion por anio, no la serie entera
 SELECT p_codmes,
        count(*)                                                                          AS n_filas,
        count(DISTINCT key_value)                                                         AS clientes,
