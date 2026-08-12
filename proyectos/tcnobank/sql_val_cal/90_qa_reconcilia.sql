@@ -21,6 +21,14 @@ FROM (
            sum(CASE WHEN flg_calib NOT IN (0,1) OR flg_calib IS NULL THEN 1 ELSE 0 END),
            count(*) FROM disc_model_owner.ds_adm_vcnbank_tc_cal
     UNION ALL
+    SELECT 'flg_hist fuera de 0 y 1',
+           sum(CASE WHEN flg_hist NOT IN (0,1) OR flg_hist IS NULL THEN 1 ELSE 0 END),
+           count(*) FROM disc_model_owner.ds_adm_vcnbank_tc_cal
+    UNION ALL
+    SELECT 'flg_calib = 1 con flg_hist = 0',
+           sum(CASE WHEN flg_calib = 1 AND flg_hist = 0 THEN 1 ELSE 0 END),
+           count(*) FROM disc_model_owner.ds_adm_vcnbank_tc_cal
+    UNION ALL
     SELECT 'llaves duplicadas en el maestro',
            (SELECT count(*) FROM (SELECT codmes_mrm, tip_doc, id_value, entidad
                                   FROM disc_model_owner.ds_adm_vcnbank_tc_cal GROUP BY 1,2,3,4 HAVING count(*) > 1) d),

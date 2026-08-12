@@ -235,3 +235,46 @@ Toda salida reporta **magnitud** además del veredicto.
 `ESTILO_SQL.md §1` pide terminar cada sentencia con `;`. El `CLAUDE.md` del mcp-runner lo prohíbe
 ("ni siquiera en comentarios") y el gate **G0** lo rechaza. **Manda el runner** — conviene
 actualizar el `.md`.
+
+---
+## Correcciones tras la QA del 2026-08-12
+
+**H. f_malo_ori pasa a m0.** Medido: la variante m2 daba 0 exacto sobre 13.5M filas. La causa es
+estructural, no un bug de SQL: `malo_ori` sale de `05_rcc_agg` filtrado a `entidad = p.entidad`, y
+la poblacion es un ALTA, asi que en m-2 no existe fila de esa entidad. Los otros cuatro origenes
+(`cast/jud/ref/ree`) salen del CTE `cli`, agregado a nivel CLIENTE sobre todas las entidades, y por
+eso si tienen fila en m-2. Es el unico origen que no se puede reanclar.
+
+Contrafactual (d4, sobre `cal` con la prelacion vieja):
+
+    dispara malo_ori_m0    n = 199,706   1.47% del universo   bad-rate 75.12%   dm_fut medio 135 d
+    no dispara             n = 13,388,044                     bad-rate 13.59%   dm_fut medio  15 d
+    de los que disparan, 60,199 estaban entrando como flg_clean = 1 con bad-rate 66.62%
+
+    delta_lra_pp sobre la base clean = -1.57 pp  (13.82% -> 12.25%)
+
+Decision: DIRTY (flg_clean = 0), anclado en m0, no liberado. Un bad-rate 5.5x no es ruido. No va a
+99 porque no es un filtro de alcance: el 99 sigue reservado a `f_banc_u12m` y `f_entidades`.
+`ctrl_malo_ori_m2` viaja como control para poder medir el contrafactual desde la tabla.
+
+**I. Fan-out en 60_filtros.** `fac` se unia por RANGO de meses (`su` 12 meses atras, `sp` 12
+adelante) sin agregar: un cliente con 12 meses de facilidades generaba 12 filas. Medido con d1:
+
+    11_po_key, 20_rcc_base, 21_rcc_flags, 50_targets, 30_drivers, 40_pdraw   0 duplicados
+    60_filtros   16,731 llaves duplicadas   19,878 filas extra
+    cal          16,731 llaves duplicadas   67,660 filas extra   <- 70_cal une f con d por las
+                 4 llaves, asi que un grupo duplicado n veces sale n al cuadrado
+
+Arreglo: CTE `sw` que agrega al grano (codmes_mrm, cod_cuc) ANTES de unir, con las tres ventanas
+resueltas por CASE dentro del mismo max(). Un solo LEFT JOIN por dos llaves.
+
+**J. flg_hist se separa de flg_calib.** El score `scr_vcnbank_rsk` arranca en 202303, y `flg_calib`
+exigia `pd_raw IS NOT NULL`, asi que la serie de RD para el modelo macro quedaba vacia en
+201902-202302 pese a tener target completo. Son dos preguntas distintas:
+
+    flg_hist   alcance + datos, SIN score y SIN madurez  -> serie de RD, ~201902-202506
+    flg_calib  flg_hist + pd_raw + madurez 12m           -> base de calibracion, 202303-202506
+
+La madurez por horizonte la gobierna el NULL de cada `target_0Nm`: los horizontes cortos compran
+ventana sin necesitar flag propio. `81_macro_serie` y `93_export_macro` pasan a `flg_hist`;
+`pd_raw_clean` se queda en `flg_calib` porque si necesita el score.

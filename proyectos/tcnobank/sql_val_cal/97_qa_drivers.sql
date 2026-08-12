@@ -7,6 +7,8 @@ SELECT substr(codmes_mrm, 1, 4)                                                 
        round(100.0 * avg(CAST(ctrl_inca_sin_dato     AS DOUBLE)), 3)                   AS pct_sin_inca,
        round(100.0 * avg(CAST(ctrl_fuente_nueva      AS DOUBLE)), 3)                   AS pct_fuente_nueva,
        round(100.0 * avg(CAST(falla_sin_score        AS DOUBLE)), 3)                   AS pct_sin_score,
+       round(100.0 * avg(CASE WHEN flg_hist = 1
+                              THEN CAST(falla_sin_score AS DOUBLE) END), 3)             AS pct_sin_score_alcance,
        round(100.0 * avg(CAST(falla_sin_sbs          AS DOUBLE)), 3)                   AS pct_sin_sbs,
        round(100.0 * avg(CAST(falla_sin_cuc          AS DOUBLE)), 3)                   AS pct_sin_cuc,
        round(100.0 * avg(CAST(f_edad_nomatch         AS DOUBLE)), 3)                   AS pct_sin_reniec,

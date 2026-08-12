@@ -23,12 +23,12 @@ WITH m AS (
 s AS (
     SELECT codmes_mrm                                                                  AS codmes,
            count(*)                                                                    AS n_universo,
-           sum(CASE WHEN flg_calib = 1 AND flg_clean = 1 THEN 1 ELSE 0 END)            AS n_clean,
-           sum(CASE WHEN flg_calib = 1 AND flg_clean_macro = 1 THEN 1 ELSE 0 END)      AS n_clean_macro,
-           avg(CASE WHEN flg_calib = 1 AND flg_clean = 1 THEN CAST(target_12m AS DOUBLE) END) AS rd_12m_clean,
-           avg(CASE WHEN flg_calib = 1 AND flg_clean = 1 THEN CAST(target_06m AS DOUBLE) END) AS rd_06m_clean,
-           avg(CASE WHEN flg_calib = 1 AND flg_clean = 1 THEN CAST(target_03m AS DOUBLE) END) AS rd_03m_clean,
-           avg(CASE WHEN flg_calib = 1 AND flg_clean_macro = 1 THEN CAST(target_12m AS DOUBLE) END) AS rd_12m_macro,
+           sum(CASE WHEN flg_hist = 1 AND flg_clean = 1 THEN 1 ELSE 0 END)            AS n_clean,
+           sum(CASE WHEN flg_hist = 1 AND flg_clean_macro = 1 THEN 1 ELSE 0 END)      AS n_clean_macro,
+           avg(CASE WHEN flg_hist = 1 AND flg_clean = 1 THEN CAST(target_12m AS DOUBLE) END) AS rd_12m_clean,
+           avg(CASE WHEN flg_hist = 1 AND flg_clean = 1 THEN CAST(target_06m AS DOUBLE) END) AS rd_06m_clean,
+           avg(CASE WHEN flg_hist = 1 AND flg_clean = 1 THEN CAST(target_03m AS DOUBLE) END) AS rd_03m_clean,
+           avg(CASE WHEN flg_hist = 1 AND flg_clean_macro = 1 THEN CAST(target_12m AS DOUBLE) END) AS rd_12m_macro,
            avg(CASE WHEN flg_calib = 1 AND flg_clean = 1 THEN pd_raw END)              AS pd_raw_clean
     FROM disc_model_owner.ds_adm_vcnbank_tc_cal
     GROUP BY codmes_mrm

@@ -2,11 +2,19 @@
 -- 60. FILTROS - UNA COLUMNA POR FILTRO, NUNCA NULL
 --   scan: 20_rcc_base U 21_rcc_flags U t_mst_reniec_rsk U t_consolidado_rsk U t_mst_fraude_rsk U t_cob_facilidades_ejecutadas
 --   ancla: fraude p_codmes<=m-2, garantia m-2, edad k=0. Los 18 filtros con COALESCE, nunca NULL
+--   malo_ori va en m0: la cuenta es un alta y en m-2 no existe fila de esa entidad, asi que
+--   la variante m2 es cero por construccion. Es el unico origen que no se puede reanclar
+--   fac se agrega al grano de la po ANTES de unir: unir por rango de meses multiplica filas
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_60_filtros AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad, sbs_value, cod_cuc, saldo_tc_ori,
-           falla_sin_sbs, falla_sin_cuc, date_format(date_add('month', -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m02, date_format(date_add('month', 12, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS p12
+           falla_sin_sbs, falla_sin_cuc,
+           date_format(date_add('month',  -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m')  AS m02,
+           date_format(date_add('month', -12, date_parse(codmes_mrm, '%Y%m')), '%Y%m')  AS m12,
+           date_format(date_add('month',  -1, date_parse(codmes_mrm, '%Y%m')), '%Y%m')  AS m01,
+           date_format(date_add('month',   1, date_parse(codmes_mrm, '%Y%m')), '%Y%m')  AS p01,
+           date_format(date_add('month',  12, date_parse(codmes_mrm, '%Y%m')), '%Y%m')  AS p12
     FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key
 ),
 gar AS (
@@ -31,6 +39,17 @@ fac AS (
     FROM e_perm_aws.t_cob_facilidades_ejecutadas
     WHERE estado_facilidad = 'EJECUTADO'
     GROUP BY codunicocli, CAST(periodo AS VARCHAR)
+),
+sw AS (
+    SELECT k.codmes_mrm,
+           k.cod_cuc,
+           max(CASE WHEN f.codmes BETWEEN k.m12 AND k.m01 THEN f.f_swap  ELSE 0 END)     AS swap_u12m,
+           max(CASE WHEN f.codmes BETWEEN k.p01 AND k.p12 THEN f.f_swap  ELSE 0 END)     AS swap_p12m,
+           max(CASE WHEN f.codmes BETWEEN k.p01 AND k.p12 THEN f.f_repro ELSE 0 END)     AS repro_p12m
+    FROM (SELECT DISTINCT codmes_mrm, cod_cuc, m12, m01, p01, p12
+          FROM po WHERE cod_cuc IS NOT NULL) k
+    INNER JOIN fac f ON f.codunicocli = k.cod_cuc AND f.codmes BETWEEN k.m12 AND k.p12
+    GROUP BY k.codmes_mrm, k.cod_cuc
 )
 SELECT p.tip_doc,
        p.id_value,
@@ -47,7 +66,7 @@ SELECT p.tip_doc,
        CAST(coalesce(b.jud_ori_m2,  0) AS INTEGER)                                     AS f_jud_ori,
        CAST(coalesce(b.ref_ori_m2,  0) AS INTEGER)                                     AS f_ref_ori,
        CAST(coalesce(b.ree_ori_m2,  0) AS INTEGER)                                     AS f_ree_ori,
-       CAST(coalesce(b.malo_ori_m2, 0) AS INTEGER)                                     AS f_malo_ori,
+       CAST(coalesce(b.malo_ori_m0, 0) AS INTEGER)                                     AS f_malo_ori,
        CAST(coalesce(h.cast_u24m,   0) AS INTEGER)                                     AS f_cast_u24m,
        CAST(coalesce(h.jud_u24m,    0) AS INTEGER)                                     AS f_jud_u24m,
        CAST(coalesce(h.ref_u6m,     0) AS INTEGER)                                     AS f_ref_u6m,
@@ -56,14 +75,14 @@ SELECT p.tip_doc,
        CAST(coalesce(CASE WHEN fr.p_codmes_min <= p.m02 THEN 1 ELSE 0 END, 0) AS INTEGER) AS f_fraude,
        CAST(CASE WHEN p.entidad IN ('00001','00002','00004','00006','00142')
                  THEN 0 ELSE 1 END AS INTEGER)                                         AS f_entidades,
-       CAST(coalesce(su.f_swap,  0) AS INTEGER)                                        AS f_swap_u12m,
-       CAST(coalesce(sp.f_swap,  0) AS INTEGER)                                        AS f_swap_p12m,
-       CAST(coalesce(sp.f_repro, 0) AS INTEGER)                                        AS f_repro_p12m,
+       CAST(coalesce(sw.swap_u12m,  0) AS INTEGER)                                     AS f_swap_u12m,
+       CAST(coalesce(sw.swap_p12m,  0) AS INTEGER)                                     AS f_swap_p12m,
+       CAST(coalesce(sw.repro_p12m, 0) AS INTEGER)                                     AS f_repro_p12m,
        CAST(coalesce(b.cast_ori_m0, 0) AS INTEGER)                                     AS ctrl_cast_ori_m0,
        CAST(coalesce(b.jud_ori_m0,  0) AS INTEGER)                                     AS ctrl_jud_ori_m0,
        CAST(coalesce(b.ref_ori_m0,  0) AS INTEGER)                                     AS ctrl_ref_ori_m0,
        CAST(coalesce(b.ree_ori_m0,  0) AS INTEGER)                                     AS ctrl_ree_ori_m0,
-       CAST(coalesce(b.malo_ori_m0, 0) AS INTEGER)                                     AS ctrl_malo_ori_m0,
+       CAST(coalesce(b.malo_ori_m2, 0) AS INTEGER)                                     AS ctrl_malo_ori_m2,
        CAST(CASE WHEN p.codmes_mrm < '202106' THEN 1 ELSE 0 END AS INTEGER)            AS ctrl_sin_fraude,
        CAST(CASE WHEN p.codmes_mrm < '202201' THEN 1 ELSE 0 END AS INTEGER)            AS ctrl_sin_swap,
        CAST(coalesce(h.ctrl_no_consumo, 0) AS INTEGER)                                 AS ctrl_no_consumo,
@@ -79,7 +98,4 @@ LEFT JOIN disc_model_owner.ds_adm_vcnbank_tc_21_rcc_flags h ON h.tip_doc = p.tip
 LEFT JOIN e_perm_aws.t_mst_reniec_rsk r ON r.tip_doc = p.tip_doc AND r.key_value = p.id_value
 LEFT JOIN gar g  ON g.sbs_value = p.sbs_value AND g.p_codmes = p.m02
 LEFT JOIN fra fr ON fr.tip_doc  = p.tip_doc   AND fr.key_value = p.id_value
-LEFT JOIN fac su ON su.codunicocli = p.cod_cuc
-                AND su.codmes BETWEEN date_format(date_add('month', -12, date_parse(p.codmes_mrm, '%Y%m')), '%Y%m') AND date_format(date_add('month', -1, date_parse(p.codmes_mrm, '%Y%m')), '%Y%m')
-LEFT JOIN fac sp ON sp.codunicocli = p.cod_cuc
-                AND sp.codmes BETWEEN date_format(date_add('month', 1, date_parse(p.codmes_mrm, '%Y%m')), '%Y%m') AND p.p12
+LEFT JOIN sw     ON sw.codmes_mrm = p.codmes_mrm AND sw.cod_cuc = p.cod_cuc
