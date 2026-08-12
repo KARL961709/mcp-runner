@@ -1,7 +1,7 @@
 -- 82_discrepancia_por_entidad.sql | reparte por entidad las altas que no cuadran entre la derivacion completa y tng_altas. Si la discrepancia se concentra en pocas entidades es un problema de reporte de esas casas, no de la regla, y la derivacion sigue siendo valida para las cinco que nos importan
 WITH tc_mes AS (
     SELECT DISTINCT tip_doc, key_value, ltrim(rtrim(cod_instit_financiera)) AS entidad
-    FROM d_perm_aws.t_fact_report_rcc_rsk
+    FROM e_perm_aws.t_fact_report_rcc_rsk
     WHERE p_codmes = '202404'
       AND (
             (    substr(cod_cuenta_rcc, 1, 2) = '14'
@@ -17,7 +17,7 @@ WITH tc_mes AS (
 ),
 tc_prev AS (
     SELECT DISTINCT tip_doc, key_value, ltrim(rtrim(cod_instit_financiera)) AS entidad
-    FROM d_perm_aws.t_fact_report_rcc_rsk
+    FROM e_perm_aws.t_fact_report_rcc_rsk
     WHERE p_codmes BETWEEN '202304' AND '202403'
       AND (
             (    substr(cod_cuenta_rcc, 1, 2) = '14'

@@ -1,7 +1,7 @@
 -- 81_altas_tc_completo.sql | rehace la prueba de la 58, que estaba mal: derivaba el alta usando solo la linea 81*923 e ignoraba las 30 subcuentas 14-x que la PO tambien cuenta como tarjeta. Con la definicion COMPLETA de dm_tc, el solape contra tng_altas deberia subir por encima del 96.1 por ciento medido antes
 WITH tc_mes AS (
     SELECT DISTINCT tip_doc, key_value, ltrim(rtrim(cod_instit_financiera)) AS entidad
-    FROM d_perm_aws.t_fact_report_rcc_rsk
+    FROM e_perm_aws.t_fact_report_rcc_rsk
     WHERE p_codmes = '202404'
       AND (
             (    substr(cod_cuenta_rcc, 1, 2) = '14'
@@ -17,7 +17,7 @@ WITH tc_mes AS (
 ),
 tc_prev AS (
     SELECT DISTINCT tip_doc, key_value, ltrim(rtrim(cod_instit_financiera)) AS entidad
-    FROM d_perm_aws.t_fact_report_rcc_rsk
+    FROM e_perm_aws.t_fact_report_rcc_rsk
     WHERE p_codmes BETWEEN '202304' AND '202403'
       AND (
             (    substr(cod_cuenta_rcc, 1, 2) = '14'

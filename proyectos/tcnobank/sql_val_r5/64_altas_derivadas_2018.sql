@@ -29,7 +29,7 @@ UNION ALL
 SELECT '3. stock linea TC 202404 (referencia)', count(*)
 FROM (
     SELECT DISTINCT tip_doc, key_value, ltrim(rtrim(cod_instit_financiera))
-    FROM d_perm_aws.t_fact_report_rcc_rsk
+    FROM e_perm_aws.t_fact_report_rcc_rsk
     WHERE p_codmes = '202404'
       AND substr(cod_cuenta_rcc, 1, 2) = '81' AND substr(cod_cuenta_rcc, 4, 3) = '923'
 ) r
