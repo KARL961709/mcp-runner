@@ -2,11 +2,13 @@
 -- 87. EQUIVALENCIA DE POBLACION CONTRA LA PO VIGENTE
 --   scan: disc_model_owner.ds_adm_vcnbank_tc_cal U e_perm_aws.ds_flg_admtcnobk1_rsk, solape [202303,202606]
 --   ancla: la vigente lleva codmes_mrm propio. Grano cliente-mes con prelacion 1 en ambos lados
+--   el nuevo se recorta a flg_clean <> 99: comparar universos crudos media otra cosa
 -- ============================================================================
 WITH nuevo AS (
     SELECT codmes_mrm, tip_doc, id_value
     FROM disc_model_owner.ds_adm_vcnbank_tc_cal
     WHERE prelacion_cod = 1
+      AND flg_clean <> 99
       AND codmes_mrm BETWEEN '202303' AND '202606'
 ),
 vigente AS (
