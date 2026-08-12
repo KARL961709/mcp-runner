@@ -4,11 +4,12 @@
 --   ancla: flg_tc acepta vencido judicial refinanciado y reestructurado, asi que una
 --          primera aparicion no es una originacion. Si malo_ori se concentra en 4 y 5
 --          no son altas sino compras de cartera o reanudaciones de reporte
+--   lee la tabla PREVIA a la reconstruccion: el grupo lo marca ctrl_malo_ori_m0
 -- ============================================================================
 WITH g AS (
-    SELECT codmes_mrm, tip_doc, id_value, entidad, f_malo_ori, target_12m
+    SELECT codmes_mrm, tip_doc, id_value, entidad, ctrl_malo_ori_m0 AS f_malo_ori, target_12m
     FROM disc_model_owner.ds_adm_vcnbank_tc_cal
-    WHERE flg_calib = 1 AND flg_clean_prod = 1
+    WHERE flg_calib = 1 AND flg_clean = 1
       AND codmes_mrm BETWEEN '202401' AND '202412'
 ),
 r AS (
