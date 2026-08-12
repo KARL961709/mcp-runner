@@ -1,5 +1,9 @@
--- 04_rcc_agg_t04.sql | capa agregada del RCC al grano cliente x entidad x mes, tramo 4 de 10 (202001-202012). Colapsa el RCC a las medidas que los 20 filtros y el target necesitan, para que ningun paso siguiente vuelva a escanearlo. Fuente por R9: e_perm_aws.t_fact_report_rcc_rsk
-INSERT INTO disc_model_owner.ds_tcnobank_rcc_agg_v1
+-- 05_rcc_agg_t07.sql | colapsa el RCC al grano cliente x entidad x mes con las medidas que los 20 filtros
+-- y el target necesitan, para que ningun paso posterior vuelva a escanear 114 particiones de 60M filas.
+-- Tramo 7 de 10 (202301 a 202312). Fuente por el mapa R9 medido con la q62, que probo que las dos copias del RCC
+-- coinciden al decimal en el solape: d_perm [201701,201812] y e_perm [201901,202606]. Ningun tramo cruza
+-- esa frontera, asi la fuente sale del mapa y no de una asignacion a mano.
+INSERT INTO disc_model_owner.ds_adm_tcnb_05_rcc_agg
 SELECT a.tip_doc,
        a.key_value,
        ltrim(rtrim(a.cod_instit_financiera))                                          AS entidad,
@@ -11,7 +15,16 @@ SELECT a.tip_doc,
                                                        '5030613','6030613','5031908','6031908','5031998','6031998')
                    OR substr(a.cod_cuenta_rcc,4,5) IN ('10304','40304','50304','60304','40302',
                                                        '10308','40308','50308','60308') ) )
-         OR (substr(a.cod_cuenta_rcc,1,2) = '81' AND substr(a.cod_cuenta_rcc,4,3) = '923') ) THEN a.condicion END)                                       AS dm_tc,
+         OR (substr(a.cod_cuenta_rcc,1,2) = '81' AND substr(a.cod_cuenta_rcc,4,3) = '923') ) THEN 1 ELSE 0 END)                                        AS flg_tc,
+       max(CASE WHEN (    (    substr(a.cod_cuenta_rcc,1,2) = '14'
+              AND a.tipo_credito IN ('11','12')
+              AND (   substr(a.cod_cuenta_rcc,4,7) IN ('1030201','5030201','6030201','1030202','5030202',
+                                                       '6030202','1030209','5030209','6030209','5031902',
+                                                       '1030203','5030203','6030203','1030613','4030613',
+                                                       '5030613','6030613','5031908','6031908','5031998','6031998')
+                   OR substr(a.cod_cuenta_rcc,4,5) IN ('10304','40304','50304','60304','40302',
+                                                       '10308','40308','50308','60308') ) )
+         OR (substr(a.cod_cuenta_rcc,1,2) = '81' AND substr(a.cod_cuenta_rcc,4,3) = '923') ) THEN a.condicion END)                                     AS dm_tc,
        sum(CASE WHEN (    (    substr(a.cod_cuenta_rcc,1,2) = '14'
               AND a.tipo_credito IN ('11','12')
               AND (   substr(a.cod_cuenta_rcc,4,7) IN ('1030201','5030201','6030201','1030202','5030202',
@@ -20,7 +33,7 @@ SELECT a.tip_doc,
                                                        '5030613','6030613','5031908','6031908','5031998','6031998')
                    OR substr(a.cod_cuenta_rcc,4,5) IN ('10304','40304','50304','60304','40302',
                                                        '10308','40308','50308','60308') ) )
-         OR (substr(a.cod_cuenta_rcc,1,2) = '81' AND substr(a.cod_cuenta_rcc,4,3) = '923') ) THEN a.saldo END)                                           AS saldo_tc,
+         OR (substr(a.cod_cuenta_rcc,1,2) = '81' AND substr(a.cod_cuenta_rcc,4,3) = '923') ) THEN a.saldo END)                                         AS saldo_tc,
        sum(CASE WHEN ( (   (substr(a.cod_cuenta_rcc,1,2) = '81' AND substr(a.cod_cuenta_rcc,4,3) = '923')
                         OR (substr(a.cod_cuenta_rcc,1,2) || '0' || substr(a.cod_cuenta_rcc,4,3) = '720506')
                         OR (substr(a.cod_cuenta_rcc,1,2) = '14' AND substr(a.cod_cuenta_rcc,4,1) IN ('1','3','4','5','6'))
@@ -45,5 +58,5 @@ SELECT a.tip_doc,
        max(CASE WHEN a.tipo_credito NOT IN ('11','12','13','99') THEN 1 ELSE 0 END)   AS flg_no_consumo,
        a.p_codmes                                                                     AS codmes
 FROM e_perm_aws.t_fact_report_rcc_rsk a
-WHERE a.p_codmes BETWEEN '202001' AND '202012'
-GROUP BY a.p_codmes, a.tip_doc, a.key_value, ltrim(rtrim(a.cod_instit_financiera))
+WHERE a.p_codmes BETWEEN '202301' AND '202312'
+GROUP BY a.tip_doc, a.key_value, ltrim(rtrim(a.cod_instit_financiera)), a.p_codmes
