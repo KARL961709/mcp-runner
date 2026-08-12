@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 65. DEDUP - PRELACION CON ORDEN TOTAL DETERMINISTA
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_60_filtros
+--   ancla: ninguna prelacion mira el target. Orden total, entidad desempata
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_65_dedup
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_65_dedup AS
 SELECT tip_doc,
        id_value,
        entidad,

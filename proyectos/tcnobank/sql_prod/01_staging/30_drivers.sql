@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 30. DRIVERS - TIPO DE INGRESO Y ARQUETIPO SALUD
+--   scan: ds_rtd_rskvol_cas_ingr_ir en codmes U t_inca_sa en codmes-2
+--   ancla: ingreso k=0. inca k=-2 por tablas.txt. numcarga=1 y ROW_NUMBER de orden total
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_30_drivers
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_30_drivers AS
 WITH po AS (
     SELECT DISTINCT codmes_mrm, tip_doc, id_value, date_format(date_add('month', -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m02
     FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key

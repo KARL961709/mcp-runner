@@ -2,12 +2,8 @@
 -- 92. EXPORT DIRTY
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_px_dirty
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm'],
-    external_location   = '<S3_DATOS>/adm_vcnbank_tc_px_dirty/'
-) AS
+WITH (format = 'PARQUET', write_compression = 'SNAPPY',
+      external_location = '<S3_DATOS>/dirty/') AS
 SELECT
        to_hex(md5(to_utf8(tip_doc || '|' || id_value || '|' || entidad)))              AS id_hash,
        entidad, prelacion_cod, prelacion_sld, saldo_tc_ori,

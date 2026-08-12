@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 70. ENSAMBLADO FINAL - TABLA DE CALIBRACION
+--   scan: 60_filtros U 65_dedup U 50_targets U 30_drivers U 40_pdraw
+--   ancla: la ventana NO es un WHERE. Los flags viajan como columnas y Fase 2 recorta
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_cal
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_cal AS
 SELECT f.tip_doc,
        f.id_value,
        f.entidad,

@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 11. LLAVES - SBS_VALUE Y COD_CUC CON COBERTURA
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_10_po U t_mst_ctarcc_rsk U t_mst_ctaibk_rsk (fotos, sin periodo)
+--   ancla: sin rezago. Las maestras de llave no tienen particion
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_11_po_key
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_11_po_key AS
 WITH sbs AS (
     SELECT tip_doc, key_value, sbs_value FROM (
         SELECT tip_doc, key_value, sbs_value,

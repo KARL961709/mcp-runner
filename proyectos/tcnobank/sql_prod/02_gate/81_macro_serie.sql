@@ -1,11 +1,9 @@
 -- ============================================================================
 -- 81. SERIE MENSUAL PARA SELECCION DE VARIABLE MACRO
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_cal U t_fact_bpe_vars_macro (dedup por fec_proceso, ~8 filas por mes)
+--   ancla: grano codmes. Las 7 variables macro, no solo las 2 de la calibracion vigente
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_81_macro
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY'
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_81_macro AS
 WITH m AS (
     SELECT CAST(cod_mes AS VARCHAR)                    AS codmes,
            TRY_CAST(rat_ipc              AS DOUBLE)    AS rat_ipc,

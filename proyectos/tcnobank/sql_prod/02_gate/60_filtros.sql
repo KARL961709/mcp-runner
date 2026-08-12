@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 60. FILTROS - UNA COLUMNA POR FILTRO, NUNCA NULL
+--   scan: 20_rcc_base U 21_rcc_flags U t_mst_reniec_rsk U t_consolidado_rsk U t_mst_fraude_rsk U t_cob_facilidades_ejecutadas
+--   ancla: fraude p_codmes<=m-2, garantia m-2, edad k=0. Los 18 filtros con COALESCE, nunca NULL
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_60_filtros
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_60_filtros AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad, sbs_value, cod_cuc, saldo_tc_ori,
            falla_sin_sbs, falla_sin_cuc, date_format(date_add('month', -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m02, date_format(date_add('month', 12, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS p12

@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 40. PD CRUDA DEL MODELO VCNBANK
+--   scan: scr_vcnbank_rsk en codmes
+--   ancla: p_codmes del score = codmes_mrm. La q22 verifico cod_mes = p_codmes
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_40_pdraw
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_40_pdraw AS
 WITH po AS (
     SELECT DISTINCT codmes_mrm, tip_doc, id_value FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key
 )

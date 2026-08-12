@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 20. RCC EN ORIGEN - VARIANTES M0 Y M2
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg en codmes y codmes-2
+--   ancla: m2 es la honesta. m0 replica produccion y viaja como ctrl_*
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_20_rcc_base
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_20_rcc_base AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad,
            date_format(date_add('month', -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m02

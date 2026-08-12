@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 10. POBLACION OBJETIVO - ALTA DE TC DERIVADA DEL RCC
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg [201701,202606]
+--   ancla: alta = TC en codmes y ausente en [codmes-12, codmes-1]. Ventana 201902-202605
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_10_po
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_10_po AS
 WITH tc AS (
     SELECT codmes, tip_doc, key_value, entidad, saldo_tc
     FROM disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg

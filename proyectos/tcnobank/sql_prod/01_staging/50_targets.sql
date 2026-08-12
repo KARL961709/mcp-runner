@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 50. TARGETS 1M A 12M - ACUMULADOS Y CON MADUREZ POR HORIZONTE
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg [codmes+1, codmes+12]
+--   ancla: acumulado desde +1. Inmaduro contra el snapshot 202606 es NULL, nunca 0
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_50_targets
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_50_targets AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad, date_format(date_add('month', 1, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS p01
     FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key

@@ -1,12 +1,9 @@
 -- ============================================================================
 -- 21. HISTORICOS U6M U12M U24M
+--   scan: disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg [codmes-25, codmes-2]
+--   ancla: m-2 por rezago de publicacion del RCC (CASO2)
 -- ============================================================================
-CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_21_rcc_flags
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes_mrm']
-) AS
+CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_21_rcc_flags AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad,
            date_format(date_add('month', -2, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m02, date_format(date_add('month', -7, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m07, date_format(date_add('month', -13, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m13, date_format(date_add('month', -25, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS m25

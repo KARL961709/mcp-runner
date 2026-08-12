@@ -2,11 +2,8 @@
 -- 05. CAPA AGREGADA DEL RCC - TRAMO 1 DE 10 (201701 A 201712)
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg
-WITH (
-    format              = 'PARQUET',
-    parquet_compression = 'SNAPPY',
-    partitioned_by      = ARRAY['codmes']
-) AS
+WITH (format = 'PARQUET', write_compression = 'SNAPPY',
+      partitioned_by = ARRAY['codmes']) AS
 SELECT a.tip_doc,
        a.key_value,
        ltrim(rtrim(a.cod_instit_financiera))                                          AS entidad,
