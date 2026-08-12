@@ -1,4 +1,4 @@
--- 58_altas_rcc_vs_tng.sql | prueba de viabilidad: deriva el alta de TC del propio RCC (linea 81*923 presente en el mes y ausente en los 12 previos) y la cruza fila a fila contra tng_altas. Un solape alto habilita reconstruir la poblacion desde la madre y heredar toda la profundidad del RCC; uno bajo deja la serie larga atada a tng_altas
+-- 58_altas_rcc_vs_tng.sql | prueba de viabilidad: deriva el alta de TC del propio RCC (linea 81*923 presente en el mes y ausente en los 12 previos) y la cruza fila a fila contra tng_altas. Un solape alto habilita reconstruir la poblacion desde la madre y heredar toda la profundidad del RCC. Uno bajo deja la serie larga atada a tng_altas
 WITH tc_mes AS (
     SELECT DISTINCT tip_doc, key_value, ltrim(rtrim(cod_instit_financiera)) AS entidad
     FROM e_perm_aws.t_fact_report_rcc_rsk
