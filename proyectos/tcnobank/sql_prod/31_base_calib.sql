@@ -1,4 +1,4 @@
--- 31_base_calib.sql | materializa una sola vez el cruce del molde vigente con el score nuevo, para no repetir el join contra 26M filas por mes en cada lectura. Una fila por alta, sin key_value ni tip_doc. Lleva las cuatro definiciones de target: la publicada, la corregida por evento, la de banda 30-60 y la que combina ambas
+-- 31_base_calib.sql | materializa una sola vez el cruce del molde vigente con la pd cruda de Vision Cliente, para no repetir el join contra 26M filas por mes en cada lectura. Una fila por alta y entidad, sin key_value ni tip_doc. NO filtra por flg_est: conserva las dos prelaciones y el flag para reconstruir cualquier variante sin volver a construir, porque prelacion_12m ordena por el target y mete look-ahead en la seleccion. Lleva las cuatro definiciones de target: la publicada, la corregida por evento, la de banda 30-60 y la que combina ambas
 CREATE TABLE disc_model_owner.ds_tcnobank_calib_v1
 WITH (
     format              = 'PARQUET',
@@ -53,4 +53,5 @@ LEFT JOIN e_perm_aws.scr_vcnbank_rsk s
       AND s.p_codmes = f.codmes_scr
       AND s.p_codmes BETWEEN '202303' AND '202512'
 WHERE f.p_codmes BETWEEN '202305' AND '202602'
-  AND f.flg_est = 1
+  AND f.dsc_flg_malo_12m IN ('BUENO', 'MALO', 'UNCASHED', 'INSUFICIENTE', 'INDETERMINADO',
+                             'SWAPS P12M', 'REPRO P12M')

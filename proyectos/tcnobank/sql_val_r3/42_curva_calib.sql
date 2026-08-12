@@ -18,7 +18,7 @@ FROM (
            target_12m_full
     FROM disc_model_owner.ds_tcnobank_calib_v1
     WHERE flg_maduro = 1
-      AND prelacion_12m = 1
+      AND prelacion_00m = 1
       AND pd_raw IS NOT NULL
       AND target_12m IS NOT NULL
 ) x

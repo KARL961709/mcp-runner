@@ -11,5 +11,6 @@ SELECT p_codmes,
        round(100.0 * avg(pd_raw), 3)                                  AS pd_raw,
        round(100.0 * avg(pd_cal_pub), 3)                              AS pd_cal_pub
 FROM disc_model_owner.ds_tcnobank_calib_v1
+WHERE prelacion_00m = 1
 GROUP BY p_codmes, flg_maduro
 ORDER BY p_codmes

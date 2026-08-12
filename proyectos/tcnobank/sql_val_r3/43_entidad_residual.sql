@@ -11,7 +11,7 @@ SELECT entidad,
        round(avg(CAST(target_12m AS DOUBLE)) / nullif(avg(pd_raw), 0), 4) AS ratio_obs_raw
 FROM disc_model_owner.ds_tcnobank_calib_v1
 WHERE flg_maduro = 1
-  AND prelacion_12m = 1
+  AND prelacion_00m = 1
   AND target_12m IS NOT NULL
   AND scr_nuevo IS NOT NULL
 GROUP BY entidad, 2
