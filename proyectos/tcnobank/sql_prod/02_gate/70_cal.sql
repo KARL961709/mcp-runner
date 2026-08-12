@@ -5,6 +5,9 @@
 --   flg_hist  alcance mas datos, SIN score y SIN madurez: la serie de RD para el modelo macro
 --   flg_calib flg_hist mas pd_raw mas madurez 12m: la base de calibracion
 --   la madurez por horizonte la gobierna el NULL de cada target_0Nm, no un flag
+--   flg_clean_prod es flg_clean sin f_malo_ori: el unico filtro que corre en m0 y que por
+--   lo tanto no es observable al momento de decidir. flg_clean_prod = 1 con f_malo_ori = 1
+--   aisla exactamente la poblacion en disputa
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_cal AS
 SELECT f.tip_doc,
@@ -31,6 +34,8 @@ SELECT f.tip_doc,
                  WHEN f.f_edad_rango + f.f_cast_ori + f.f_jud_ori + f.f_ref_ori + f.f_ree_ori + f.f_malo_ori + f.f_cast_u24m + f.f_jud_u24m + f.f_ref_u6m + f.f_mayor_cpp + f.f_gar_conv + f.f_fraude + f.f_swap_u12m + f.f_entidades = 0 THEN 1 ELSE 0 END AS INTEGER)             AS flg_clean_sin_ent,
        CAST(CASE WHEN f.f_banc_u12m = 1 OR f.f_entidades = 1 THEN 99
                  WHEN f.f_edad_rango + f.f_cast_ori + f.f_jud_ori + f.f_ref_ori + f.f_ree_ori + f.f_malo_ori + f.f_cast_u24m + f.f_jud_u24m + f.f_ref_u6m + f.f_mayor_cpp + f.f_gar_conv = 0 THEN 1 ELSE 0 END AS INTEGER)                             AS flg_clean_macro,
+       CAST(CASE WHEN f.f_banc_u12m = 1 OR f.f_entidades = 1 THEN 99
+                 WHEN f.f_edad_rango + f.f_cast_ori + f.f_jud_ori + f.f_ref_ori + f.f_ree_ori + f.f_cast_u24m + f.f_jud_u24m + f.f_ref_u6m + f.f_mayor_cpp + f.f_gar_conv + f.f_fraude + f.f_swap_u12m = 0 THEN 1 ELSE 0 END AS INTEGER)                AS flg_clean_prod,
        CAST(CASE WHEN f.f_banc_u12m = 1 OR f.f_entidades = 1 THEN 0
                  WHEN f.f_edad_nomatch = 1       THEN 0
                  ELSE 1 END AS INTEGER)                                                AS flg_hist,
