@@ -13,6 +13,21 @@ UNION ALL
 SELECT '12_saldo_perfil', count(*), count(DISTINCT codmes_mrm)
 FROM disc_model_owner.ds_adm_vcnbank_tc_12_saldo_perfil
 UNION ALL
+SELECT '81_macro', count(*), count(DISTINCT codmes)
+FROM disc_model_owner.ds_adm_vcnbank_tc_81_macro
+UNION ALL
+SELECT '13_pasivos', count(*), count(DISTINCT codmes_mrm)
+FROM disc_model_owner.ds_adm_vcnbank_tc_13_pasivos
+UNION ALL
+SELECT '14_plin', count(*), count(DISTINCT codmes_mrm)
+FROM disc_model_owner.ds_adm_vcnbank_tc_14_plin
+UNION ALL
+SELECT '15_cta_sueldo', count(*), count(DISTINCT codmes_mrm)
+FROM disc_model_owner.ds_adm_vcnbank_tc_15_cta_sueldo
+UNION ALL
+SELECT '16_nodo', count(*), count(DISTINCT codmes_mrm)
+FROM disc_model_owner.ds_adm_vcnbank_tc_16_nodo
+UNION ALL
 SELECT '20_rcc_base' AS paso, count(*) AS n_filas, count(DISTINCT codmes_mrm) AS meses
 FROM disc_model_owner.ds_adm_vcnbank_tc_20_rcc_base
 UNION ALL

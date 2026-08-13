@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS disc_model_owner.ds_adm_vcnbank_tc_px_macro_serie
