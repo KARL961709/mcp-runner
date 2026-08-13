@@ -1,30 +1,32 @@
--- 116_serie_mensual_pd_mora.sql | una fila por codmes con pd_raw, pd_pit y mora 30d a 3 meses para IBK, TOP 4 completo y SSFF. GLOBAL: clean y dirty juntos, sin abrir, excluyendo el bucket 99 de exclusion estructural. OJO flg_clean_calib es el flag de la calibracion, no el binario que redefine 5b_cal_scored
+-- 116_serie_mensual_pd_mora.sql | una fila por codmes con pd_raw, pd_pit y mora 30d a 3 meses, abierto en IBK, resto del top 4 y los cuatro juntos. Universo de la CALIBRACION: flg_clean_calib <> 99, o sea clean + dirty sin abrir. El SSFF no esta porque filtro_top4 lo manda entero al bucket 99
 SELECT codmes,
-       sum(CASE WHEN pob = 'IBK'  THEN 1 ELSE 0 END)                                        AS ibk_n,
-       round(100.0 * avg(CASE WHEN pob = 'IBK'  THEN pd_crudo END), 4)                      AS ibk_pd_raw,
-       round(100.0 * avg(CASE WHEN pob = 'IBK'  THEN pd_pit   END), 4)                      AS ibk_pd_pit,
-       sum(CASE WHEN pob = 'IBK'  THEN mora30_3m ELSE 0 END)                                AS ibk_ev_mora,
-       round(100.0 * sum(CASE WHEN pob = 'IBK'  THEN mora30_3m ELSE 0 END)
-             / nullif(sum(CASE WHEN pob = 'IBK'  THEN 1 ELSE 0 END), 0), 4)                 AS ibk_mora30_3m,
-       sum(CASE WHEN pob <> 'SSFF' THEN 1 ELSE 0 END)                                       AS top4_n,
-       round(100.0 * avg(CASE WHEN pob <> 'SSFF' THEN pd_crudo END), 4)                     AS top4_pd_raw,
-       round(100.0 * avg(CASE WHEN pob <> 'SSFF' THEN pd_pit   END), 4)                     AS top4_pd_pit,
-       sum(CASE WHEN pob <> 'SSFF' THEN mora30_3m ELSE 0 END)                               AS top4_ev_mora,
-       round(100.0 * sum(CASE WHEN pob <> 'SSFF' THEN mora30_3m ELSE 0 END)
-             / nullif(sum(CASE WHEN pob <> 'SSFF' THEN 1 ELSE 0 END), 0), 4)                AS top4_mora30_3m,
-       sum(CASE WHEN pob = 'SSFF' THEN 1 ELSE 0 END)                                        AS ssff_n,
-       round(100.0 * avg(CASE WHEN pob = 'SSFF' THEN pd_crudo END), 4)                      AS ssff_pd_raw,
-       round(100.0 * avg(CASE WHEN pob = 'SSFF' THEN pd_pit   END), 4)                      AS ssff_pd_pit,
-       sum(CASE WHEN pob = 'SSFF' THEN mora30_3m ELSE 0 END)                                AS ssff_ev_mora,
-       round(100.0 * sum(CASE WHEN pob = 'SSFF' THEN mora30_3m ELSE 0 END)
-             / nullif(sum(CASE WHEN pob = 'SSFF' THEN 1 ELSE 0 END), 0), 4)                 AS ssff_mora30_3m,
-       sum(sin_rcc)                                                                         AS n_sin_rcc
+       sum(CASE WHEN pob = 'IBK' THEN 1 ELSE 0 END)                                     AS ibk_n,
+       round(100.0 * avg(CASE WHEN pob = 'IBK' THEN pd_crudo END), 4)                   AS ibk_pd_raw,
+       round(100.0 * avg(CASE WHEN pob = 'IBK' THEN pd_pit END), 4)                     AS ibk_pd_pit,
+       sum(CASE WHEN pob = 'IBK' THEN mora30 ELSE 0 END)                                AS ibk_ev_mora,
+       round(100.0 * sum(CASE WHEN pob = 'IBK' THEN mora30 ELSE 0 END)
+             / nullif(sum(CASE WHEN pob = 'IBK' THEN 1 ELSE 0 END), 0), 4)              AS ibk_mora30_3m,
+       round(100.0 * avg(CASE WHEN pob = 'IBK' THEN CAST(pjj AS DOUBLE) END), 2)        AS ibk_pct_pjj,
+       sum(CASE WHEN pob = 'RESTO' THEN 1 ELSE 0 END)                                   AS resto_n,
+       round(100.0 * avg(CASE WHEN pob = 'RESTO' THEN pd_crudo END), 4)                 AS resto_pd_raw,
+       round(100.0 * avg(CASE WHEN pob = 'RESTO' THEN pd_pit END), 4)                   AS resto_pd_pit,
+       sum(CASE WHEN pob = 'RESTO' THEN mora30 ELSE 0 END)                              AS resto_ev_mora,
+       round(100.0 * sum(CASE WHEN pob = 'RESTO' THEN mora30 ELSE 0 END)
+             / nullif(sum(CASE WHEN pob = 'RESTO' THEN 1 ELSE 0 END), 0), 4)            AS resto_mora30_3m,
+       round(100.0 * avg(CASE WHEN pob = 'RESTO' THEN CAST(pjj AS DOUBLE) END), 2)      AS resto_pct_pjj,
+       count(*)                                                                         AS top4_n,
+       round(100.0 * avg(pd_crudo), 4)                                                  AS top4_pd_raw,
+       round(100.0 * avg(pd_pit), 4)                                                    AS top4_pd_pit,
+       sum(mora30)                                                                      AS top4_ev_mora,
+       round(100.0 * avg(CAST(mora30 AS DOUBLE)), 4)                                    AS top4_mora30_3m,
+       sum(sin_rcc)                                                                     AS n_sin_rcc
 FROM (
     SELECT p.cm AS codmes,
            p.pob,
+           p.pjj,
            p.pd_crudo,
            p.pd_pit,
-           CASE WHEN max(r.dm) > 30 THEN 1 ELSE 0 END  AS mora30_3m,
+           CASE WHEN max(r.dm) > 30 THEN 1 ELSE 0 END  AS mora30,
            CASE WHEN count(r.dm) = 0 THEN 1 ELSE 0 END AS sin_rcc
     FROM (
         SELECT CAST(tip_doc AS VARCHAR)               AS td,
@@ -33,9 +35,8 @@ FROM (
                CAST(codmes AS VARCHAR)                AS cm,
                date_format(date_parse(CAST(codmes AS VARCHAR), '%Y%m') + interval '1' month, '%Y%m') AS cm1,
                date_format(date_parse(CAST(codmes AS VARCHAR), '%Y%m') + interval '3' month, '%Y%m') AS cm3,
-               CASE WHEN entidad = 'OTRO' THEN 'SSFF'
-                    WHEN entidad = 'IBK'  THEN 'IBK'
-                    ELSE 'RESTO_TOP4' END             AS pob,
+               CASE WHEN entidad = 'IBK' THEN 'IBK' ELSE 'RESTO' END AS pob,
+               TRY_CAST(flg_ppjj AS INTEGER)          AS pjj,
                TRY_CAST(pd_raw AS DOUBLE)             AS pd_crudo,
                TRY_CAST(prob_modelo_cal AS DOUBLE)    AS pd_pit
         FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607
@@ -64,7 +65,7 @@ FROM (
      AND r.kv  = p.kv
      AND r.ent = p.ent
      AND r.codmes BETWEEN p.cm1 AND p.cm3
-    GROUP BY p.td, p.kv, p.cm, p.pob, p.pd_crudo, p.pd_pit
+    GROUP BY p.td, p.kv, p.cm, p.pob, p.pjj, p.pd_crudo, p.pd_pit
 ) q
 GROUP BY codmes
 ORDER BY codmes
