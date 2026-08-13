@@ -6,6 +6,7 @@
 --   el script suma saldo_fdp_tot_pas_sin_cts de datalab, que no alcanzamos. El 360
 --   trae las dos piezas por separado, asi que se reconstruye como pasivo menos cts.
 --   Una suma de componentes sueltos queda corta: es un subconjunto del total
+--   umbral ESTRICTO > 900 como la linea 3047, no mayor-igual
 --   AFP anclado en codmes de la solicitud <= codmes del alta, igual que el script. Sin
 --   filtro de abono para replicar. La variante con abono viaja como control
 -- ============================================================================
@@ -34,7 +35,7 @@ s AS (
 f AS (
     SELECT codmes_mrm, tip_doc, id_value,
            count(*)                                                                     AS n_meses_360,
-           count(CASE WHEN saldo >= 900 THEN 1 END)                                     AS n_meses_900,
+           count(CASE WHEN saldo > 900 THEN 1 END)                                     AS n_meses_900,
            max(CASE WHEN codmes = m01 THEN saldo END)                                   AS saldo_m01
     FROM s
     GROUP BY codmes_mrm, tip_doc, id_value
