@@ -395,3 +395,54 @@ atipico es 2019, no 2020, y son 2,916 registros: inmaterial en cualquier direcci
 
 `86_qa` se conserva como esta, fallando en BCP 2020. Un gate que falla y esta firmado con
 evidencia es informacion; subirle el umbral para que pase seria esconderlo.
+
+---
+## P. Validacion contra la logica de nodos (Recibidos2), hecha en local
+
+El master exportado trae `id_hash = to_hex(md5(tip_doc || '|' || id_value || '|' || entidad))`,
+que es reproducible desde `nodos.csv` (ojo: su `cod_instit_financiera` viene sin ceros a la
+izquierda y hay que rellenar a 5). Eso permitio cruzar por llave SIN usar el puente.
+
+**Poblacion.** 16,651 de 18,664 filas del csv estan en el master (89.21 %). Por volumen el csv
+es el 92.7 % de nuestro `calib_clean` de IBK, con la misma forma mes a mes (89.9 a 95.4 %).
+No es una muestra: es la misma poblacion menos ~7 %.
+
+**Score: es el mismo.** Sobre los registros cruzados:
+
+    PROB_VC_NB_NEW_V3   media 8.9515 %   p50 6.8900 %
+    nuestro pd_raw      media 9.0931 %   p50 7.0613 %
+    correlacion 0.9973   |dif| media 0.36 pp   identicos 0 %
+
+La alarma de 8.82 contra 13.4 comparaba su poblacion IBK con cascada completa contra nuestra
+base clean de cinco entidades. Sobre los MISMOS registros la brecha es 0.14 pp. Hay diferencia
+de version (ningun valor coincide al sexto decimal) pero la dispersion supera al sesgo medio:
+es ruido, no otro modelo. Queda cerrado que `e_perm_aws.scr_vcnbank_rsk.prob_model` es el
+score correcto.
+
+**Target: 100 % exacto.**
+
+                        nuestro target_12m
+    csv TIPO_CLIENTE         0        1
+    BUENO               12,929        0
+    MALO                     0      987
+    INDETERMINADO        1,222       31
+    INSUFICIENTE         1,450       32
+
+Cero discrepancias sobre BUENO/MALO (n=13,916). Los 63 de INDETERMINADO e INSUFICIENTE son los
+estados liberados, que en la vigente no llevan etiqueta y en la nuestra si.
+
+**Desviacion entidad contra cliente, medida.** `TARGET60_12_VC` es el target de Vision Cliente,
+a nivel CLIENTE. Sobre los mismos 13,916 registros:
+
+    por entidad  (TIPO_CLIENTE)     7.093 %
+    por cliente  (TARGET60_12_VC)   7.804 %      +0.71 pp
+
+De los que difieren, el 62 % tiene `max_dm_fut = 0` en IBK y NINGUNO supera 60 dias ni tiene
+evento duro: cayeron en otra entidad. Confirma que el sesgo es unidireccional, solo quita
+malos, y ahora esta cuantificado en 0.71 pp.
+
+**Los nodos.** RD 4.18 / 6.04 / 9.80 con reparto 23.2 / 27.0 / 49.8. OJO: la bad-rate del csv
+cae de 10.77 % en 202410 a 5.99 % en 202504, que es frontera de madurez y no comportamiento,
+asi que las RD de los nodos estan subestimadas en los meses recientes.
+
+`d21` y `d26` se retiran del lote: ambos quedaron respondidos en local contra el parquet.
