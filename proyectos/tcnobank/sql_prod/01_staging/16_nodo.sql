@@ -25,7 +25,8 @@ WITH b AS (
            coalesce(a.ctrl_sin_360, 1)                                                  AS ctrl_sin_360,
            coalesce(c.ctrl_sin_cta_sueldo, 1)                                           AS ctrl_sin_cta_sueldo,
            CAST(CASE WHEN p.id_value IS NULL THEN 1 ELSE 0 END AS INTEGER)              AS ctrl_sin_plin,
-           coalesce(a.ctrl_retiro_afp, 0)                                               AS ctrl_retiro_afp
+           coalesce(a.ctrl_retiro_afp, 0)                                               AS ctrl_retiro_afp,
+           coalesce(a.ctrl_retiro_afp_abonado, 0)                                       AS ctrl_retiro_afp_abonado
     FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key k
     LEFT JOIN disc_model_owner.ds_adm_vcnbank_tc_13_pasivos    a ON a.codmes_mrm = k.codmes_mrm AND a.tip_doc = k.tip_doc AND a.id_value = k.id_value
     LEFT JOIN disc_model_owner.ds_adm_vcnbank_tc_14_plin       p ON p.codmes_mrm = k.codmes_mrm AND p.tip_doc = k.tip_doc AND p.id_value = k.id_value
@@ -46,6 +47,7 @@ SELECT tip_doc,
        ctrl_sin_cta_sueldo,
        ctrl_sin_plin,
        ctrl_retiro_afp,
+       ctrl_retiro_afp_abonado,
        CASE WHEN entidad <> '00002' THEN 'SIN_ALCANCE'
             ELSE CASE
             WHEN pasivo = 1 AND cs = 1 AND plin = 1 AND f1 = 1 AND f2 = 1 THEN 'N1'

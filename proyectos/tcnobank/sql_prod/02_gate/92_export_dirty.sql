@@ -21,7 +21,7 @@ SELECT
        macro_inflacion, macro_desempleo, macro_desempleo_6,
        nodo_final, flag_pasivos_afp_f, flg_cs_v2, flg_cs_estado,
        flg_plinero_u3m, flg_plin_f1, flg_plin_f2, f1_estricto, f2_estricto,
-       ctrl_sin_360, ctrl_sin_cta_sueldo, ctrl_sin_plin, ctrl_retiro_afp,
+       ctrl_sin_360, ctrl_sin_cta_sueldo, ctrl_sin_plin, ctrl_retiro_afp, ctrl_retiro_afp_abonado,
        flg_clean, flg_clean_sin_ent, flg_clean_macro, flg_clean_prod, flg_hist, flg_calib,
        codmes_mrm
 FROM disc_model_owner.ds_adm_vcnbank_tc_cal

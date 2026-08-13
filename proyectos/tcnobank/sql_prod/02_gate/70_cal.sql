@@ -33,7 +33,7 @@ SELECT f.tip_doc,
        q.macro_inflacion, q.macro_desempleo, q.macro_desempleo_6, q.falla_sin_score,
        n.nodo_final, n.flag_pasivos_afp_f, n.flg_cs_v2, n.flg_cs_estado,
        n.flg_plinero_u3m, n.flg_plin_f1, n.flg_plin_f2, n.f1_estricto, n.f2_estricto,
-       n.ctrl_sin_360, n.ctrl_sin_cta_sueldo, n.ctrl_sin_plin, n.ctrl_retiro_afp,
+       n.ctrl_sin_360, n.ctrl_sin_cta_sueldo, n.ctrl_sin_plin, n.ctrl_retiro_afp, n.ctrl_retiro_afp_abonado,
        CAST(CASE WHEN f.f_banc_u12m = 1 OR f.f_entidades = 1 OR f.f_sin_linea = 1 THEN 99
                  WHEN f.f_edad_rango + f.f_cast_ori + f.f_jud_ori + f.f_ref_ori + f.f_ree_ori + f.f_malo_ori + f.f_cast_u24m + f.f_jud_u24m + f.f_ref_u6m + f.f_mayor_cpp + f.f_gar_conv + f.f_fraude + f.f_swap_u12m = 0 THEN 1 ELSE 0 END AS INTEGER)                             AS flg_clean,
        CAST(CASE WHEN f.f_banc_u12m = 1 OR f.f_sin_linea = 1 THEN 99
