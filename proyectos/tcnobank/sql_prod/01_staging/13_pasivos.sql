@@ -7,7 +7,10 @@
 --   trae las dos piezas por separado, asi que se reconstruye como pasivo menos cts.
 --   Una suma de componentes sueltos queda corta: es un subconjunto del total
 --   umbral ESTRICTO > 900 como la linea 3047, no mayor-igual
---   AFP anclado en codmes de la solicitud <= codmes del alta, igual que el script. Sin
+--   AFP anclado en M-1, no en M: un retiro hecho a mitad del mes de la decision no se
+--   conoce en campania. El script original usa M pero no se penso para campania.
+--   Medido antes de cambiarlo: 115 registros de IBK sobre 103,656 y un solo malo,
+--   las tres LRA se mueven menos de 0.03 pp contra un error de estimacion de 0.33. Sin
 --   filtro de abono para replicar. La variante con abono viaja como control
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_13_pasivos AS
@@ -49,8 +52,8 @@ afp AS (
 ),
 r AS (
     SELECT p.codmes_mrm, p.tip_doc, p.id_value,
-           max(CASE WHEN a.codmes_retiro <= p.codmes_mrm THEN 1 ELSE 0 END)             AS retiro_afp,
-           max(CASE WHEN a.codmes_retiro <= p.codmes_mrm AND a.flg_abono = 1
+           max(CASE WHEN a.codmes_retiro <= p.m01 THEN 1 ELSE 0 END)                    AS retiro_afp,
+           max(CASE WHEN a.codmes_retiro <= p.m01 AND a.flg_abono = 1
                     THEN 1 ELSE 0 END)                                                  AS retiro_afp_abonado
     FROM po p
     INNER JOIN afp a ON a.id_value = p.id_value AND a.tip_doc = p.tip_doc

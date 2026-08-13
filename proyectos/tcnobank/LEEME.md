@@ -446,3 +446,41 @@ cae de 10.77 % en 202410 a 5.99 % en 202504, que es frontera de madurez y no com
 asi que las RD de los nodos estan subestimadas en los meses recientes.
 
 `d21` y `d26` se retiran del lote: ambos quedaron respondidos en local contra el parquet.
+
+---
+## Q. Ancla del AFP: medida, corregida en codigo, no reconstruida
+
+El script de nodos ancla la exclusion AFP en `a.codmes >= k.codmes`, o sea el retiro
+hasta el mes M inclusive. En campania un retiro hecho a mitad de M no se conoce, asi que
+la ancla implementable es M-1. El original nunca se penso para campania.
+
+Medido ANTES de decidir si valia una reconstruccion (v21):
+
+    IBK  N1  el flag se da vuelta    40 registros   1 malo   rd  2.50 %
+    IBK  N2                          25             0        rd  0.00 %
+    IBK  N3                          50             0        rd  0.00 %
+    resto                            48             0        rd  0.00 %
+
+115 registros de IBK sobre 103,656 = 0.111 %, con UN malo entre los tres nodos. Migran
+como maximo 75 hacia N1, y las LRA quedan:
+
+              hoy          corregido        delta
+    N1     5.3133 %        5.2921 %       -0.021 pp
+    N2     8.3861 %        8.3931 %       +0.007 pp
+    N3    13.9606 %       13.9733 %       +0.013 pp
+
+Contra un error de estimacion de +-0.33 pp en la LRA de N1. El cambio esta un orden de
+magnitud debajo del ruido. **Se corrige el codigo y NO se reconstruye**: la tabla
+exportada usa M y la diferencia esta cuantificada arriba.
+
+**Nota de proceso.** R5 pide medir el rezago POR FUENTE. Los anclajes de PLIN, pasivos
+y cuenta sueldo se copiaron del script original en vez de medirse. Que las tres tengan
+M-1 disponible se confirmo despues, con mediciones hechas por otro motivo (d23, v3, v6):
+
+    t_agg_retail_user_trx_plin   ultimo mes 202608   rezago 0
+    t_aws_360_cliente_mes_d3     ultimo mes 202607   rezago 1
+    t_rsk_cta_sueldo             ultimo mes 202607   rezago 1
+
+O sea que el nodo ES computable en campania, pero eso salio por suerte y no por
+verificacion deliberada. Si alguna hubiera tenido dos meses de rezago, el nodo habria
+quedado no implementable sin que nada lo detectara.
