@@ -155,3 +155,16 @@ elnino_ibk/03_deck/_check/
 # mantiene angosta a proposito. Un png nuevo necesita su propia linea.
 !entregables/charts/
 !entregables/charts/gini_mensual.png
+
+# LAMINAS DEL FACTOR MACRO (2026-08-13). Rutas explicitas, no glob: la whitelist
+# se mantiene angosta. Un .html nuevo necesita su propia linea.
+# Contenido verificado ANTES del push, no despues: series mensuales agregadas
+# (mora 12m por entidad, inflacion del BCRP), parametros del modelo y el embudo
+# de seleccion. Maximo 107 filas por serie. Cero key_value, cero id_value, cero
+# tip_doc, cero hashes de 64. Los numeros de 8 digitos del xlsx son EMU internos
+# de OOXML, no documentos.
+# La mora por entidad viene del RCC, registro compartido de la industria, y va
+# agregada por mes -- mismo criterio que rd_vs_pd_driver.xlsx (2026-08-10).
+# Repo PRIVADO. Un push no se deshace.
+!entregables/slide_factor_macro.html
+!entregables/grafico_ciclo.html
