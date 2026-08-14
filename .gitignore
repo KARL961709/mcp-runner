@@ -168,3 +168,16 @@ elnino_ibk/03_deck/_check/
 # Repo PRIVADO. Un push no se deshace.
 !entregables/slide_factor_macro.html
 !entregables/grafico_ciclo.html
+
+# GRUPOS DE RIESGO TCNB (2026-08-14). Cada archivo con su linea, como el resto de
+# esta seccion. Verificado antes del push: los PNG son curvas y barras agregadas
+# por mes y por grupo; los HTML son tablas de agregados -n, RD, PD, IC- con cero
+# hashes de 64 chars, cero numeros de 8+ digitos y cero menciones de key_value,
+# id_value, id_hash o tip_doc. Maximo 19 puntos por serie. Repo PRIVADO.
+!entregables/charts/opcion_D_limpio.png
+!entregables/charts/grupos_D_vs_E.png
+!entregables/charts/grupos_opcion_E.png
+!entregables/charts/techo_rd12_g5.png
+!entregables/charts/pd_vs_rd_mensual.png
+!entregables/lamina_grupos.html
+!entregables/lamina_factor_macro.html

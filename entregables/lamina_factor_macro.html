@@ -1,0 +1,252 @@
+<title>TC No Bancarizado &middot; Factor Macro</title>
+<style>
+:root{
+  --ink:#0D1714; --body:#2C3A34; --slate:#5C6E66; --faint:#8A9A92;
+  --paper:#FFFFFF; --surface:#F3F8F5; --sunk:#E9F1EC; --line:#D7E3DC;
+  --green:#00A65A; --deep:#05603A; --wash:#E3F3EA;
+  --bad:#B42318; --bad-bg:#FEF3F2; --warn:#B45309;
+  --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#EAF3EE; --body:#C3D2CB; --slate:#94A69E; --faint:#6E827A;
+  --paper:#0B1310; --surface:#111C17; --sunk:#16241E; --line:#25352D;
+  --green:#3CC97F; --deep:#7FDCA9; --wash:#132A20;
+  --bad:#F97066; --bad-bg:#2A1412; --warn:#E8A33D;
+}}
+:root[data-theme="dark"]{
+  --ink:#EAF3EE; --body:#C3D2CB; --slate:#94A69E; --faint:#6E827A;
+  --paper:#0B1310; --surface:#111C17; --sunk:#16241E; --line:#25352D;
+  --green:#3CC97F; --deep:#7FDCA9; --wash:#132A20;
+  --bad:#F97066; --bad-bg:#2A1412; --warn:#E8A33D;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+     font-family:var(--sans);font-size:15px;line-height:1.55;
+     -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:36px 26px 72px}
+h1{font-size:clamp(26px,3.4vw,38px);line-height:1.1;margin:0;color:var(--deep);
+   font-weight:700;letter-spacing:-.022em;text-wrap:balance}
+h1 span{color:var(--faint);font-weight:400}
+h2{font-size:19px;margin:0;color:var(--ink);font-weight:650;letter-spacing:-.012em;text-wrap:balance}
+h3{font-size:12px;margin:0;color:var(--slate);font-weight:700;
+   letter-spacing:.1em;text-transform:uppercase}
+p{margin:0}
+.lede{font-size:16.5px;color:var(--slate);max-width:66ch;margin-top:10px}
+header{border-bottom:2px solid var(--deep);padding-bottom:18px;margin-bottom:30px}
+.grid{display:grid;gap:22px}
+.cols{grid-template-columns:minmax(260px,320px) 1fr}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:18px 20px}
+.card.plain{background:var(--paper)}
+.stack{display:flex;flex-direction:column;gap:22px}
+.row{display:flex;flex-direction:column;gap:9px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.big{font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--deep)}
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px}
+.cards3 .card{display:flex;flex-direction:column;gap:6px}
+.cards3 small{color:var(--slate);font-size:12.5px;line-height:1.4}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.params th,.params td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:baseline}
+.params tr:last-child td,.params tr:last-child th{border-bottom:0}
+.params th{width:64px;font-family:var(--mono);font-size:16px;color:var(--deep);font-weight:600}
+.params .v{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink);
+           font-weight:600;white-space:nowrap}
+.params .n{color:var(--slate);font-size:12.5px;display:block;line-height:1.35}
+.prow{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));
+      gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:3px;
+       padding:15px 17px;display:flex;flex-direction:column;gap:3px}
+.pcard .sym{font-family:var(--sans);font-size:20px;color:var(--deep);font-weight:600;line-height:1.2}
+.pcard .val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:21px;
+            color:var(--ink);font-weight:600;letter-spacing:-.02em;line-height:1.25}
+.pcard b{color:var(--body);font-size:13px;font-weight:600;margin-top:4px}
+.pcard small{color:var(--slate);font-size:12px;line-height:1.4;font-family:var(--mono)}
+.chart{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:14px 10px 6px;overflow-x:auto}
+svg{display:block;width:100%;height:auto;min-width:600px}
+.gl line{stroke:var(--line);stroke-width:1}
+.gl text{fill:var(--faint);font-family:var(--mono);font-size:10px;text-anchor:end}
+.gx text{fill:var(--faint);font-family:var(--mono);font-size:9.5px;text-anchor:middle}
+.fit{fill:none;stroke:var(--green);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.ext{fill:none;stroke:var(--green);stroke-width:2.4;stroke-dasharray:5 4;opacity:.62}
+.pts circle{fill:var(--ink)}
+.band{fill:var(--wash)}
+.mark{stroke:var(--slate);stroke-width:1;stroke-dasharray:3 3}
+.blab{fill:var(--slate);font-size:10.5px;font-family:var(--mono)}
+.key{display:flex;gap:20px;flex-wrap:wrap;padding:10px 4px 2px;font-size:12.5px;color:var(--slate)}
+.key i{display:inline-block;vertical-align:middle;margin-right:7px}
+.k-d{width:9px;height:9px;border-radius:50%;background:var(--ink)}
+.k-l{width:20px;height:3px;background:var(--green);border-radius:2px}
+.k-x{width:20px;height:3px;background:repeating-linear-gradient(90deg,var(--green) 0 5px,transparent 5px 9px)}
+.k-b{width:13px;height:11px;background:var(--wash);border:1px solid var(--line)}
+.gear{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;
+      border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.step{padding:17px 19px;background:var(--surface);border-right:1px solid var(--line);
+      display:flex;flex-direction:column;gap:7px}
+.step:last-child{border-right:0;background:var(--wash)}
+@media(max-width:820px){.step{border-right:0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}}
+.step .cad{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+           color:var(--green);font-weight:700}
+.step b{color:var(--ink);font-size:14.5px;font-weight:650}
+.step .f{font-family:var(--mono);font-size:13px;color:var(--deep);
+         background:var(--paper);border:1px solid var(--line);border-radius:2px;
+         padding:6px 8px;overflow-x:auto;white-space:nowrap}
+.step small{color:var(--slate);font-size:12.5px;line-height:1.45}
+.esc{width:100%;font-size:14px}
+.esc th,.esc td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left}
+.esc thead th{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--slate);
+              font-weight:700;border-bottom:1.5px solid var(--line)}
+.esc tbody th{font-family:var(--mono);color:var(--slate);font-weight:600;width:88px}
+.esc td b{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink);
+          font-size:16px;font-weight:600;display:block}
+.esc td i{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--slate)}
+.esc tbody tr:last-child th,.esc tbody tr:last-child td{border-bottom:0}
+.warn{border-left:3px solid var(--bad);background:var(--bad-bg);padding:16px 20px;border-radius:0 3px 3px 0}
+.warn h3{color:var(--bad)}
+.corr{width:100%;font-size:13.5px;margin-top:6px}
+.corr th,.corr td{padding:11px 13px;border-bottom:1px solid var(--line);
+                  text-align:left;vertical-align:top}
+.corr thead th{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+               color:var(--slate);font-weight:700}
+.corr .was{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px;
+           width:24%;font-family:var(--mono);font-size:12.5px}
+.corr .is{color:var(--deep);font-weight:600;width:26%;font-family:var(--mono);font-size:12.5px}
+.corr .why{color:var(--slate);line-height:1.5}
+.corr tr:last-child td{border-bottom:0}
+.tw{overflow-x:auto}
+footer{margin-top:14px;padding-top:16px;border-top:1px solid var(--line);
+       color:var(--faint);font-size:12.5px;font-family:var(--mono);line-height:1.7}
+a{color:var(--green)}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>TC No Bancarizado <span>&middot; Factor Macro</span></h1>
+  <p class="lede">La inflaci&oacute;n contempor&aacute;nea explica el movimiento de la mora. El ciclo se
+  identifica en un panel de cinco entidades, no en IBK sola, y se transmite a la PD del mes por el
+  Vasicek de un factor.</p>
+</header>
+
+<div class="grid cols">
+  <div class="stack">
+    <div class="card">
+      <h3>La variable</h3>
+      <p style="margin-top:9px"><b style="color:var(--ink);font-size:17px">Inflaci&oacute;n &middot; IPC Lima</b></p>
+      <p style="color:var(--slate);font-size:13.5px;margin-top:5px">Variaci&oacute;n interanual (12m),
+      <b style="color:var(--ink)">contempor&aacute;nea</b>. Sin rezago y sin media m&oacute;vil.
+      A m&aacute;s inflaci&oacute;n, mayor mora.</p>
+      <p style="color:var(--slate);font-size:13px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line)">
+      Se eligi&oacute; sobre la <b style="color:var(--ink)">expectativa</b> de inflaci&oacute;n, con la que
+      correlaciona 0.970: empatan fuera de muestra (69.6 contra 68.4 bps), la inflaci&oacute;n gana dentro
+      (53.0 contra 60.8) y sobre todo <b style="color:var(--ink)">tiene proyecci&oacute;n por escenario
+      hasta 2029</b>.</p>
+    </div>
+
+    <div class="card">
+      <h3>C&oacute;mo se identifica el ciclo</h3>
+      <p style="color:var(--slate);font-size:13.5px;margin-top:9px">Panel de las
+      <b style="color:var(--ink)">5 entidades</b> del alcance con efectos fijos de entidad y de tiempo:
+      71 meses, 355 celdas. Lo que mueve a las cinco a la vez es ciclo; lo propio de cada
+      banco cae al residuo por construcci&oacute;n.</p>
+      <p style="color:var(--slate);font-size:13px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line)">
+      Sobre IBK sola no se identifica nada: la regresi&oacute;n en niveles da positiva y las
+      <b style="color:var(--ink)">dos mitades dan negativas</b>. Era tendencia contra tendencia.</p>
+    </div>
+
+  </div>
+
+  <div class="stack">
+    <h2>La inflaci&oacute;n explica el movimiento de la mora</h2>
+    <div class="chart">
+      <svg viewBox="0 0 780 310" role="img"
+           aria-label="RD observada contra RD predicha por el modelo macro, 202303 a 202605">
+        <rect class="band" x="121.8" y="16" width="56.8" height="264.0"/>
+        <g class="gl"><line x1="46" y1="280.0" x2="766" y2="280.0"/><text x="38" y="283.5">0%</text><line x1="46" y1="210.5" x2="766" y2="210.5"/><text x="38" y="214.0">5%</text><line x1="46" y1="141.1" x2="766" y2="141.1"/><text x="38" y="144.6">10%</text><line x1="46" y1="71.6" x2="766" y2="71.6"/><text x="38" y="75.1">15%</text></g>
+        <line class="mark" x1="424.9" y1="16" x2="424.9" y2="280"/>
+        <text class="blab" x="429.9" y="28">202411 &middot; corte de pol&iacute;tica</text>
+        <text class="blab" x="125.8" y="28">apret&oacute;n</text>
+        <path class="fit" d="M46.0,37.3 L64.9,68.6 L83.9,64.9 L102.8,99.6 L121.8,170.3 L140.7,163.0 L159.7,171.4 L178.6,175.5 L197.6,93.9 L216.5,76.6 L235.5,112.6 L254.4,105.9 L273.4,122.5 L292.3,124.1 L311.3,134.1 L330.2,126.3 L349.2,117.8 L368.1,141.5 L387.1,147.7 L406.0,160.2 L424.9,195.0 L443.9,202.5 L462.8,205.0 L481.8,207.4 L500.7,203.7 L519.7,201.7 L538.6,198.2 L557.6,199.6"/>
+        <path class="ext" d="M557.6,199.6 L576.5,186.4 L595.5,195.7 L614.4,191.0 L633.4,197.5 L652.3,191.1 L671.3,184.8 L690.2,190.6 L709.2,180.6 L728.1,165.5 L747.1,158.9 L766.0,154.1"/>
+        <g class="pts"><circle cx="46.0" cy="53.1" r="3.1"/><circle cx="64.9" cy="76.8" r="3.1"/><circle cx="83.9" cy="62.4" r="3.1"/><circle cx="102.8" cy="89.1" r="3.1"/><circle cx="121.8" cy="170.1" r="3.1"/><circle cx="140.7" cy="165.5" r="3.1"/><circle cx="159.7" cy="164.6" r="3.1"/><circle cx="178.6" cy="181.3" r="3.1"/><circle cx="197.6" cy="100.7" r="3.1"/><circle cx="216.5" cy="63.2" r="3.1"/><circle cx="235.5" cy="118.0" r="3.1"/><circle cx="254.4" cy="98.2" r="3.1"/><circle cx="273.4" cy="118.2" r="3.1"/><circle cx="292.3" cy="125.1" r="3.1"/><circle cx="311.3" cy="139.6" r="3.1"/><circle cx="330.2" cy="143.3" r="3.1"/><circle cx="349.2" cy="123.3" r="3.1"/><circle cx="368.1" cy="155.9" r="3.1"/><circle cx="387.1" cy="170.0" r="3.1"/><circle cx="406.0" cy="148.5" r="3.1"/><circle cx="424.9" cy="185.7" r="3.1"/><circle cx="443.9" cy="201.8" r="3.1"/><circle cx="462.8" cy="212.0" r="3.1"/><circle cx="481.8" cy="196.2" r="3.1"/><circle cx="500.7" cy="200.6" r="3.1"/><circle cx="519.7" cy="209.3" r="3.1"/><circle cx="538.6" cy="200.5" r="3.1"/><circle cx="557.6" cy="204.1" r="3.1"/></g>
+        <g class="gx"><text x="46.0" y="300">2023.03</text><text x="159.7" y="300">2023.09</text><text x="273.4" y="300">2024.03</text><text x="387.1" y="300">2024.09</text><text x="500.7" y="300">2025.03</text><text x="614.4" y="300">2025.09</text><text x="728.1" y="300">2026.03</text></g>
+      </svg>
+      <div class="key">
+        <span><i class="k-d"></i>RD 12m observada</span>
+        <span><i class="k-l"></i>RD predicha &middot; ventana de ajuste</span>
+        <span><i class="k-x"></i>predicha sin mora madura a&uacute;n</span>
+        <span><i class="k-b"></i>escal&oacute;n transitorio 202307&ndash;202310</span>
+      </div>
+    </div>
+    <div class="cards3"><div class="card"><h3>Ajuste del modelo</h3><span class="num big">0.9650</span><small>R&sup2; sobre probit(RD), 28 meses</small></div><div class="card"><h3>Aporte de la macro</h3><span class="num big">+0.333</span><small>&Delta;R&sup2; en el panel de 5 entidades</small></div><div class="card"><h3>Error de seguimiento</h3><span class="num big">53 bps</span><small>MAE contra la RD observada</small></div></div>
+  </div>
+</div>
+
+<h2 style="margin-top:38px">Los cinco par&aacute;metros</h2>
+<p class="lede" style="margin-bottom:14px">Ninguno es libre: cada uno se estim&oacute; en su propio
+paso y qued&oacute; fijo. Dos llevan una nota que conviene decir en voz alta antes de que la pregunten.</p>
+<div class="prow"><div class="pcard"><span class="sym">&beta;</span><span class="val">0.0601</span><b>inflaci&oacute;n &rarr; ciclo</b><small>panel, p = 3.5e-11</small></div><div class="pcard"><span class="sym">carga</span><span class="val">+0.7284</span><b>ciclo &rarr; probit(RD)</b><small>p = 8.77e-10</small></div><div class="pcard"><span class="sym">&rho;</span><span class="val">0.0332</span><b>correlaci&oacute;n de activos</b><small>piso; el panel midi&oacute; 0.0244</small></div><div class="pcard"><span class="sym">&radic;&rho;</span><span class="val">0.1822</span><b>transmisi&oacute;n al probit</b><small>se aplica en el Vasicek</small></div><div class="pcard"><span class="sym">&lambda;</span><span class="val">1.0</span><b>sensibilidad al ciclo</b><small>TOPE: el MLE pide 2.596</small></div></div>
+
+<h2 style="margin-top:38px">C&oacute;mo engrana la proyecci&oacute;n trimestral con la PD mensual</h2>
+<p class="lede" style="margin-bottom:16px">El BCRP publica la senda de inflaci&oacute;n por trimestre y la
+PD se calcula todos los meses. La cadena que une las dos cadencias tiene cuatro pasos y ning&uacute;n
+par&aacute;metro libre: una vez fijados &beta;, &rho; y &lambda;, la senda macro determina el
+desplazamiento.</p>
+<div class="gear">
+  <div class="step">
+    <span class="cad">Trimestral &middot; BCRP</span>
+    <b>Senda de inflaci&oacute;n</b>
+    <small>Reporte de Inflaci&oacute;n, tres escenarios. En la serie viven como
+    <span style="font-family:var(--mono)">proy BASE</span> desde 202606 hasta 202912.</small>
+  </div>
+  <div class="step">
+    <span class="cad">Mensual</span>
+    <b>Se lleva a mes</b>
+    <small>Los meses entre publicaciones se completan. El &uacute;ltimo IPC observado es 202605;
+    202602 no ten&iacute;a dato y entr&oacute; como despeje del trimestre.</small>
+  </div>
+  <div class="step">
+    <span class="cad">Ciclo</span>
+    <b>La inflaci&oacute;n se vuelve ft</b>
+    <div class="f">ft = 0.0601 &times; (infl &minus; 4.5241)</div>
+    <small>&mu; es la inflaci&oacute;n media del panel. Cuando la inflaci&oacute;n est&aacute; en su media,
+    ft = 0 y la PD no se mueve.</small>
+  </div>
+  <div class="step">
+    <span class="cad">PD del mes</span>
+    <b>ft desplaza la PD</b>
+    <div class="f">F = (z_LRA &minus; 0.9833 &times; ft) &divide; 0.1822</div>
+    <div class="f">PD_PIT = &Phi;( (&Phi;&#8315;&sup1;(PD_TTC) &minus; 0.1822 &times; 1.0 &times; F) &divide; 0.9833 )</div>
+    <small>La primera l&iacute;nea invierte el signo: en la regresi&oacute;n ft positivo es
+    <b>peor</b>, en el Vasicek F positivo es <b>mejor</b>. Despu&eacute;s F se centra en cero sobre la
+    ventana de la LRA y se topea a [&minus;0.726, +0.271], el P5&ndash;P95, para no extrapolar.</small>
+  </div>
+</div>
+
+<h2 style="margin-top:34px">Qu&eacute; le hace cada escenario a la PD</h2>
+<p class="lede" style="margin-bottom:14px">Desplazamiento sobre un cliente parado en la LRA de la cartera
+(6.98%). El signo es el que corresponde: m&aacute;s inflaci&oacute;n, m&aacute;s mora.</p>
+<div class="tw"><table class="esc">
+  <thead><tr><th>Horizonte</th><th>Optimista</th><th>Base</th><th>Pesimista</th></tr></thead>
+  <tbody><tr><th scope="row">2026&middot;12</th><td><b>7.710%</b><i>infl 4.40% &nbsp;&middot;&nbsp; +73 bps</i></td><td><b>7.799%</b><i>infl 4.54% &nbsp;&middot;&nbsp; +82 bps</i></td><td><b>7.991%</b><i>infl 4.84% &nbsp;&middot;&nbsp; +101 bps</i></td></tr><tr><th scope="row">2027&middot;12</th><td><b>6.903%</b><i>infl 3.08% &nbsp;&middot;&nbsp; -8 bps</i></td><td><b>6.906%</b><i>infl 3.08% &nbsp;&middot;&nbsp; -8 bps</i></td><td><b>7.087%</b><i>infl 3.39% &nbsp;&middot;&nbsp; +10 bps</i></td></tr><tr><th scope="row">2028&middot;12</th><td><b>6.575%</b><i>infl 2.50% &nbsp;&middot;&nbsp; -41 bps</i></td><td><b>6.575%</b><i>infl 2.50% &nbsp;&middot;&nbsp; -41 bps</i></td><td><b>6.695%</b><i>infl 2.71% &nbsp;&middot;&nbsp; -29 bps</i></td></tr></tbody>
+</table></div>
+
+<div class="warn" style="margin-top:44px">
+  <h3>Correcciones respecto de la l&aacute;mina anterior &middot; uso interno, no va al comit&eacute;</h3>
+  <p style="margin-top:8px;font-size:13.5px;color:var(--body)">La versi&oacute;n previa de esta l&aacute;mina
+  qued&oacute; de una generaci&oacute;n anterior del pipeline. Ocho valores cambian, y el &uacute;ltimo bloque
+  no es un n&uacute;mero sino una historia de selecci&oacute;n que no ocurri&oacute;.</p>
+  <div class="tw"><table class="corr">
+    <thead><tr><th>Dec&iacute;a</th><th>Es</th><th>Por qu&eacute;</th></tr></thead>
+    <tbody><tr><td class="was">Rezago de 5 meses y media m&oacute;vil de 6</td><td class="is">Contempor&aacute;nea, lag 0, sin media m&oacute;vil</td><td class="why">Los rezagos &minus;1, &minus;3 y &minus;6 cambian de signo entre mitades de muestra. Los leads mejoran el panel pero empeoran IBK de forma mon&oacute;tona: el MAE fuera de muestra pasa de 69.6 a 116.6 bps entre k=0 y k=4.</td></tr><tr><td class="was">Modelo probit univariado</td><td class="is">Probit multivariado de cinco t&eacute;rminos</td><td class="why">probit(RD) = a + d&#8321;&middot;transit + d&#8322;&middot;post + b&middot;probit(PD) + carga&middot;ft. El factor de PD pesa 1.3265 y los dos escalones est&aacute;n fechados por volumen.</td></tr><tr><td class="was">&beta;&#8321; = +0.66</td><td class="is">carga = +0.7284 &nbsp;&middot;&nbsp; &beta; = 0.0601</td><td class="why">Son dos par&aacute;metros distintos y la l&aacute;mina anterior los fund&iacute;a en uno: &beta; liga inflaci&oacute;n con el ciclo, la carga liga el ciclo con la mora.</td></tr><tr><td class="was">R&sup2; 60% sobre 64 meses</td><td class="is">R&sup2; 0.9650 sobre 28 meses</td><td class="why">Sin la macro el mismo modelo da 0.8148. El &Delta;R&sup2; que se reporta como aporte macro, +0.333, se mide en el panel de 71 meses, no ac&aacute;.</td></tr><tr><td class="was">MAE 100 bps</td><td class="is">MAE 53 bps</td><td class="why">Reconstruido desde los coeficientes publicados: 54.6 bps.</td></tr><tr><td class="was">19k candidatas &rarr; 42 sobreviven &rarr; 1 elecci&oacute;n</td><td class="is">Identificaci&oacute;n en panel de 5 entidades</td><td class="why">ESTE ES EL GRAVE. El barrido F1&ndash;F8 que produce esa cascada corri&oacute; sobre <b>otro producto</b> (su json dice universo &laquo;Reenganche IBK&raquo;), su embudo deja <b>0 sobrevivientes</b> y su ranking sale vac&iacute;o. Si alguien pide ver las 42, no hay nada que mostrar.</td></tr><tr><td class="was">&rho; = 0.038 &nbsp;&middot;&nbsp; &radic;&rho; = 0.19</td><td class="is">&rho; = 0.0332 &nbsp;&middot;&nbsp; &radic;&rho; = 0.1822</td><td class="why">Y el 0.0332 es un piso heredado del producto anterior: el panel midi&oacute; 0.0244.</td></tr><tr><td class="was">&lambda; = 1.0, &laquo;est&aacute;ndar&raquo;</td><td class="is">&lambda; = 1.0, y es un TOPE</td><td class="why">El MLE binomial pide 2.596 con IC95 [2.479, 2.713] y rechaza &lambda;=1 con p&asymp;10&#8315;&sup1;&#8309;&#8311;. El marco Vasicek solo admite &lambda; &isin; (0,1], as&iacute; que se topea. El modelo reacciona al ciclo MENOS de lo que el dato pide.</td></tr></tbody>
+  </table></div>
+</div>
+
+<footer>
+Fuentes &middot; macro_model.json &middot; vasicek_rho.json &middot; lambda_mle_binomial.json &middot;
+lra.json &middot; ft_calendario.csv &middot; rd_mensual.csv &middot; macro_tcnb.csv<br>
+Ventana de ajuste 202303&ndash;202506 (28 meses) &middot; ciclo identificado sobre 71 meses de panel &middot;
+serie predicha reconstruida desde los coeficientes publicados, MAE 54.6 bps contra 53.0 declarados
+</footer>
+</div>
