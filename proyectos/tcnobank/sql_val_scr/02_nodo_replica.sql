@@ -1,7 +1,9 @@
 -- 02. EL NODO RECONSTRUIDO CONTRA EL DE LA TABLA
 --   en IBK nodo_calc tiene que reproducir nodo_final: n_discrepa = 0.
---   fuera de IBK nodo_final es SIN_ALCANCE, asi que ahi solo se mide de que se
---   alimenta el nodo: pct_sin_ninguna_fuente es la magnitud de la ceguera.
+--   fuera de IBK nodo_final es SIN_ALCANCE, asi que ahi lo que se mide es la
+--   COBERTURA de las fuentes gobernadas que alimentan el nodo. La regla es la
+--   misma para todos, lo que cambia es en cuantas fuentes aparece cada cliente:
+--   pct_sin_ninguna_fuente es esa magnitud, y hay que reportarla, no corregirla.
 SELECT CASE WHEN entidad = '00002' THEN 'IBK' ELSE 'resto SS.FF.' END             AS grupo,
        COUNT(*)                                                                   AS n,
        SUM(CASE WHEN nodo_calc IS NULL THEN 1 ELSE 0 END)                         AS n_nodo_nulo,

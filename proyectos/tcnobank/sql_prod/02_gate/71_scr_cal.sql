@@ -18,20 +18,36 @@
 --            -> Vasicek PIT(F del mes) -> prob_modelo_cal -> puntuacion_cal
 --     rho 0.0332  lambda 1  LRA 0.0698337961  delta_0 0.182367613  driver seg_arq_salud='C' -0.0350174239
 --
---   EL NODO SE RECONSTRUYE. 16_nodo.sql pone SIN_ALCANCE fuera de la entidad
---   00002, pero sus cinco banderas existen para las 25 entidades sin un solo
---   nulo porque 16_nodo las coalesce a 0. Aca se replican las 20 ramas: se
---   verifico que nodo_calc reproduce nodo_final en las 1,690,263 filas de IBK
---   sin una discrepancia. nodo_final viaja al lado para que el chequeo se pueda
---   repetir sobre la tabla escrita.
+--   EL NODO NO SE INVENTA ACA. Las cinco banderas ya vienen construidas en la
+--   cadena 13/14/15 -> 16_nodo, desde FUENTES GOBERNADAS de e_perm_aws y con el
+--   rezago declarado en cada una:
+--     t_aws_360_cliente_mes_d3            pasivos, ventana [M-6, M-1]
+--     t_fact_edc_solicitud_retiro_afp_ibk retiro AFP, anclado en M-1
+--     t_agg_retail_user_trx_plin          PLIN, ventana [M-3, M-1]
+--     t_rsk_cta_sueldo                    cuenta sueldo, M-1
+--   Ninguna se lee en el mes de la decision, asi que no hay look-ahead, y el
+--   pasivo se reconstruyo desde el 360 gobernado justamente porque la suma del
+--   script original vivia en datalab, que no es fuente gobernada (13_pasivos).
+--   Las anclas estan medidas contra el csv de nodos, no supuestas: PLIN u3m da
+--   57.03 por ciento en IBK clean contra 56.7 del csv.
+--
+--   Lo unico que este paso vuelve a evaluar es el CASE de 20 ramas, porque
+--   16_nodo lo cierra con SIN_ALCANCE fuera de la entidad 00002. Las banderas
+--   en si ya existen para las 25 entidades sin un solo nulo. Verificado:
+--   nodo_calc reproduce nodo_final en las 1,690,263 filas de IBK sin una
+--   discrepancia, y nodo_final viaja al lado para repetir el chequeo sobre la
+--   tabla escrita.
 --
 --   FUERA DE IBK ESTO ES EXTRAPOLACION, que es lo unico que produccion puede
---   hacer: no hay forma de calibrar distinto por entidad. Al leerlo hay que
---   tener presente que las tres fuentes del nodo son internas de Interbank y
---   que entre 55 y 63 por ciento de los clientes de otros bancos no aparecen en
---   ninguna, asi que a ellos el nodo se les arma desde la ausencia y caen en N3.
---   ctrl_nodo_n_fuentes cuenta en cuantas de las tres se los vio, y
---   ctrl_nodo_observado marca con 0 exactamente a los que no estan en ninguna.
+--   hacer: no hay forma de calibrar distinto por entidad. Y es defendible
+--   precisamente porque las cuatro fuentes son gobernadas y se leen igual para
+--   todos, con el mismo rezago. Lo que cambia entre entidades no es la regla
+--   sino la cobertura: entre 55 y 63 por ciento de los clientes de otros bancos
+--   no aparecen en ninguna de las tres fuentes de comportamiento, asi que a
+--   ellos el nodo se les arma desde la ausencia y caen en N3. Eso es un hecho
+--   medido de la cobertura, no un defecto de la replica, y por eso viaja como
+--   columna: ctrl_nodo_n_fuentes cuenta en cuantas de las tres se los vio y
+--   ctrl_nodo_observado marca con 0 a los que no estan en ninguna.
 --
 --   El F del mes viaja precalculado en convencion Vasicek, ya centrado y topeado
 --   a [-0.725565158, 0.2705294769]. Recalcularlo aca seria un lugar mas donde equivocarse.
