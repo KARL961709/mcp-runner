@@ -181,3 +181,14 @@ elnino_ibk/03_deck/_check/
 !entregables/charts/pd_vs_rd_mensual.png
 !entregables/lamina_grupos.html
 !entregables/lamina_factor_macro.html
+
+# --- deck_tcnb (2026-08-18): lamina de grupos de riesgo de TC No Bancarizado.
+# HTML autocontenido, se abre con doble clic; sin scripts ni referencias externas.
+# Verificado ANTES del push, no despues: cero hashes de 64 chars, cero numeros de
+# 8+ digitos, cero menciones de key_value / id_value / tip_doc / cif_key. Lo unico
+# numerico son conteos de poblacion por grupo, tasas de mora, PD calibradas,
+# umbrales de score y coordenadas SVG. Maximo agregado: 249,565 registros
+# resumidos en 19 tablas de a lo sumo 15 filas.
+# Repo PRIVADO (la API sin auth devuelve 404). Un push no se deshace.
+!deck_tcnb/
+!deck_tcnb/*.html
