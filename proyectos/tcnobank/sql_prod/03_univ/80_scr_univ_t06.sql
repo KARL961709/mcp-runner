@@ -1,5 +1,5 @@
 -- ============================================================================
--- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 06 DE 11 (202502 a 202504)
+-- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 06 DE 6 (202602 a 202607)
 --   scan: scr_vcnbank_rsk U t_aws_360_cliente_mes_d3 U t_fact_edc_solicitud_retiro_afp_ibk
 --         U t_agg_retail_user_trx_plin U t_rsk_cta_sueldo U t_mst_inter_ibk_base_cliente
 --         U t_inca_sa
@@ -104,7 +104,7 @@ po AS (
             date_format(date_add('month', -3, date_parse(s.p_codmes, '%Y%m')), '%Y%m') AS m03,
             date_format(date_add('month', -6, date_parse(s.p_codmes, '%Y%m')), '%Y%m') AS m06
        FROM e_perm_aws.scr_vcnbank_rsk s
-      WHERE s.p_codmes BETWEEN '202502' AND '202504'
+      WHERE s.p_codmes BETWEEN '202602' AND '202607'
      ),
 llaves AS (
      SELECT DISTINCT tip_doc, id_value, m01, m02, m03, m06 FROM po

@@ -32,43 +32,43 @@ el dato es un tramo mas.
 
 ## Orden de ejecucion
 
-    .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/00_reset -Only r024_drop_scr_univ.sql
+El piloto **ya corrio**: t01, un mes, 26.4M filas, **70 segundos**. Con eso se
+dimensionaron los demas a 6 meses (~420 s estimados, 47% del timeout de 900 s).
 
-Despues **el piloto, y cronometrado**:
+Se dejo margen a proposito. Con `INSERT INTO` un TIMEOUT es peligroso: el limite
+es del runner y no de Athena, asi que la insercion pudo completarse igual y
+**relanzar duplicaria las filas sin avisar**. Es preferible un tramo de mas que
+un tramo al borde.
 
-    .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t01.sql
+El escalado deberia ser SUB-lineal: las ventanas de 360 `[M-6,M-1]` y PLIN
+`[M-3,M-1]` se solapan entre meses del mismo tramo, asi que 6 meses no leen 6
+veces las particiones de lookback. Es la misma razon por la que en el RCC pasar
+de 6 a 24 meses costo 1.9x y no 4x.
 
-Un solo mes, 202401, ~26.4M filas. **Anotar los segundos del `_resumen.txt` y
-pegarlos de vuelta antes de seguir.** Los diez tramos que siguen son de 3 meses:
-si el piloto tarda X, cada uno deberia tardar del orden de 3X, y si eso pasa el
-timeout del runner (900s por defecto) hay que regenerarlos mas chicos ANTES de
-lanzarlos, no descubrirlo a mitad de camino.
+| tramo | meses | statement | estado |
+|---|---|---|---|
+| t01 | 202401 | `CREATE TABLE` | **corrido, 70 s** |
+| t02 | 202402-202407 | `INSERT INTO` | |
+| t03 | 202408-202501 | `INSERT INTO` | |
+| t04 | 202502-202507 | `INSERT INTO` | |
+| t05 | 202508-202601 | `INSERT INTO` | |
+| t06 | 202602-202607 | `INSERT INTO` | |
 
-Con el tiempo confirmado, los diez restantes **de a uno y en orden**:
+De a uno:
 
     .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t02.sql
     .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t03.sql
-    ... hasta t11
-
-| tramo | meses | statement |
-|---|---|---|
-| t01 | 202401 | `CREATE TABLE` (crea la tabla) |
-| t02 | 202402-202404 | `INSERT INTO` |
-| t03 | 202405-202407 | `INSERT INTO` |
-| t04 | 202408-202410 | `INSERT INTO` |
-| t05 | 202411-202501 | `INSERT INTO` |
-| t06 | 202502-202504 | `INSERT INTO` |
-| t07 | 202505-202507 | `INSERT INTO` |
-| t08 | 202508-202510 | `INSERT INTO` |
-| t09 | 202511-202601 | `INSERT INTO` |
-| t10 | 202602-202604 | `INSERT INTO` |
-| t11 | 202605-202607 | `INSERT INTO` |
+    .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t04.sql
+    .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t05.sql
+    .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t06.sql
 
 **De a uno no es opcional.** El `catch` del runner no corta el lote: un fallo
-genera errores en cascada y la causa raiz es siempre el primero. Y con
-`INSERT INTO` hay un riesgo que el CTAS no tiene — **correr un tramo dos veces
-duplica sus filas sin avisar**. Por eso la QA reconcilia contra la fuente mes a
-mes: `dif_filas` distinto de 0 delata tanto el tramo que falto como el repetido.
+genera errores en cascada y la causa raiz es siempre el primero.
+
+**Si un tramo da TIMEOUT o error, NO relanzarlo de una.** Correr primero
+`sql_val_univ/01_reconciliacion.sql` y mirar los meses de ese tramo: si ya tienen
+las filas de la fuente, el INSERT se completo y relanzarlo duplicaria. Si no
+aparecen, se puede relanzar.
 
 ## Al terminar
 

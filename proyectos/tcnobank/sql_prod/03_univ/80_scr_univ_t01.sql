@@ -1,5 +1,5 @@
 -- ============================================================================
--- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 01 DE 11 (202401)  PILOTO
+-- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 01 DE 6 (202401)  PILOTO
 --   scan: scr_vcnbank_rsk U t_aws_360_cliente_mes_d3 U t_fact_edc_solicitud_retiro_afp_ibk
 --         U t_agg_retail_user_trx_plin U t_rsk_cta_sueldo U t_mst_inter_ibk_base_cliente
 --         U t_inca_sa
@@ -10,7 +10,12 @@
 --   fuente ya traia con esos nombres viajan renombradas a *_vigente, para que no
 --   queden dos calibraciones distintas compartiendo un mismo nombre.
 --
---   ESTE ES EL TRAMO PILOTO Y HAY QUE CRONOMETRARLO. Son ~26M filas de un
+--   PILOTO YA CORRIDO: 70 segundos para este mes, 26.4M filas. Con eso se
+--   dimensionaron los tramos que siguen a 6 meses (~420 s, 47 por ciento del
+--   timeout de 900 s del runner). Se dejo margen a proposito: con INSERT INTO un
+--   TIMEOUT es peligroso porque el limite es del runner y no de Athena, la
+--   insercion pudo completarse igual, y relanzar duplicaria las filas sin avisar.
+--   Nota vieja, que el piloto ya contesto: eran ~26M filas de un
 --   solo mes, contra ~200K altas: 123 veces mas. 30_drivers deja anotado que la
 --   poblacion entra por INNER JOIN ANTES de cada ventana porque si no el
 --   row_number ordena 1,250 millones de filas de inca y Athena agota recursos, y
