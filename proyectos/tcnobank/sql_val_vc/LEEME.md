@@ -27,9 +27,31 @@ Cada uno tiene dos patas y cada pata tiene alcance distinto:
 | mora  | `dm_sf`: RCC de **todo el sistema**, **todos** los creditos | `dm_tc` con `e.entidad = p.entidad`: solo la entidad de alta, solo tarjeta | **original** |
 | duro  | `cc_castigos` desde `wrk_info_ibk` <- `t_rsk_fct_visioncliente`: **solo IBK** | `monto_cast`/`sld_jud`/`sld_ref`/`sld_ree` del RCC: **todo el sistema** | **nuestro** |
 
-Por eso `solo_tc` en la matriz 2x2 **no** va a dar cero, y el signo neto de la
-brecha es una pregunta empirica, no una deduccion. Cuidado con leerlo como un
-sesgo unidireccional: eso vale para el eje de mora aislado, no para el target.
+En teoria eso permite que un malo nuestro sea bueno del original, asi que
+`solo_tc` podria no dar cero. **Medido: da cero.** En los 25 meses maduros,
+sobre 190,686 emparejamientos, no hay una sola excepcion: `dm_sf` es tan ancha
+que absorbe todo lo que marca nuestra pata dura. El cruce existe en la
+definicion y no se materializa en el dato.
+
+## MEDIDO 2026-08-18
+
+- **Grano** el original tiene una fila por cliente: `n_filas = n_clientes =
+  n_cli_ent` en las 41 cohortes.
+- **Madurez** la ultima cohorte con `missing = 0` es **202503**; el RCC del
+  original corta en 202603. De 202504 en adelante el target esta truncado y la
+  brecha se da vuelta -llega a -2.95 pp en 202506- por artefacto, no por riesgo.
+  **No comparar mas alla de 202503.**
+- **Brecha** ventana 202303-202503: RD12 VC **12.7686%** vs RD12 TC **11.6506%**,
+  o sea **+1.1181 pp**, **+9.6% relativo**. Mensual entre +0.63 y +1.49 pp.
+- **Descomposicion** la entidad explica el **67%** de la brecha y el producto el
+  **33%**. La pata de mora sola pasa de 39,889 a 43,905 malos al soltar la
+  entidad: **+10.07%**.
+- **Cobertura** el match cubre el **38.8%** de nuestra poblacion de calibracion.
+  El original arranca de otra PO y su cascada excluye ramas enteras, asi que el
+  NIVEL de cada curva no es la RD de ningun libro: **solo la diferencia es
+  interpretable**.
+- **Indeterminados** `13.Indeterm_60` entra al denominador contando como bueno.
+  Son 3.13% de los evaluables, asi que empuja las dos RD hacia abajo por igual.
 
 ## Calendario
 
