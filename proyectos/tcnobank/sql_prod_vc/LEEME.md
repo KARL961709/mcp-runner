@@ -30,27 +30,33 @@ eje PRODUCTO. Medidos contra el original valen 67% y 33% de la brecha.
 
 ## Orden de ejecucion
 
+Ventana: **cohortes desde 202401**. Para tenerlas a 12m hay que leer el futuro
+`[202402, 202606]`, que son **29 particiones** del RCC. La historia anterior no
+se construye.
+
     00_reset/            solo si hay que rehacer
-    51_dmsf_t01 .. t08   la mora del sistema, por tramos anuales
+    51_dmsf_t01          202402-202412   CREATE
+    51_dmsf_t02          202501-202512   INSERT
+    51_dmsf_t03          202601-202606   INSERT
     52_target_vc         el target
     53_cal_vc            el ensamble
 
-**Corre `51_dmsf_t05` primero y cronometralo.** Es 2023, doce particiones, el
-tramo tipico. Los ocho tramos juntos barren `e_perm_aws.t_fact_report_rcc_rsk`
-de 201903 a 202606, que son 88 particiones de la tabla mas grande del RCC. El
-`JOIN` contra las llaves distintas de `11_po_key` es lo que lo hace viable.
-Si el piloto sale caro, ese join es lo primero a mirar.
-
 Construir **de a uno**: el `catch` del runner no corta, asi que un fallo genera
-errores en cascada y la causa raiz es siempre el primero.
+errores en cascada y la causa raiz es siempre el primero. `t01` crea la tabla,
+`t02` y `t03` insertan, asi que el orden no es opcional.
 
-### Si solo necesitas la ventana de calibracion
+El recorte a 202401 vive en **dos** lugares y los dos son obligatorios:
 
-`51_dmsf_t05` a `t08` cubren 202301-202606, o sea cohortes desde **202212**.
-Con eso alcanza para calibrar y cuesta la mitad. Las cohortes anteriores quedan
-con `target_vc_*` en NULL, que es lo correcto -no hay dato-, pero **ojo si
-alguien usa `flg_hist` para la serie de RD del modelo macro**: esa serie
-arranca antes y se quedaria corta.
+- en `51_dmsf`, sobre las llaves de la PO, que es lo que abarata el scan
+- en `52_target_vc`, sobre el CTE `po`
+
+El segundo no es cosmetico. Sin el, una cohorte anterior a 202401 no encuentra
+fila en `51_dmsf`, el `coalesce(max_sf_12m, 0) > 60` da falso, y si ademas no
+tiene evento duro el target sale **0 en vez de NULL**: falsos buenos en
+silencio, que es peor que no tener la columna.
+
+Con el filtro puesto, `52` no emite filas para cohortes anteriores, y el
+`LEFT JOIN` de `53` las deja en NULL, que es lo correcto.
 
 ## Verificacion
 

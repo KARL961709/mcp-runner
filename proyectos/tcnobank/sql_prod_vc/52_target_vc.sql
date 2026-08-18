@@ -1,9 +1,13 @@
 -- ============================================================================
--- 52. TARGET VISION CLIENTE 1M A 12M
+-- 52. TARGET VISION CLIENTE 1M A 12M - COHORTES DESDE 202401
 --   DERIVADO de 50_targets.sql por sustitucion, no reescrito. Cambia UNA sola
---   cosa: la pata de mora pasa de dm_tc de la entidad de alta a dm_sf de todo
---   el sistema y todos los creditos. La pata dura queda byte a byte identica,
---   asi que target_vc_12m contra target_12m aisla exactamente la mora.
+--   cosa de fondo: la pata de mora pasa de dm_tc de la entidad de alta a dm_sf
+--   de todo el sistema y todos los creditos. La pata dura queda byte a byte
+--   identica, asi que target_vc_12m contra target_12m aisla exactamente la mora.
+--   El WHERE codmes_mrm >= 202401 NO es cosmetico: 51_dmsf solo tiene [202402,
+--   202606], asi que sin ese filtro una cohorte anterior no encontraria fila,
+--   el coalesce(max_sf_12m, 0) > 60 daria falso y el target saldria 0 en vez de
+--   NULL. Falsos buenos en silencio.
 --   scan: 11_po_key + 51_dmsf [codmes+1, codmes+12] + 05_rcc_agg para la pata dura
 --   ancla: acumulado desde +1. Inmaduro contra el snapshot 202606 es NULL, nunca 0
 -- ============================================================================
@@ -11,6 +15,7 @@ CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_52_target_vc AS
 WITH po AS (
     SELECT codmes_mrm, tip_doc, id_value, entidad, date_format(date_add('month', 1, date_parse(codmes_mrm, '%Y%m')), '%Y%m') AS p01
     FROM disc_model_owner.ds_adm_vcnbank_tc_11_po_key
+    WHERE codmes_mrm >= '202401'
 ),
 cli AS (
     SELECT codmes, tip_doc, key_value,
