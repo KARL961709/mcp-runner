@@ -1,7 +1,7 @@
 # 03_univ - la calibracion sobre la poblacion objetivo
 
 Tabla `disc_model_owner.scr_univ_vcnbank_tc_cal`. Una fila por cada fila de
-`scr_vcnbank_rsk` en **202401 a 202607** (31 meses, ~800M filas), con
+`scr_vcnbank_rsk` en **202401 a 202608** (32 meses, ~825M filas), con
 `prob_modelo_cal`, `puntuacion_cal` y `grupo_cal` = **nuestra** calibracion.
 Las que la fuente traia con esos nombres viajan como `*_vigente`.
 
@@ -23,12 +23,21 @@ como las dos viajan lado a lado sobre las mismas filas se comparan de frente:
 
 `grupo_cal` trae los cortes de la opcion B ya aplicados: `972 | 964 | 938 | 899 | 768`.
 
-## Por que la ventana termina en 202607
+## La inflacion del ultimo mes va PROYECTADA, y eso es metodologia
 
-`scr_vcnbank_rsk` llega a 202608, pero el factor macro no: F sale de la inflacion
-observada y el BCRP publica el IPC de agosto alrededor del 1 de septiembre.
-Meter 202608 ahora daria un mes entero con `prob_modelo_cal` nulo. Cuando salga
-el dato es un tramo mas.
+El IPC de Lima se publica alrededor del 1 del mes siguiente, asi que el mes mas
+reciente nunca tiene inflacion observada. `macro_tcnb.csv` trae observado,
+despeje y los tres escenarios justamente para poder pronunciarse igual: 202608
+entra con la senda **BASE** (4.25%), F = -0.3872559620.
+
+Cada fila lleva `fuente_macro`, que dice si el F de su mes salio de inflacion
+observada o proyectada. Un mes proyectado no se lee como observado.
+
+| mes | infl | fuente_macro |
+|---|---|---|
+| 202606 | 4.0089% | observado |
+| 202607 | 4.0652% | observado |
+| 202608 | 4.2500% | **proy BASE** |
 
 ## Orden de ejecucion
 
@@ -53,6 +62,7 @@ de 6 a 24 meses costo 1.9x y no 4x.
 | t04 | 202502-202507 | `INSERT INTO` | |
 | t05 | 202508-202601 | `INSERT INTO` | |
 | t06 | 202602-202607 | `INSERT INTO` | |
+| t07 | 202608 | `INSERT INTO` | |
 
 De a uno:
 
@@ -61,6 +71,7 @@ De a uno:
     .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t04.sql
     .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t05.sql
     .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t06.sql
+    .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_prod/03_univ -Only 80_scr_univ_t07.sql
 
 **De a uno no es opcional.** El `catch` del runner no corta el lote: un fallo
 genera errores en cascada y la causa raiz es siempre el primero.
@@ -74,7 +85,7 @@ aparecen, se puede relanzar.
 
     .\Run-Athena.ps1 -SqlDir proyectos/tcnobank/sql_val_univ
 
-- **01** reconcilia: `dif_filas = 0` en los 31 meses, `n_nodo_nulo = 0`
+- **01** reconcilia: `dif_filas = 0` en los 32 meses, `n_nodo_nulo = 0`
 - **02** la matriz de migracion `grupo_cal_vigente` x `grupo_cal`. Es la que
   contesta cuanta gente cambia de decision de oferta
 - **03** el evolutivo mensual y `dif_pp`, el cambio de nivel

@@ -1,5 +1,5 @@
 -- ============================================================================
--- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 04 DE 6 (202502 a 202507)
+-- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 04 DE 7 (202502 a 202507)
 --   scan: scr_vcnbank_rsk U t_aws_360_cliente_mes_d3 U t_fact_edc_solicitud_retiro_afp_ibk
 --         U t_agg_retail_user_trx_plin U t_rsk_cta_sueldo U t_mst_inter_ibk_base_cliente
 --         U t_inca_sa
@@ -37,6 +37,13 @@
 --   mismos rezagos: pasivos [M-6, M-1], PLIN [M-3, M-1], cuenta sueldo M-1.
 --   Ninguna se lee en el mes de la decision, asi que no hay look-ahead.
 --
+--   LA INFLACION DEL FACTOR MACRO PUEDE SER PROYECTADA, y eso es metodologia y
+--   no un parche: macro_tcnb.csv trae observado, despeje y los tres escenarios
+--   justamente para poder pronunciarse sobre meses que el BCRP no cerro. El IPC
+--   de Lima se publica alrededor del 1 del mes siguiente, asi que el mes mas
+--   reciente SIEMPRE entra con la senda BASE. La columna fuente_macro dice mes a
+--   mes cual es cual, para que un proyectado no se lea como observado.
+--
 --   prob_model viene REAL, o sea float32 con ~7 digitos. Se pasa a DOUBLE antes
 --   de ln(p) porque la cadena toma logaritmos y ahi la precision se nota.
 --   Medido: las 42 particiones traen prob_model en el 100 por ciento de sus
@@ -44,50 +51,51 @@
 -- ============================================================================
 INSERT INTO disc_model_owner.scr_univ_vcnbank_tc_cal
 WITH ft AS (
-     SELECT codmes, f_mes
+     SELECT codmes, f_mes, fuente_macro
        FROM (VALUES
-            ('202303', -0.7056560795),
-            ('202304', -0.7056560795),
-            ('202305', -0.7056560795),
-            ('202306', -0.7056560795),
-            ('202307', -0.7056560795),
-            ('202308', -0.7056560795),
-            ('202309', -0.5902261957),
-            ('202310', -0.4110339926),
-            ('202311', -0.2305283514),
-            ('202312', -0.128578414),
-            ('202401', -0.0740489159),
-            ('202402', -0.1430586906),
-            ('202403', -0.0794451794),
-            ('202404', 0.0796951644),
-            ('202405', 0.1862548426),
-            ('202406', 0.1146142237),
-            ('202407', 0.154904096),
-            ('202408', 0.1788061397),
-            ('202409', 0.2449909096),
-            ('202410', 0.1851711923),
-            ('202411', 0.11803515),
-            ('202412', 0.1961244902),
-            ('202501', 0.2254301815),
-            ('202502', 0.3143482354),
-            ('202503', 0.3143482354),
-            ('202504', 0.2764568895),
-            ('202505', 0.2675597012),
-            ('202506', 0.2657597305),
-            ('202507', 0.2670135203),
-            ('202508', 0.3143482354),
-            ('202509', 0.3143482354),
-            ('202510', 0.3143482354),
-            ('202511', 0.3143482354),
-            ('202512', 0.3129956207),
-            ('202601', 0.2639184403),
-            ('202602', 0.1328066619),
-            ('202603', -0.2734627438),
-            ('202604', -0.3270054231),
-            ('202605', -0.2991375921),
-            ('202606', -0.3256683805),
-            ('202607', -0.3400358764)
-            ) AS t (codmes, f_mes)
+            ('202303', -0.7056560795, 'observado'),
+            ('202304', -0.7056560795, 'observado'),
+            ('202305', -0.7056560795, 'observado'),
+            ('202306', -0.7056560795, 'observado'),
+            ('202307', -0.7056560795, 'observado'),
+            ('202308', -0.7056560795, 'observado'),
+            ('202309', -0.5902261957, 'observado'),
+            ('202310', -0.4110339926, 'observado'),
+            ('202311', -0.2305283514, 'observado'),
+            ('202312', -0.128578414, 'observado'),
+            ('202401', -0.0740489159, 'observado'),
+            ('202402', -0.1430586906, 'observado'),
+            ('202403', -0.0794451794, 'observado'),
+            ('202404', 0.0796951644, 'observado'),
+            ('202405', 0.1862548426, 'observado'),
+            ('202406', 0.1146142237, 'observado'),
+            ('202407', 0.154904096, 'observado'),
+            ('202408', 0.1788061397, 'observado'),
+            ('202409', 0.2449909096, 'observado'),
+            ('202410', 0.1851711923, 'observado'),
+            ('202411', 0.11803515, 'observado'),
+            ('202412', 0.1961244902, 'observado'),
+            ('202501', 0.2254301815, 'observado'),
+            ('202502', 0.3143482354, 'observado'),
+            ('202503', 0.3143482354, 'observado'),
+            ('202504', 0.2764568895, 'observado'),
+            ('202505', 0.2675597012, 'observado'),
+            ('202506', 0.2657597305, 'observado'),
+            ('202507', 0.2670135203, 'observado'),
+            ('202508', 0.3143482354, 'observado'),
+            ('202509', 0.3143482354, 'observado'),
+            ('202510', 0.3143482354, 'observado'),
+            ('202511', 0.3143482354, 'observado'),
+            ('202512', 0.3129956207, 'observado'),
+            ('202601', 0.2639184403, 'observado'),
+            ('202602', 0.1328066619, 'observado'),
+            ('202603', -0.2734627438, 'observado'),
+            ('202604', -0.3270054231, 'observado'),
+            ('202605', -0.2991375921, 'observado'),
+            ('202606', -0.3256683805, 'observado'),
+            ('202607', -0.3400358764, 'observado'),
+            ('202608', -0.387255962, 'proy BASE')
+            ) AS t (codmes, f_mes, fuente_macro)
      ),
 po AS (
      SELECT s.cod_tip_doc                                                         AS tip_doc,
@@ -195,6 +203,7 @@ base AS (
      SELECT po.tip_doc, po.id_value, po.pd_raw, po.puntuacion, po.pd_cal_vigente,
             po.puntuacion_cal_vigente, po.grupo_cal_vigente, po.sitlab_score, po.p_codmes,
             f.f_mes,
+            f.fuente_macro,
             arq.seg_arq_salud,
             CAST(CASE WHEN coalesce(pas.n_meses_900, 0) = 6
                        AND coalesce(afp.retiro_afp, 0) = 0
@@ -294,6 +303,7 @@ SELECT tip_doc,
                   AND ctrl_sin_plin = 1 THEN 0 ELSE 1 END AS INTEGER)             AS ctrl_nodo_observado,
        seg_arq_salud,
        sitlab_score,
+       fuente_macro,
        pd_cal_calc                                                                AS prob_modelo_cal,
        CAST(CASE WHEN pd_cal_calc IS NULL THEN NULL
                  ELSE FLOOR(1000 * (1 - pd_cal_calc)) END AS INTEGER)             AS puntuacion_cal,

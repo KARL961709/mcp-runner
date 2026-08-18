@@ -17,7 +17,7 @@ SELECT coalesce(s.codmes, d.codmes)                                             
   FULL JOIN (SELECT p_codmes                                                     AS codmes,
                     COUNT(*)                                                     AS n_fuente
                FROM e_perm_aws.scr_vcnbank_rsk
-              WHERE p_codmes BETWEEN '202401' AND '202607'
+              WHERE p_codmes BETWEEN '202401' AND '202608'
               GROUP BY p_codmes) d
          ON d.codmes = s.codmes
  ORDER BY 1
