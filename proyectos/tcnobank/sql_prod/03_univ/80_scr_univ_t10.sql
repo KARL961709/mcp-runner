@@ -1,5 +1,5 @@
 -- ============================================================================
--- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 1 (PILOTO, 202605)
+-- 80. SCORE CALIBRADO SOBRE EL UNIVERSO SCOREADO - TRAMO 10 DE 11 (202602 a 202604)
 --   scan: scr_vcnbank_rsk U t_aws_360_cliente_mes_d3 U t_fact_edc_solicitud_retiro_afp_ibk
 --         U t_agg_retail_user_trx_plin U t_rsk_cta_sueldo U t_mst_inter_ibk_base_cliente
 --         U t_inca_sa
@@ -10,11 +10,9 @@
 --   fuente ya traia con esos nombres viajan renombradas a *_vigente, para que no
 --   queden dos calibraciones distintas compartiendo un mismo nombre.
 --
---   ESTO ES UN PILOTO DE UN MES Y HAY QUE CRONOMETRARLO. Son ~25M filas por mes
---   contra ~200K altas: 123 veces mas. 30_drivers deja anotado que la poblacion
---   entra por INNER JOIN ANTES de cada ventana porque si no el row_number ordena
---   1,250 millones de filas de inca y Athena agota recursos, y aca esa poblacion
---   casi no restringe. Con el tiempo de este mes se sizea el resto.
+--   Tramo de continuacion, va DESPUES del piloto y de a uno. El catch del
+--   runner no corta el lote: un fallo genera errores en cascada y la causa raiz
+--   es siempre el primero.
 --
 --   QUE ES ESTA TABLA. Es la POBLACION OBJETIVO sobre la que se lanza el
 --   modelo, no altas: los desembolsos todavia no ocurrieron. Por eso sus 50
@@ -44,8 +42,7 @@
 --   Medido: las 42 particiones traen prob_model en el 100 por ciento de sus
 --   filas, asi que aca no hay ninguna fila sin score que explicar.
 -- ============================================================================
-CREATE TABLE disc_model_owner.scr_univ_vcnbank_tc_cal
-WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['p_codmes']) AS
+INSERT INTO disc_model_owner.scr_univ_vcnbank_tc_cal
 WITH ft AS (
      SELECT codmes, f_mes
        FROM (VALUES
@@ -107,7 +104,7 @@ po AS (
             date_format(date_add('month', -3, date_parse(s.p_codmes, '%Y%m')), '%Y%m') AS m03,
             date_format(date_add('month', -6, date_parse(s.p_codmes, '%Y%m')), '%Y%m') AS m06
        FROM e_perm_aws.scr_vcnbank_rsk s
-      WHERE s.p_codmes = '202605'
+      WHERE s.p_codmes BETWEEN '202602' AND '202604'
      ),
 llaves AS (
      SELECT DISTINCT tip_doc, id_value, m01, m02, m03, m06 FROM po
