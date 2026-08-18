@@ -51,6 +51,17 @@
 --
 --   El F del mes viaja precalculado en convencion Vasicek, ya centrado y topeado
 --   a [-0.7056560795, 0.3143482354]. Recalcularlo aca seria un lugar mas donde equivocarse.
+--
+--   LA TABLA DE F PUEDE TENER MAS MESES QUE EL ds_, y no es un error. F depende
+--   solo de la inflacion observada, asi que se calcula para todo mes publicado.
+--   Hasta donde se SCOREA lo decide otra cosa: la frontera del RCC. Medido el
+--   2026-08-14 contando filas por particion, t_fact_report_rcc_rsk cierra en
+--   202606 y 202607 no existe, asi que la poblacion no puede pasar de 202606.
+--   Un mes con F pero sin filas en el ds_ simplemente no aparece en el LEFT JOIN.
+--   Las otras cinco fuentes llegan mas lejos: el score a 202608 y las tres del
+--   nodo a 202607. PLIN tiene particion 202608 pero a medias -28.9M filas contra
+--   55.6M de un mes normal-, que es por que la frontera se mide contando y no
+--   con max().
 -- ============================================================================
 CREATE TABLE disc_model_owner.scr_adm_vcnbank_tc_cal AS
 WITH ft AS (
@@ -94,7 +105,9 @@ WITH ft AS (
             ('202602', 0.1328066619),
             ('202603', -0.2734627438),
             ('202604', -0.3270054231),
-            ('202605', -0.2991375921)
+            ('202605', -0.2991375921),
+            ('202606', -0.3256683805),
+            ('202607', -0.3400358764)
             ) AS t (codmes, f_mes)
      ),
 base AS (

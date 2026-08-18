@@ -21,5 +21,5 @@ INNER JOIN e_perm_aws.t_fact_report_rcc_rsk a
        ON a.tip_doc = p.tip_doc AND a.key_value = p.id_value
       AND ltrim(rtrim(a.cod_instit_financiera)) = p.entidad
       AND a.p_codmes = p.codmes_mrm
-WHERE a.p_codmes BETWEEN '201902' AND '202605'
+WHERE a.p_codmes BETWEEN '201902' AND '202606'
 GROUP BY p.tip_doc, p.id_value, p.entidad, p.codmes_mrm

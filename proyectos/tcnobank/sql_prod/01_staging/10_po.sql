@@ -1,7 +1,8 @@
 -- ============================================================================
 -- 10. POBLACION OBJETIVO - ALTA DE TC DERIVADA DEL RCC
 --   scan: disc_model_owner.ds_adm_vcnbank_tc_05_rcc_agg [201701,202606]
---   ancla: alta = TC en codmes y ausente en [codmes-12, codmes-1]. Ventana 201902-202605
+--   ancla: alta = TC en codmes y ausente en [codmes-12, codmes-1]. Ventana 201902-202606. El tope lo pone el RCC: medido, t_fact_report_rcc_rsk
+--          cierra en 202606 y 202607 todavia no existe
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_vcnbank_tc_10_po AS
 WITH tc AS (
@@ -21,5 +22,5 @@ LEFT JOIN tc b
       AND b.entidad   = a.entidad
       AND b.codmes   >= date_format(date_add('month', -12, date_parse(a.codmes, '%Y%m')), '%Y%m')
       AND b.codmes   <= date_format(date_add('month', -1, date_parse(a.codmes, '%Y%m')), '%Y%m')
-WHERE a.codmes BETWEEN '201902' AND '202605'
+WHERE a.codmes BETWEEN '201902' AND '202606'
   AND b.key_value IS NULL
