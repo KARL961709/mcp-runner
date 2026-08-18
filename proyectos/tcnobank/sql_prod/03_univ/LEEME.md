@@ -24,52 +24,44 @@ como las dos viajan lado a lado sobre las mismas filas se comparan de frente:
 
 **Observado manda donde el BCRP publico.** El IPC de Lima sale alrededor del 1
 del mes siguiente, asi que el mes mas reciente nunca lo tiene: ahi entra la
-senda proyectada. La ventana de ajuste de la calibracion (202303-202506) es
-**toda observada** -0 meses proyectados-, asi que ningun coeficiente se estimo
-sobre proyeccion.
+senda. La ventana de ajuste de la calibracion (202303-202506) es **toda
+observada** -0 meses proyectados-, asi que ningun coeficiente se estimo sobre
+proyeccion.
 
-La senda trimestral se ancla en el **mes central de cada trimestre**, con
-valores redondos, y los meses intermedios vienen interpolados:
+La senda trimestral se mensualiza con **desagregacion temporal estilo Denton**
+(`Programas/analisis/00c_mensualiza_senda.py`): se interpola el PRECIO -que es
+donde la suavidad tiene sentido- sujeto a que la tasa interanual resultante
+reproduzca EXACTO el valor trimestral del BCRP. Medido sobre 14 trimestres:
+**0.000000 pp de error**. Las alternativas fallan 0.023 (la heredada), 0.047
+(lineal sobre la tasa) y 0.412 (interpolar el precio sin atar).
 
-    202608=4.25   202611=4.56   202702=4.45   202705=4.10   202708=3.65
+Dos consecuencias que importan:
 
-Con que se interpola **no se pudo reproducir**: lineal falla por 0.050 pp,
-spline cubica por 0.029 y PCHIP por 0.024. Queda como incognita del insumo.
+- **El empalme no necesita add-factor.** El trimestre en curso tiene meses ya
+  observados y entran DENTRO de la restriccion con su valor real, asi que la
+  propia restriccion trimestral resuelve la union. Habia antes un re-anclaje con
+  decaimiento: se quito porque apuntaba al reves y su horizonte no era medible.
+- **Los efectos base sobreviven.** Marzo 2026 tuvo +2.3787% mensual -5.4
+  desvios, la mayor en 32 anos, por la emergencia del gas de Camisea (INEI). Un
+  metodo que interpole la tasa borra ese efecto; este lo respeta.
 
-### El empalme se RE-ANCLA, no se pega crudo
+`macro_proy` marca cada fila: `0` si el F de su mes salio de inflacion
+observada, `1` si de la senda. Hoy solo 202608 lleva 1, con `infl 4.3892%` y
+`F -0.4228093335`.
 
-La senda se armo con un corte anterior, asi que en los meses que despues
-cerraron tiene un error de pronostico medible: en 202607 dijo 4.1330% y el real
-vino 4.0652%, **-0.0678 pp**. Pegarla cruda convierte ese error en un escalon
-que no existe:
-
-| | salto 202607 -> 202608 |
-|---|---|
-| empalme crudo | +0.1848 pp |
-| **re-anclado** | **+0.1170 pp** (el paso que la propia senda preveia) |
-
-Se corrige entero en el primer mes proyectado y se disuelve linealmente en 6,
-para no arrastrar nuestro error sobre el nivel de largo plazo, que es del BCRP:
-
-| mes | infl usada | senda cruda | corrimiento |
-|---|---|---|---|
-| 202608 | 4.1822% | 4.2500% | -0.0678 |
-| 202609 | 4.3271% | 4.3836% | -0.0565 |
-| 202612 | 4.5213% | 4.5439% | -0.0226 |
-| 202702 | 4.4500% | 4.4500% | 0.0000 |
-
-`infl_BASE/PESIMISTA/OPTIMISTA` conservan la senda **cruda**: el re-anclaje vive
-solo en `infl`, que es la que lee el paso 03.
-
-### macro_proy
-
-Cada fila lleva **`macro_proy`**: `0` si el F de su mes salio de inflacion
-observada, `1` si de proyeccion. Hoy solo 202608 lleva 1.
+**No se movio ningun coeficiente.** Verificado: los 12 BetaCal + corrimientos
+probit, delta_0, driver, rho, lambda, CARGA, CENTRO y beta quedan identicos al
+decimo decimal, y los 41 F de meses observados dan diferencia 0.00e+00 contra
+lo commiteado.
 
 ## Orden de ejecucion
 
-El piloto **ya corrio**: t01, un mes, 26.4M filas, **70 segundos**. Con eso se
+El piloto corrio en **70 segundos** (un mes, 26.4M filas) y con eso se
 dimensionaron los demas a 6 meses (~420 s estimados, 47% del timeout de 900 s).
+
+**HAY QUE REHACER DESDE EL DROP.** La tabla que dejo ese piloto tiene el esquema
+viejo -llevaba `grupo_cal` y no `macro_proy`-, asi que un `INSERT INTO` desde
+t02 falla por columnas. No se puede seguir desde t02.
 
 Se dejo margen a proposito. Con `INSERT INTO` un TIMEOUT es peligroso: el limite
 es del runner y no de Athena, asi que la insercion pudo completarse igual y
@@ -83,7 +75,7 @@ de 6 a 24 meses costo 1.9x y no 4x.
 
 | tramo | meses | statement | estado |
 |---|---|---|---|
-| t01 | 202401 | `CREATE TABLE` | **corrido, 70 s** |
+| t01 | 202401 | `CREATE TABLE` | **rehacer**: cambio el esquema |
 | t02 | 202402-202407 | `INSERT INTO` | |
 | t03 | 202408-202501 | `INSERT INTO` | |
 | t04 | 202502-202507 | `INSERT INTO` | |
