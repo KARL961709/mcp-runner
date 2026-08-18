@@ -2,7 +2,7 @@
 
 Tabla `disc_model_owner.scr_univ_vcnbank_tc_cal`. Una fila por cada fila de
 `scr_vcnbank_rsk` en **202401 a 202608** (32 meses, ~825M filas), con
-`prob_modelo_cal`, `puntuacion_cal` y `grupo_cal` = **nuestra** calibracion.
+`prob_modelo_cal` y `puntuacion_cal` = **nuestra** calibracion.
 Las que la fuente traia con esos nombres viajan como `*_vigente`.
 
 ## Que es esta tabla
@@ -19,25 +19,52 @@ como las dos viajan lado a lado sobre las mismas filas se comparan de frente:
 |---|---|
 | `prob_modelo_cal` | `pd_cal_vigente` |
 | `puntuacion_cal` | `puntuacion_cal_vigente` |
-| `grupo_cal` | `grupo_cal_vigente` |
 
-`grupo_cal` trae los cortes de la opcion B ya aplicados: `972 | 964 | 938 | 899 | 768`.
+## Como engrana la inflacion observada con la proyeccion trimestral
 
-## La inflacion del ultimo mes va PROYECTADA, y eso es metodologia
+**Observado manda donde el BCRP publico.** El IPC de Lima sale alrededor del 1
+del mes siguiente, asi que el mes mas reciente nunca lo tiene: ahi entra la
+senda proyectada. La ventana de ajuste de la calibracion (202303-202506) es
+**toda observada** -0 meses proyectados-, asi que ningun coeficiente se estimo
+sobre proyeccion.
 
-El IPC de Lima se publica alrededor del 1 del mes siguiente, asi que el mes mas
-reciente nunca tiene inflacion observada. `macro_tcnb.csv` trae observado,
-despeje y los tres escenarios justamente para poder pronunciarse igual: 202608
-entra con la senda **BASE** (4.25%), F = -0.3872559620.
+La senda trimestral se ancla en el **mes central de cada trimestre**, con
+valores redondos, y los meses intermedios vienen interpolados:
 
-Cada fila lleva `fuente_macro`, que dice si el F de su mes salio de inflacion
-observada o proyectada. Un mes proyectado no se lee como observado.
+    202608=4.25   202611=4.56   202702=4.45   202705=4.10   202708=3.65
 
-| mes | infl | fuente_macro |
-|---|---|---|
-| 202606 | 4.0089% | observado |
-| 202607 | 4.0652% | observado |
-| 202608 | 4.2500% | **proy BASE** |
+Con que se interpola **no se pudo reproducir**: lineal falla por 0.050 pp,
+spline cubica por 0.029 y PCHIP por 0.024. Queda como incognita del insumo.
+
+### El empalme se RE-ANCLA, no se pega crudo
+
+La senda se armo con un corte anterior, asi que en los meses que despues
+cerraron tiene un error de pronostico medible: en 202607 dijo 4.1330% y el real
+vino 4.0652%, **-0.0678 pp**. Pegarla cruda convierte ese error en un escalon
+que no existe:
+
+| | salto 202607 -> 202608 |
+|---|---|
+| empalme crudo | +0.1848 pp |
+| **re-anclado** | **+0.1170 pp** (el paso que la propia senda preveia) |
+
+Se corrige entero en el primer mes proyectado y se disuelve linealmente en 6,
+para no arrastrar nuestro error sobre el nivel de largo plazo, que es del BCRP:
+
+| mes | infl usada | senda cruda | corrimiento |
+|---|---|---|---|
+| 202608 | 4.1822% | 4.2500% | -0.0678 |
+| 202609 | 4.3271% | 4.3836% | -0.0565 |
+| 202612 | 4.5213% | 4.5439% | -0.0226 |
+| 202702 | 4.4500% | 4.4500% | 0.0000 |
+
+`infl_BASE/PESIMISTA/OPTIMISTA` conservan la senda **cruda**: el re-anclaje vive
+solo en `infl`, que es la que lee el paso 03.
+
+### macro_proy
+
+Cada fila lleva **`macro_proy`**: `0` si el F de su mes salio de inflacion
+observada, `1` si de proyeccion. Hoy solo 202608 lleva 1.
 
 ## Orden de ejecucion
 

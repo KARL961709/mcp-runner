@@ -51,51 +51,51 @@
 -- ============================================================================
 INSERT INTO disc_model_owner.scr_univ_vcnbank_tc_cal
 WITH ft AS (
-     SELECT codmes, f_mes, fuente_macro
+     SELECT codmes, f_mes, macro_proy
        FROM (VALUES
-            ('202303', -0.7056560795, 'observado'),
-            ('202304', -0.7056560795, 'observado'),
-            ('202305', -0.7056560795, 'observado'),
-            ('202306', -0.7056560795, 'observado'),
-            ('202307', -0.7056560795, 'observado'),
-            ('202308', -0.7056560795, 'observado'),
-            ('202309', -0.5902261957, 'observado'),
-            ('202310', -0.4110339926, 'observado'),
-            ('202311', -0.2305283514, 'observado'),
-            ('202312', -0.128578414, 'observado'),
-            ('202401', -0.0740489159, 'observado'),
-            ('202402', -0.1430586906, 'observado'),
-            ('202403', -0.0794451794, 'observado'),
-            ('202404', 0.0796951644, 'observado'),
-            ('202405', 0.1862548426, 'observado'),
-            ('202406', 0.1146142237, 'observado'),
-            ('202407', 0.154904096, 'observado'),
-            ('202408', 0.1788061397, 'observado'),
-            ('202409', 0.2449909096, 'observado'),
-            ('202410', 0.1851711923, 'observado'),
-            ('202411', 0.11803515, 'observado'),
-            ('202412', 0.1961244902, 'observado'),
-            ('202501', 0.2254301815, 'observado'),
-            ('202502', 0.3143482354, 'observado'),
-            ('202503', 0.3143482354, 'observado'),
-            ('202504', 0.2764568895, 'observado'),
-            ('202505', 0.2675597012, 'observado'),
-            ('202506', 0.2657597305, 'observado'),
-            ('202507', 0.2670135203, 'observado'),
-            ('202508', 0.3143482354, 'observado'),
-            ('202509', 0.3143482354, 'observado'),
-            ('202510', 0.3143482354, 'observado'),
-            ('202511', 0.3143482354, 'observado'),
-            ('202512', 0.3129956207, 'observado'),
-            ('202601', 0.2639184403, 'observado'),
-            ('202602', 0.1328066619, 'observado'),
-            ('202603', -0.2734627438, 'observado'),
-            ('202604', -0.3270054231, 'observado'),
-            ('202605', -0.2991375921, 'observado'),
-            ('202606', -0.3256683805, 'observado'),
-            ('202607', -0.3400358764, 'observado'),
-            ('202608', -0.387255962, 'proy BASE')
-            ) AS t (codmes, f_mes, fuente_macro)
+            ('202303', -0.7056560795, 0),
+            ('202304', -0.7056560795, 0),
+            ('202305', -0.7056560795, 0),
+            ('202306', -0.7056560795, 0),
+            ('202307', -0.7056560795, 0),
+            ('202308', -0.7056560795, 0),
+            ('202309', -0.5902261957, 0),
+            ('202310', -0.4110339926, 0),
+            ('202311', -0.2305283514, 0),
+            ('202312', -0.128578414, 0),
+            ('202401', -0.0740489159, 0),
+            ('202402', -0.1430586906, 0),
+            ('202403', -0.0794451794, 0),
+            ('202404', 0.0796951644, 0),
+            ('202405', 0.1862548426, 0),
+            ('202406', 0.1146142237, 0),
+            ('202407', 0.154904096, 0),
+            ('202408', 0.1788061397, 0),
+            ('202409', 0.2449909096, 0),
+            ('202410', 0.1851711923, 0),
+            ('202411', 0.11803515, 0),
+            ('202412', 0.1961244902, 0),
+            ('202501', 0.2254301815, 0),
+            ('202502', 0.3143482354, 0),
+            ('202503', 0.3143482354, 0),
+            ('202504', 0.2764568895, 0),
+            ('202505', 0.2675597012, 0),
+            ('202506', 0.2657597305, 0),
+            ('202507', 0.2670135203, 0),
+            ('202508', 0.3143482354, 0),
+            ('202509', 0.3143482354, 0),
+            ('202510', 0.3143482354, 0),
+            ('202511', 0.3143482354, 0),
+            ('202512', 0.3129956207, 0),
+            ('202601', 0.2639184403, 0),
+            ('202602', 0.1328066619, 0),
+            ('202603', -0.2734627438, 0),
+            ('202604', -0.3270054231, 0),
+            ('202605', -0.2991375921, 0),
+            ('202606', -0.3256683805, 0),
+            ('202607', -0.3400358764, 0),
+            ('202608', -0.369932104, 1)
+            ) AS t (codmes, f_mes, macro_proy)
      ),
 po AS (
      SELECT s.cod_tip_doc                                                         AS tip_doc,
@@ -203,7 +203,7 @@ base AS (
      SELECT po.tip_doc, po.id_value, po.pd_raw, po.puntuacion, po.pd_cal_vigente,
             po.puntuacion_cal_vigente, po.grupo_cal_vigente, po.sitlab_score, po.p_codmes,
             f.f_mes,
-            f.fuente_macro,
+            f.macro_proy,
             arq.seg_arq_salud,
             CAST(CASE WHEN coalesce(pas.n_meses_900, 0) = 6
                        AND coalesce(afp.retiro_afp, 0) = 0
@@ -303,20 +303,10 @@ SELECT tip_doc,
                   AND ctrl_sin_plin = 1 THEN 0 ELSE 1 END AS INTEGER)             AS ctrl_nodo_observado,
        seg_arq_salud,
        sitlab_score,
-       fuente_macro,
+       macro_proy,
        pd_cal_calc                                                                AS prob_modelo_cal,
        CAST(CASE WHEN pd_cal_calc IS NULL THEN NULL
                  ELSE FLOOR(1000 * (1 - pd_cal_calc)) END AS INTEGER)             AS puntuacion_cal,
-       CASE WHEN pd_cal_calc IS NULL THEN NULL
-            ELSE CASE
-                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 972 THEN 'G1'
-                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 964 THEN 'G2'
-                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 938 THEN 'G3'
-                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 899 THEN 'G4'
-                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 768 THEN 'G5'
-                 ELSE 'R'
-                 END
-       END                                                                        AS grupo_cal,
        pd_cal_vigente,
        puntuacion_cal_vigente,
        grupo_cal_vigente,
