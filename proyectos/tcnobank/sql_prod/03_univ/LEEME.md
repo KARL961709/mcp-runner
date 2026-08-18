@@ -37,14 +37,34 @@ estimo 4x y el real fue 1.9x porque el lookback es cola fija.
   clientes. Un N3 masivo aca es lo esperado, no un defecto
 - `prob_modelo_cal` sin nulos: las 42 particiones traen `prob_model` en el 100%
 
-## El reparo que no se resuelve con SQL
+## Sobre el alcance
 
-La calibracion se ajusto sobre **altas clean de TC no bancarizada**, ancladas a
-una LRA de 6.98%. Los ~25M de esta tabla son el barrido mensual de todo el
-universo scoreable, que no es esa poblacion: la mayoria nunca va a recibir una
-tarjeta. Aplicarles ese ancla es una extrapolacion mas fuerte que la de IBK a
-SS.FF. que ya esta documentada en doc/LIMITACIONES.md C3.
+`scr_vcnbank_rsk` **no tiene mora**: sus 50 columnas no traen target ni flag de
+malo. Es salida de scoring, se emite antes de conocer el desenlace. Eso no es una
+carencia de la fuente, es lo que un modelo de admision hace.
 
-Esta tabla sirve para ver que haria la calibracion en el flujo de produccion.
-Para validar la calibracion, la que manda sigue siendo `scr_adm_vcnbank_tc_cal`,
-que es por alta y tiene mora observable.
+Y esa tabla **ya trae `prob_modelo_cal`, `puntuacion_cal` y `grupo_calibracion`**
+aplicados a sus ~25M filas: la calibracion vigente ya vive ahi, sobre esta misma
+superficie. Este build la reemplaza por la nueva, no estrena una extrapolacion.
+
+El supuesto de fondo que comparten las dos -el ancla sale de altas clean, con LRA
+6.98%, y se aplica a quien todavia no es alta- es inferencia de rechazados, y es
+propia de cualquier modelo de admision. No la introduce este paso.
+
+Como las dos calibraciones viajan lado a lado sobre las mismas filas, esta tabla
+sirve para compararlas de frente:
+
+    prob_modelo_cal   vs   pd_cal_vigente
+    puntuacion_cal    vs   puntuacion_cal_vigente
+    nodo_calc         vs   grupo_cal_vigente
+
+## Las dos tablas, dos trabajos distintos
+
+| | `scr_univ_vcnbank_tc_cal` | `scr_adm_vcnbank_tc_cal` |
+|---|---|---|
+| una fila por | persona scoreada | alta |
+| para que | ver que hace la calibracion en produccion | validar contra mora |
+| tiene target | no | si, `target_12m` |
+| alcance | 42 meses, 202303-202608 | hasta 202606, lo que el RCC permite |
+
+Las dos hacen falta. Ninguna reemplaza a la otra.

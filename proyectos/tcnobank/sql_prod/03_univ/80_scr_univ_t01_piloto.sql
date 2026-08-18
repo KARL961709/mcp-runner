@@ -16,10 +16,22 @@
 --   1,250 millones de filas de inca y Athena agota recursos, y aca esa poblacion
 --   casi no restringe. Con el tiempo de este mes se sizea el resto.
 --
---   OJO CON EL ANCLA. La calibracion se ajusto sobre ALTAS CLEAN de TC no
---   bancarizada, con LRA 0.0698337961. Los ~25M de esta tabla son el barrido mensual de
---   todo el universo scoreable, que no es esa poblacion. Es una extrapolacion
---   mas fuerte que la de IBK a SS.FF. y hay que leerla asi.
+--   ESTA ES LA TABLA DE PRODUCCION Y POR ESO NO TIENE MORA. Sus 50 columnas no
+--   traen target ni flag de malo: es salida de scoring, se emite antes de saber
+--   el desenlace. Eso no es una carencia, es lo que un modelo de admision hace.
+--
+--   Y la fuente YA TRAE prob_modelo_cal, puntuacion_cal y grupo_calibracion
+--   aplicados a sus ~25M filas: la calibracion vigente ya vive aca, sobre esta
+--   misma superficie. Lo que este build hace es reemplazarla por la nueva, no
+--   estrenar una extrapolacion. Las dos comparten el mismo alcance y el mismo
+--   supuesto de fondo -el ancla sale de altas clean, con LRA 0.0698337961, y se aplica
+--   a quien todavia no es alta-, que es inferencia de rechazados y es propia de
+--   cualquier modelo de admision, no algo que introduzca este paso.
+--
+--   Como las dos calibraciones viajan lado a lado sobre las mismas filas, esta
+--   tabla sirve para compararlas de frente. Lo que NO se puede hacer aca es
+--   validar contra mora: para eso esta scr_adm_vcnbank_tc_cal, que es por alta
+--   y si tiene target observable.
 --
 --   CADENA, sin reajustar un coeficiente:
 --     pd_raw -> BetaCal(nodo) -> corrimiento probit(nodo) -> delta_0 + driver
