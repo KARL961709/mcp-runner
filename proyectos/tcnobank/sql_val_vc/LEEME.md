@@ -18,13 +18,18 @@ lado a lado y usa la primera:
 salen de `dm_sf`. O sea el target del original **es Vision Cliente**. `dm_ibk` se
 define y no se usa en ninguna otra linea de los tres scripts recibidos.
 
-Nuestro `50_targets.sql` se desvia en dos ejes a la vez:
+## Los dos targets se CRUZAN: ninguno domina al otro
 
-- **entidad**: `e.entidad = p.entidad` en la pata de mora
-- **producto**: `dm_tc` es solo tarjeta; `dm_sf` es todo credito
+Cada uno tiene dos patas y cada pata tiene alcance distinto:
 
-Los dos ejes solo pueden **quitar** malos, asi que nuestra RD es cota inferior de
-la del original.
+| pata | ORIGINAL | NUESTRO | quien es mas ancho |
+|---|---|---|---|
+| mora  | `dm_sf`: RCC de **todo el sistema**, **todos** los creditos | `dm_tc` con `e.entidad = p.entidad`: solo la entidad de alta, solo tarjeta | **original** |
+| duro  | `cc_castigos` desde `wrk_info_ibk` <- `t_rsk_fct_visioncliente`: **solo IBK** | `monto_cast`/`sld_jud`/`sld_ref`/`sld_ree` del RCC: **todo el sistema** | **nuestro** |
+
+Por eso `solo_tc` en la matriz 2x2 **no** va a dar cero, y el signo neto de la
+brecha es una pregunta empirica, no una deduccion. Cuidado con leerlo como un
+sesgo unidireccional: eso vale para el eje de mora aislado, no para el target.
 
 ## Calendario
 
