@@ -37,34 +37,29 @@ estimo 4x y el real fue 1.9x porque el lookback es cola fija.
   clientes. Un N3 masivo aca es lo esperado, no un defecto
 - `prob_modelo_cal` sin nulos: las 42 particiones traen `prob_model` en el 100%
 
-## Sobre el alcance
+## Que es esta tabla
 
-`scr_vcnbank_rsk` **no tiene mora**: sus 50 columnas no traen target ni flag de
-malo. Es salida de scoring, se emite antes de conocer el desenlace. Eso no es una
-carencia de la fuente, es lo que un modelo de admision hace.
+Es la **poblacion objetivo sobre la que se lanza el modelo**, no altas: los
+desembolsos todavia no ocurrieron. Por eso no trae mora ni identificacion de
+alta, y no tiene por que traerlas — un modelo de admision existe para
+pronunciarse antes.
 
-Y esa tabla **ya trae `prob_modelo_cal`, `puntuacion_cal` y `grupo_calibracion`**
-aplicados a sus ~25M filas: la calibracion vigente ya vive ahi, sobre esta misma
-superficie. Este build la reemplaza por la nueva, no estrena una extrapolacion.
+La fuente ya trae `prob_modelo_cal`, `puntuacion_cal` y `grupo_calibracion` sobre
+sus ~25M filas: la calibracion vigente ya vive en esta superficie. Este build la
+reemplaza, y como las dos viajan lado a lado sobre las mismas filas se pueden
+comparar de frente:
 
-El supuesto de fondo que comparten las dos -el ancla sale de altas clean, con LRA
-6.98%, y se aplica a quien todavia no es alta- es inferencia de rechazados, y es
-propia de cualquier modelo de admision. No la introduce este paso.
+| nuestra | vigente |
+|---|---|
+| `prob_modelo_cal` | `pd_cal_vigente` |
+| `puntuacion_cal` | `puntuacion_cal_vigente` |
+| `grupo_cal` | `grupo_cal_vigente` |
 
-Como las dos calibraciones viajan lado a lado sobre las mismas filas, esta tabla
-sirve para compararlas de frente:
+`grupo_cal` viene con los puntos de corte de la opcion B ya aplicados
+-`972 | 964 | 938 | 899 | 768`-, que es la columna que decide la oferta.
 
-    prob_modelo_cal   vs   pd_cal_vigente
-    puntuacion_cal    vs   puntuacion_cal_vigente
-    nodo_calc         vs   grupo_cal_vigente
+## La otra tabla
 
-## Las dos tablas, dos trabajos distintos
-
-| | `scr_univ_vcnbank_tc_cal` | `scr_adm_vcnbank_tc_cal` |
-|---|---|---|
-| una fila por | persona scoreada | alta |
-| para que | ver que hace la calibracion en produccion | validar contra mora |
-| tiene target | no | si, `target_12m` |
-| alcance | 42 meses, 202303-202608 | hasta 202606, lo que el RCC permite |
-
-Las dos hacen falta. Ninguna reemplaza a la otra.
+`scr_adm_vcnbank_tc_cal` es por alta y llega hasta 202606, lo que el RCC permite.
+Sirve para lo que aca no se puede hacer: contrastar la PD contra la mora
+observada. Las dos hacen falta y ninguna reemplaza a la otra.

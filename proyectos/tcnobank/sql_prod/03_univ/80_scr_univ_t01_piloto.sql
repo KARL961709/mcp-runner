@@ -16,22 +16,19 @@
 --   1,250 millones de filas de inca y Athena agota recursos, y aca esa poblacion
 --   casi no restringe. Con el tiempo de este mes se sizea el resto.
 --
---   ESTA ES LA TABLA DE PRODUCCION Y POR ESO NO TIENE MORA. Sus 50 columnas no
---   traen target ni flag de malo: es salida de scoring, se emite antes de saber
---   el desenlace. Eso no es una carencia, es lo que un modelo de admision hace.
+--   QUE ES ESTA TABLA. Es la POBLACION OBJETIVO sobre la que se lanza el
+--   modelo, no altas: los desembolsos todavia no ocurrieron. Por eso sus 50
+--   columnas no traen mora ni identificacion de alta, y no tienen por que
+--   traerlas. Un modelo de admision existe justamente para pronunciarse ANTES.
 --
---   Y la fuente YA TRAE prob_modelo_cal, puntuacion_cal y grupo_calibracion
---   aplicados a sus ~25M filas: la calibracion vigente ya vive aca, sobre esta
---   misma superficie. Lo que este build hace es reemplazarla por la nueva, no
---   estrenar una extrapolacion. Las dos comparten el mismo alcance y el mismo
---   supuesto de fondo -el ancla sale de altas clean, con LRA 0.0698337961, y se aplica
---   a quien todavia no es alta-, que es inferencia de rechazados y es propia de
---   cualquier modelo de admision, no algo que introduzca este paso.
+--   La fuente ya trae prob_modelo_cal, puntuacion_cal y grupo_calibracion sobre
+--   sus ~25M filas: la calibracion vigente ya vive en esta superficie y este
+--   build la reemplaza por la nueva. Como las dos viajan lado a lado sobre las
+--   mismas filas, se pueden comparar de frente.
 --
---   Como las dos calibraciones viajan lado a lado sobre las mismas filas, esta
---   tabla sirve para compararlas de frente. Lo que NO se puede hacer aca es
---   validar contra mora: para eso esta scr_adm_vcnbank_tc_cal, que es por alta
---   y si tiene target observable.
+--   Los puntos de corte viajan aplicados en grupo_cal, con los umbrales de la
+--   opcion B. Es la columna que se compara contra grupo_cal_vigente y la que
+--   decide la oferta.
 --
 --   CADENA, sin reajustar un coeficiente:
 --     pd_raw -> BetaCal(nodo) -> corrimiento probit(nodo) -> delta_0 + driver
@@ -303,6 +300,16 @@ SELECT tip_doc,
        pd_cal_calc                                                                AS prob_modelo_cal,
        CAST(CASE WHEN pd_cal_calc IS NULL THEN NULL
                  ELSE FLOOR(1000 * (1 - pd_cal_calc)) END AS INTEGER)             AS puntuacion_cal,
+       CASE WHEN pd_cal_calc IS NULL THEN NULL
+            ELSE CASE
+                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 972 THEN 'G1'
+                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 964 THEN 'G2'
+                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 938 THEN 'G3'
+                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 899 THEN 'G4'
+                 WHEN FLOOR(1000 * (1 - pd_cal_calc)) >= 768 THEN 'G5'
+                 ELSE 'R'
+                 END
+       END                                                                        AS grupo_cal,
        pd_cal_vigente,
        puntuacion_cal_vigente,
        grupo_cal_vigente,
