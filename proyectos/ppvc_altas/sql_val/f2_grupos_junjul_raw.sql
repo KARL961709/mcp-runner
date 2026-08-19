@@ -10,11 +10,14 @@
 --   Cortes: RAW [968,931,882,829,759] TTC [962,935,893,855,789] PIT [986,966,917,885,855]
 -- =====================================================================================
 WITH mon AS (
+  -- altas NUEVAS puras: P.FACIL, sin swap (reemplazo de deuda) ni CIMA
   SELECT cast(codmes_desembolso AS varchar) AS codmes,
          CASE WHEN length(cif_key) >= 10 THEN cif_key ELSE lpad(cif_key, 10, '0') END AS cod_cuc
   FROM disc_monitorian.t_mrm_mongest_altas_pp_marcas
   WHERE cast(codmes_desembolso AS varchar) IN ('202606', '202607')
     AND upper(subproducto) LIKE '%FACIL%'
+    AND coalesce(cast(flg_swap AS varchar), '0') <> '1'
+    AND coalesce(cast(flg_cima AS varchar), '0') <> '1'
 ),
 altas AS (
   SELECT DISTINCT m.codmes, b.key_value
