@@ -4,12 +4,12 @@
 --   niveles raw/pit. (Apuesta a p_codmes + subproducto + prob_modelo; si el nombre
 --   real difiere, h1 lo revela y ajusto.)
 -- =====================================================================================
-SELECT cast(p_codmes AS varchar)                 AS mes,
+SELECT cast(codmes AS varchar)                   AS mes,
        subproducto,
        count(*)                                  AS n,
        count(DISTINCT key_value)                 AS n_cli,
        round(100*avg(prob_modelo), 2)            AS pdraw,
        round(100*avg(prob_modelo_cal_ppfacil),2) AS pit_pf
 FROM d_perm_aws.scr_vcadmbnk_hist_rsk_cal_2606_2608
-GROUP BY cast(p_codmes AS varchar), subproducto
+GROUP BY cast(codmes AS varchar), subproducto
 ORDER BY 1, 2
