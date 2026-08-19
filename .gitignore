@@ -150,6 +150,7 @@ elnino_ibk/03_deck/_check/
 # compartido de la industria, y las cifras van agregadas por entidad -- decision del usuario
 # 2026-08-10 tras plantearle el reparo. Repo PRIVADO. Un push no se deshace.
 !entregables/*.xlsx
+!entregables/*.xlsm
 
 # GRAFICOS DE ENTREGABLES (2026-08-13). Ruta explicita, no glob: la whitelist se
 # mantiene angosta a proposito. Un png nuevo necesita su propia linea.
