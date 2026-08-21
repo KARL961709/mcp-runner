@@ -144,6 +144,13 @@ elnino_ibk/03_deck/_check/
 !entregables/
 !entregables/*.pptx
 
+# --- origen_bank_bn.pptx (2026-08-21): deck Origen BPE, ajuste anti-conservador de PD.
+# 3 slides. Verificado ANTES del push descomprimiendo el pptx: 0 hashes de 64 chars, 0
+# menciones de key_value/id_value/tip_doc/cif_key/id_hash, 0 xlsx o charts nativos embebidos.
+# Los numeros de 8+ digitos son EMU/IDs internos de OOXML, no documentos. Las slides 2-3 son
+# IMAGENES png de series agregadas por codmes x poblacion x personeria (rd12/pd_pit/pd_optimista,
+# 202206-202606), mismo criterio que rd_vs_pd_driver.xlsx. Cero dato de cliente. Repo PRIVADO.
+
 # --- rd_vs_pd_driver.xlsx (2026-08-10). Tres hojas de AGREGADOS por codmes x poblacion x
 # personeria: n, pd_raw, pd_pit, RD 12m y las tres proyecciones. Maximo 294 filas por hoja.
 # Cero key_value, cero tip_doc, cero identificadores. El insumo es el RCC, que es registro
