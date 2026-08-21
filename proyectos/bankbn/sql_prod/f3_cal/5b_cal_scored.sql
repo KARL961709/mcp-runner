@@ -1,4 +1,4 @@
--- 5b_cal_scored.sql | agrega prob_modelo_cal (pd_pit), prob_modelo_esc_opt (escenario optimista = pd_pit x factor anti-conservador por personeria PJJ 0.6814 / PNN 0.9697), puntuacion_modelo y flg_clean binario 0/1. Sufijo 202607 = mes de proceso, el dato llega a 202606. Coeficientes ajustados SOLO con IBK: la PD de las otras 3 entidades es comparativa
+-- 5b_cal_scored.sql | agrega prob_modelo_cal (pd_pit), puntuacion_modelo y flg_clean binario 0/1. Sufijo 202607 = mes de proceso, el dato llega a 202606. Coeficientes ajustados SOLO con IBK: la PD de las otras 3 entidades es comparativa
 CREATE TABLE disc_model_owner.ds_adm_bpe_bankbn_cal_202607
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
 WITH ft (trim_ft, fhat) AS (
@@ -116,8 +116,6 @@ SELECT c.codmes,
        c.flg_clean                                        AS flg_clean_calib,
        c.flg_calib,
        c.pd_pit                                            AS prob_modelo_cal,
-       greatest(1e-6, least(1 - 1e-6,
-         c.pd_pit * CASE WHEN c.personeria = 'PJJ' THEN 0.68140 ELSE 0.96970 END)) AS prob_modelo_esc_opt,
        CAST(round((1.0 - c.pd_pit) * 1000) AS INTEGER)     AS puntuacion_modelo,
        CASE WHEN c.filtro_pnsn
                  + c.filtro_castigado_org + c.filtro_judicial_org + c.filtro_reest_org + c.filtro_refin_org
