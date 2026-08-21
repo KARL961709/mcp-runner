@@ -1,7 +1,7 @@
--- 122_rd_vs_pd_driver_50k_ibk.sql | como 118 pero SOLO IBK y con filtro de TICKET max_saldo_ent >= 50000 (join a _po). Grano personeria x codmes, todos los horizontes rd01..rd12 para rearmar proyecciones V1/V2/V3 y optimista en python. GLOBAL se deriva en python (mezcla ponderada). ~98 filas. READ-ONLY. OJO: la poblacion >=50k es ~10% de IBK -> celdas mensuales delgadas, RD ruidosa
+-- 122_rd_vs_pd_driver_50k_ibk.sql | como 118 pero SOLO IBK y con filtro de TICKET saldo_m0_ent >= 50000 (saldo consolidado en el mes del alta, join a _po). CORREGIDO: antes usaba max_saldo_ent que es el pico PRE-alta (0 para clientes nuevos) y adelgazaba a ~6 por ciento. Grano personeria x codmes, horizontes rd01..rd12. GLOBAL se deriva en python. READ-ONLY
 WITH po AS (
   SELECT cast(codmes AS int) AS codmes, tip_doc, key_value,
-         max(cast(max_saldo_ent AS double)) AS maxs
+         max(cast(saldo_m0_ent AS double)) AS s0
   FROM disc_model_owner.ds_adm_bpe_bankbn_po
   WHERE marca_entidad = 'IBK'
   GROUP BY cast(codmes AS int), tip_doc, key_value
@@ -23,7 +23,7 @@ q AS (
   FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607 c
   JOIN po p ON p.codmes = cast(c.codmes AS int) AND p.tip_doc = c.tip_doc AND p.key_value = c.key_value
   WHERE c.entidad = 'IBK' AND c.pd_raw IS NOT NULL AND c.fhat IS NOT NULL AND c.flg_clean_calib <> 99
-    AND p.maxs >= 50000
+    AND p.s0 >= 50000
 )
 SELECT 'IBK' AS poblacion, driver, codmes, maduro, h_disp,
        count(*) AS n, count(t12) AS n_target, round(avg(fhat), 6) AS fhat,

@@ -1,7 +1,7 @@
--- 123_rd_vs_pd_driver_50k_resto.sql | igual que 122 pero poblacion RESTO_TOP4 (BCP/BBVA/SCOTIA) con ticket max_saldo_ent >= 50000. Join a _po por marca_entidad='OTRO' (el saldo de la entidad de la alta). Los clientes con alta IBK el mismo mes (rn=1=IBK en _po) se caen a proposito, para no asignarles saldo de IBK. Grano personeria x codmes, rd01..rd12. ~98 filas. READ-ONLY
+-- 123_rd_vs_pd_driver_50k_resto.sql | igual que 122 pero poblacion RESTO_TOP4 (BCP/BBVA/SCOTIA) con ticket saldo_m0_ent >= 50000 (saldo consolidado en el mes del alta). Join a _po por marca_entidad='OTRO'. CORREGIDO: antes usaba max_saldo_ent (pico PRE-alta). Grano personeria x codmes, rd01..rd12. READ-ONLY
 WITH po AS (
   SELECT cast(codmes AS int) AS codmes, tip_doc, key_value,
-         max(cast(max_saldo_ent AS double)) AS maxs
+         max(cast(saldo_m0_ent AS double)) AS s0
   FROM disc_model_owner.ds_adm_bpe_bankbn_po
   WHERE marca_entidad = 'OTRO'
   GROUP BY cast(codmes AS int), tip_doc, key_value
@@ -23,7 +23,7 @@ q AS (
   FROM disc_model_owner.ds_adm_bpe_bankbn_cal_202607 c
   JOIN po p ON p.codmes = cast(c.codmes AS int) AND p.tip_doc = c.tip_doc AND p.key_value = c.key_value
   WHERE c.entidad <> 'IBK' AND c.pd_raw IS NOT NULL AND c.fhat IS NOT NULL AND c.flg_clean_calib <> 99
-    AND p.maxs >= 50000
+    AND p.s0 >= 50000
 )
 SELECT 'RESTO_TOP4' AS poblacion, driver, codmes, maduro, h_disp,
        count(*) AS n, count(t12) AS n_target, round(avg(fhat), 6) AS fhat,
