@@ -1,4 +1,4 @@
--- 6a_scr_calibrado.sql | scr_admbankbpe_rsk COMPLETA mas tres columnas de calibracion. Una fila de entrada, una de salida: no deduplica. flg_clean va en 1 porque no hay tabla de flags con los 13 criterios ex-ante, y con bloque unico no afecta la PD
+-- 6a_scr_calibrado.sql | scr_admbankbpe_rsk COMPLETA mas cuatro columnas de calibracion (prob_modelo_cal, prob_modelo_esc_opt = escenario optimista pd_pit x factor por personeria PJJ 0.6814 / PNN 0.9697 con tip_doc=2 como PJJ, puntuacion_modelo, flg_clean). Una fila de entrada, una de salida: no deduplica. flg_clean va en 1 porque no hay tabla de flags con los 13 criterios ex-ante, y con bloque unico no afecta la PD
 CREATE TABLE disc_model_owner.scr_admbankbpe_calibrado_202607
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY', partitioned_by = ARRAY['p_codmes']) AS
 WITH ft (trim_ft, fhat) AS (
@@ -104,6 +104,11 @@ SELECT s.codmes,
         normal_cdf(0, 1, (inverse_normal_cdf(0, 1, s.pd_cal)
                           - sqrt(s.rho_i) * 0.34999999999999998 * s.fhat) / sqrt(1.0 - s.rho_i))
         * CASE WHEN s.tip_doc = '2' THEN 1.13685059874822714 ELSE 1.16299104583772395 END ))                                                                AS prob_modelo_cal,
+       greatest(1e-6, least(1 - 1e-6,
+        normal_cdf(0, 1, (inverse_normal_cdf(0, 1, s.pd_cal)
+                          - sqrt(s.rho_i) * 0.34999999999999998 * s.fhat) / sqrt(1.0 - s.rho_i))
+        * CASE WHEN s.tip_doc = '2' THEN 1.13685059874822714 ELSE 1.16299104583772395 END
+        * CASE WHEN s.tip_doc = '2' THEN 0.68140 ELSE 0.96970 END ))                                                                                        AS prob_modelo_esc_opt,
        CAST(round((1.0 - greatest(1e-6, least(1 - 1e-6,
         normal_cdf(0, 1, (inverse_normal_cdf(0, 1, s.pd_cal)
                           - sqrt(s.rho_i) * 0.34999999999999998 * s.fhat) / sqrt(1.0 - s.rho_i))
