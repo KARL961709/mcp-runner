@@ -1,4 +1,4 @@
--- 129_valida_madurez_202607.sql | re-madura las cohortes IBK 2025 con RCC cerrado a 202607 y valida vs lo proyectado. Replica el target de f2_mad: en la ventana [alta+1, alta+12] y en la entidad del alta, malo si condicion(dm)>90 o judicial/castigo/refinanciado/reestructurado. rd_hasta_202606 es sanity (debe calzar con el ds); rd_hasta_202607 usa el mes nuevo. Con 202607, la cohorte 202507 madura a h12. READ-ONLY
+-- 129_valida_madurez_202607.sql | re-madura las cohortes IBK 2025 con RCC cerrado a 202607 y valida vs lo proyectado. Replica el target de f2_mad: en la ventana [alta+1, alta+12] y en la entidad del alta, malo si condicion(dm)>90 o judicial/castigo/refinanciado/reestructurado. rd_hasta_202606 es sanity (debe calzar con el ds) y rd_hasta_202607 usa el mes nuevo. Con 202607, la cohorte 202507 madura a h12. READ-ONLY
 WITH altas AS (
   SELECT cast(c.codmes AS int) AS cm, c.tip_doc, c.key_value, c.cod_instit_financiera AS ent,
          CASE WHEN c.flg_ppjj = 1 THEN 'PJJ' ELSE 'PNN' END AS per
