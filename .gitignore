@@ -200,3 +200,32 @@ elnino_ibk/03_deck/_check/
 # Repo PRIVADO (la API sin auth devuelve 404). Un push no se deshace.
 !deck_tcnb/
 !deck_tcnb/*.html
+
+# --- deck_fen/mapa_fen (2026-08-25): mapa FEN 2026 interactivo. Peligro CENEPRED
+# (publico), cuencas/subcuencas ANA, curvas de nivel, distritos, densidad de
+# direcciones IBK y PUNTOS LOTE por distrito, ficha por distrito, filtro Score FEN.
+# A DIFERENCIA del resto de deck_fen, este SI lleva geolocalizacion de cliente:
+#   ibk_pts/*.bin = coordenadas (col,row de grilla) por cliente, por distrito. Sin
+#   nombres ni documentos, solo el punto. 1837 archivos. Las ibk_*.png son densidad
+#   agregada; fen_*.png es peligro publico CENEPRED. Cero importes, cero identidad en claro.
+# Data interna IBK. Decision del propietario 2026-08-25 tras plantearle el reparo de
+# PII (geolocalizacion). Repo PRIVADO (API sin auth = 404). Un push no se deshace.
+# Necesita servidor local (abrir_mapa.ps1): carga los .bin con fetch(), no doble clic.
+!deck_fen/mapa_fen/
+!deck_fen/mapa_fen/mapa_fen2026_cuencas.html
+!deck_fen/mapa_fen/*.png
+!deck_fen/mapa_fen/abrir_mapa.ps1
+!deck_fen/mapa_fen/LEEME.md
+!deck_fen/mapa_fen/ibk_pts/
+!deck_fen/mapa_fen/ibk_pts/*.bin
+
+# --- entregables/fen_geocoding (2026-08-25): dataset unificado por cliente para los
+# cruces en el banco. Geocoding (X,Y), precision, proximidad a peligro (flags),
+# grado FEN R0-R5 + score, eventos por anio, impacto 2017, evidencia de prensa.
+# OJO: `clave` lleva DIRECCION en claro y lon/lat exactas = DATO PERSONAL. Es data
+# interna IBK que el propio banco ya posee (los tramos vinieron de alli). 81.7 MB
+# (zstd, <100MB de GitHub). Decision del propietario 2026-08-25 tras plantearle el
+# reparo de PII. Repo PRIVADO. Un push no se deshace.
+!entregables/fen_geocoding/
+!entregables/fen_geocoding/dataset_fen_cliente.parquet
+!entregables/fen_geocoding/DICCIONARIO_dataset_fen_cliente.md
