@@ -53,6 +53,12 @@ svg .sellbl{fill:#ecfff5;font:700 var(--sellf,16px) "IBM Plex Mono",monospace;pa
 .rfilter button[aria-pressed=true]{color:#fff!important;border-color:transparent}
 .card{position:fixed;left:16px;bottom:16px;z-index:9;width:290px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px 15px;display:none}
 .card.on{display:block}
+.card{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.card::-webkit-scrollbar{width:8px}
+.card::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.card::-webkit-scrollbar-track{background:transparent}
+@media (max-height:880px){.card{padding:11px 12px}.card h3{font-size:15px;margin-bottom:1px}.card .sub{margin-bottom:7px}.sctitle{margin-top:2px;margin-bottom:4px}.sc{margin-bottom:8px}.imp{margin-bottom:5px}.impnote{margin-bottom:8px}.kv{margin-bottom:8px}.cleg2{margin-bottom:8px}.yrs{margin-top:3px}.rbadge{margin-bottom:8px}}
+@media (max-height:720px){.card{padding:9px 11px;border-radius:11px}.card h3{font-size:13.5px}.scrow b,.kv{font-size:10.5px}.rbadge{padding:4px 9px;font-size:12px}}
 .card .x{position:absolute;top:9px;right:10px;border:0;background:transparent;color:var(--muted);cursor:pointer;font:700 16px "Public Sans"}
 .card .mn{position:absolute;top:7px;right:32px;border:0;background:transparent;color:var(--muted);cursor:pointer;font:700 19px "Public Sans";line-height:1;padding:0 3px}
 .card .x:hover,.card .mn:hover{color:var(--accent)}
@@ -213,7 +219,10 @@ document.getElementById('zo').onclick=()=>zoomAt(1/1.3,innerWidth/2,innerHeight/
 document.getElementById('rs').onclick=()=>setZ(100);
 addEventListener('wheel',e=>{if(e.ctrlKey){e.preventDefault();zoomAt(e.deltaY<0?1.1:0.909,e.clientX,e.clientY);}},{passive:false});
 addEventListener('resize',relabel);
-function padTop(){const h=document.querySelector('header').offsetHeight;document.querySelector('.stage').style.paddingTop=(h+16)+'px';}
+function padTop(){const h=document.querySelector('header').offsetHeight;document.querySelector('.stage').style.paddingTop=(h+16)+'px';
+ const mh=(window.innerHeight-h-28)+'px';
+ const c=document.getElementById('card');if(c)c.style.maxHeight=mh;
+ const p=document.getElementById('precp');if(p){p.style.maxHeight=mh;p.style.top=(h+12)+'px';}}
 addEventListener('resize',padTop);addEventListener('load',()=>{padTop();relabel();});
 /* ---- selector de distrito ---- */
 const RINFO={R0:['#9aa7b1','muy bajo'],R1:['#f4d06a','bajo'],R2:['#f0a24a','medio'],R3:['#ec7038','alto'],R4:['#cf3b28','muy alto'],R5:['#8f1b12','extremo']};
