@@ -231,3 +231,11 @@ elnino_ibk/03_deck/_check/
 # (choropleth por score, geometria publica peru_dist). Cero key_value / id_value / tip_doc /
 # cif_key / id_hash, cero hashes de 64 chars; el unico numero de 8 digitos vive dentro del
 # base64 del mapa (bytes de imagen), no es documento. Repo PRIVADO. Un push no se deshace.
+
+# --- deck_fen/mapa_indirecto_fen.html (2026-08-27): mapa interactivo del SCORE INDIRECTO FEN
+# por distrito. SVG con <title> nativo por distrito (tooltip al pasar el mouse): score s, nivel
+# S0-S4, composicion (agua/demanda/desacoplado/construccion), canal y PEA ocupada. Autocontenido,
+# sin scripts externos ni fetch. Cubierto por el !deck_fen/*.html de arriba.
+# Verificado ANTES del push: TODO es DISTRITAL agregado (Censo 2017 + score s). Cero key_value /
+# id_value / tip_doc / cif_key / id_hash, cero hashes de 64 chars, cero numeros de 8+ digitos,
+# cero dato de cliente. 1824 distritos con dato. Repo PRIVADO. Un push no se deshace.
