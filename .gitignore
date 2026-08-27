@@ -221,3 +221,13 @@ elnino_ibk/03_deck/_check/
 !entregables/fen_geocoding/
 !entregables/fen_geocoding/dataset_fen_cliente.parquet
 !entregables/fen_geocoding/DICCIONARIO_dataset_fen_cliente.md
+
+# --- deck_fen/vp_score_indirecto.html (2026-08-27): deck ejecutivo del SCORE INDIRECTO
+# FEN (dependencia del ingreso al agua por distrito), 5 laminas para VP. HTML autocontenido,
+# se abre con doble clic; sin scripts externos ni fetch. Cubierto por el !deck_fen/*.html de
+# arriba -> no necesita linea propia de whitelist.
+# Verificado ANTES del push: los 55 KB de contenido son metodologia + ejemplos de score por
+# DISTRITO (agregado) + cifras de PD ILUSTRATIVAS; el resto (1.1 MB) es el PNG del mapa distrital
+# (choropleth por score, geometria publica peru_dist). Cero key_value / id_value / tip_doc /
+# cif_key / id_hash, cero hashes de 64 chars; el unico numero de 8 digitos vive dentro del
+# base64 del mapa (bytes de imagen), no es documento. Repo PRIVADO. Un push no se deshace.
