@@ -1,14 +1,14 @@
 -- ============================================================================
--- 90. PARQUET EXPORT del _cal de PP VC - detalle individual SIN key_value.
---   Insumo del fit local (metodologia TC No Bank). WHERE unico: flg_calib = 1
---   (clean + dirty, deja fuera el 99 scope-out). La ventana NO es un WHERE:
---   flg_clean / flg_calib / pd_raw / target viajan como columnas y el pipeline
---   recorta en local:
---     fit      -> flg_ibk = 1 AND flg_clean = 1 AND target_12m IS NOT NULL
---     dirty    -> flg_ibk = 1 AND flg_clean = 0 AND target_12m IS NOT NULL
---     rd_hist  -> target_12m IS NOT NULL   (serie amplia 201901+, macro/panel)
---   Conserva las 5 entidades (cod_instit_financiera) para el panel SS.FF.
---   Sin key_value: no viaja detalle de cliente.
+-- 90. PARQUET EXPORT del _cal de PP VC - universo de FIT (donde hay pd_raw).
+--   La calibracion (isotonica/beta/etc) solo aplica donde EXISTE pd_raw, y el
+--   fit es IBK. Por eso el parquet es lo NECESARIO: IBK scoreado, clean+dirty,
+--   sin scope-out (99), sin key_value.
+--     WHERE: flg_ibk = 1 AND flg_pd_raw = 1 AND flg_clean IN (0,1)
+--   ~157k filas (PP_FACIL clean 137k + PP_CD clean 16k + dirty ~3.5k).
+--   La ventana NO es un WHERE extra: flg_clean/target viajan como columnas y el
+--   pipeline recorta (fit clean=1 maduro, dirty=0 maduro).
+--   Las series macro/panel amplias (SS.FF junto/separado 2019+) salen de la
+--   inspeccion agregada (i03/i08/i09), NO de este detalle.
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_pp_cdpp_px_cal
 WITH (format = 'PARQUET', write_compression = 'SNAPPY',
@@ -37,4 +37,6 @@ SELECT
   target_11m,
   target_12m
 FROM disc_model_owner.ds_adm_pp_cdpp_cal
-WHERE flg_calib = 1
+WHERE flg_ibk = 1
+  AND flg_pd_raw = 1
+  AND flg_clean IN (0, 1)
