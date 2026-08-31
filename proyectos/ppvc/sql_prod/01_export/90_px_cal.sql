@@ -1,14 +1,15 @@
 -- ============================================================================
--- 90. PARQUET EXPORT del _cal de PP VC - universo de FIT (donde hay pd_raw).
---   La calibracion (isotonica/beta/etc) solo aplica donde EXISTE pd_raw, y el
---   fit es IBK. Por eso el parquet es lo NECESARIO: IBK scoreado, clean+dirty,
---   sin scope-out (99), sin key_value.
---     WHERE: flg_ibk = 1 AND flg_pd_raw = 1 AND flg_clean IN (0,1)
---   ~157k filas (PP_FACIL clean 137k + PP_CD clean 16k + dirty ~3.5k).
---   La ventana NO es un WHERE extra: flg_clean/target viajan como columnas y el
---   pipeline recorta (fit clean=1 maduro, dirty=0 maduro).
---   Las series macro/panel amplias (SS.FF junto/separado 2019+) salen de la
---   inspeccion agregada (i03/i08/i09), NO de este detalle.
+-- 90. PARQUET MASTER de PP VC - IBK, ventana AMPLIA (como el master de TCNB).
+--   Replica la extraccion de TCNB: IBK, TODOS los meses (201901+), clean+dirty,
+--   sin scope-out (99), sin key_value. La ventana NO es un WHERE: flg_clean,
+--   pd_raw y los 12 targets viajan como columnas y el pipeline parte:
+--     rd_hist / LRA / rho / macro -> 201901+  (usan target, pd puede ser NULL)
+--     calibracion (modelo)        -> 202311+  (donde pd_raw NO es NULL)
+--     proyecciones                -> target_01m..11m (cohortes inmaduras)
+--   OJO: la pd NO existe antes de 202311; por eso NO se filtra por flg_pd_raw
+--   aqui (se filtraria adentro para el fit). ~514k filas.
+--   Las series SS.FF junto/separado (panel del ciclo) salen de la inspeccion
+--   agregada (i08/i09), NO de este detalle (IBK).
 -- ============================================================================
 CREATE TABLE disc_model_owner.ds_adm_pp_cdpp_px_cal
 WITH (format = 'PARQUET', write_compression = 'SNAPPY',
@@ -38,5 +39,4 @@ SELECT
   target_12m
 FROM disc_model_owner.ds_adm_pp_cdpp_cal
 WHERE flg_ibk = 1
-  AND flg_pd_raw = 1
   AND flg_clean IN (0, 1)
