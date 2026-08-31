@@ -6,7 +6,7 @@
 --     rd_hist / LRA / rho / macro -> 201901+  (usan target, pd puede ser NULL)
 --     calibracion (modelo)        -> 202311+  (donde pd_raw NO es NULL)
 --     proyecciones                -> target_01m..11m (cohortes inmaduras)
---   OJO: la pd NO existe antes de 202311; por eso NO se filtra por flg_pd_raw
+--   OJO: la pd NO existe antes de 202311, por eso NO se filtra por flg_pd_raw
 --   aqui (se filtraria adentro para el fit). ~514k filas.
 --   Las series SS.FF junto/separado (panel del ciclo) salen de la inspeccion
 --   agregada (i08/i09), NO de este detalle (IBK).
