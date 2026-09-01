@@ -190,7 +190,8 @@ base AS (
          CAST(pd_raw AS double) AS pd_raw,
          greatest(least(CAST(pd_raw AS double), 1 - 1e-6), 1e-6) AS p
   FROM disc_model_owner.ds_adm_pp_cdpp_cal
-  WHERE flg_calib = 1 AND pd_raw IS NOT NULL
+  WHERE flg_ibk = 1 AND flg_calib = 1 AND pd_raw IS NOT NULL
+    AND sub_producto IN ('PP_FACIL', 'PP_CD')
 ),
 cal AS (
   SELECT b.*,

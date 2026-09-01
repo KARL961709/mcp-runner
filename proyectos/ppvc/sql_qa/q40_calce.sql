@@ -11,7 +11,8 @@ WITH s AS (
 r AS (
   SELECT codmes, sub_producto, COUNT(*) AS n_r, SUM(target_12m) AS malos, AVG(target_12m) AS rd_real
   FROM disc_model_owner.ds_adm_pp_cdpp_cal
-  WHERE flg_calib = 1 AND pd_raw IS NOT NULL AND target_12m IS NOT NULL
+  WHERE flg_ibk = 1 AND flg_calib = 1 AND pd_raw IS NOT NULL AND target_12m IS NOT NULL
+    AND sub_producto IN ('PP_FACIL', 'PP_CD')
   GROUP BY codmes, sub_producto
 )
 SELECT s.sub_producto, s.codmes, r.n_r AS n, CAST(r.malos AS integer) AS malos,
