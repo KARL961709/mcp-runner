@@ -4,7 +4,7 @@
 -- ============================================================================
 WITH s AS (
   SELECT codmes, sub_producto, COUNT(*) AS n_s,
-         AVG(CASE WHEN sub_producto = 'PP_FACIL' THEN prob_modelo_ppfacil ELSE prob_modelo_ppcd END) AS pd_media
+         AVG(CASE WHEN sub_producto = 'PP_FACIL' THEN prob_modelo_cal_ppfacil ELSE prob_modelo_cal_ppcd END) AS pd_media
   FROM disc_model_owner.scr_ppvc_cal
   WHERE sub_producto IN ('PP_FACIL', 'PP_CD')
   GROUP BY codmes, sub_producto
