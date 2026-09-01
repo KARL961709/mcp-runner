@@ -1,12 +1,11 @@
 -- ============================================================================
--- v10. Resumen post-build de scr_ppvc_cal: n, PD media, rango puntuacion, nulls.
+-- v10. Resumen post-build: n, medias de prob por producto, rango puntuacion, nulls.
 -- ============================================================================
-SELECT sub_producto,
+SELECT flg_clean,
        COUNT(*) AS n,
-       ROUND(AVG(COALESCE(prob_modelo_ppfacil, prob_modelo_ppcd)), 4) AS pd_media,
-       MIN(COALESCE(puntuacion_modelo_ppfacil, puntuacion_modelo_ppcd)) AS punt_min,
-       MAX(COALESCE(puntuacion_modelo_ppfacil, puntuacion_modelo_ppcd)) AS punt_max,
-       SUM(CASE WHEN COALESCE(prob_modelo_ppfacil, prob_modelo_ppcd) IS NULL THEN 1 ELSE 0 END) AS pd_nulls
+       ROUND(AVG(prob_modelo_ppfacil), 4) AS pd_facil,
+       ROUND(AVG(prob_modelo_ppcd), 4) AS pd_cd,
+       SUM(CASE WHEN prob_modelo_ppfacil IS NULL OR prob_modelo_ppcd IS NULL THEN 1 ELSE 0 END) AS nulls
 FROM disc_model_owner.scr_ppvc_cal
-GROUP BY sub_producto
-ORDER BY sub_producto
+GROUP BY flg_clean
+ORDER BY flg_clean

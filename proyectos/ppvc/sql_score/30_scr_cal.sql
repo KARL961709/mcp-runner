@@ -1,8 +1,8 @@
 -- ============================================================================
 -- 90. scr_ppvc_cal : scoreo PD PIT (TC No Bank) desde ds_adm_pp_cdpp_cal.
---     Coeficientes embebidos. rho=0.0332 lambda=1.0 beta=0.052767 mu=2.4200.
---     Requiere engine Trino/Presto (normal_cdf, inverse_normal_cdf).
---     RE-crear: vaciar antes el prefijo <S3_DATOS>/scr_cal/ (DROP no limpia S3).
+--     Cada fila bajo AMBOS modelos (FACIL/CD). SIN filtro entidad/producto.
+--     rho=0.0332 lambda=1.0 beta=0.052767 mu=2.4200 dirty=0.032257.
+--     RE-crear: vaciar antes <S3_DATOS>/scr_cal/ (DROP no limpia S3).
 -- ============================================================================
 CREATE TABLE disc_model_owner.scr_ppvc_cal
 WITH (format = 'PARQUET', write_compression = 'SNAPPY',
@@ -17,7 +17,9 @@ coef_celda(ak, delta) AS (VALUES
   ('t|PP_FACIL|DEP|NODO 3', -0.002854),
   ('t|PP_FACIL|NO_DEP|NODO 1', -0.007097),
   ('t|PP_FACIL|NO_DEP|NODO 2', 0.031445),
-  ('t|PP_FACIL|NO_DEP|NODO 3', 0.119893)
+  ('t|PP_FACIL|NO_DEP|NODO 3', 0.119893),
+  ('p|PP_FACIL', 0.021667),
+  ('p|PP_CD', 0.035640)
 ),
 coef_iso(x_lo, x_hi, y_lo, y_hi) AS (VALUES
   (CAST(0.00000000 AS double), CAST(0.00490127 AS double), CAST(0.00000000 AS double), CAST(0.00000000 AS double)),
@@ -186,44 +188,47 @@ coef_ft(codmes, ft) AS (VALUES
   ('202912', 0.00422146)
 ),
 base AS (
-  SELECT codmes, key_value, sub_producto, tipo_ingreso, nodo,
+  SELECT codmes, key_value, sub_producto, tipo_ingreso, nodo, flg_clean,
          CAST(pd_raw AS double) AS pd_raw,
          greatest(least(CAST(pd_raw AS double), 1 - 1e-6), 1e-6) AS p
   FROM disc_model_owner.ds_adm_pp_cdpp_cal
-  WHERE flg_ibk = 1 AND flg_calib = 1 AND pd_raw IS NOT NULL
-    AND sub_producto IN ('PP_FACIL', 'PP_CD')
+  WHERE flg_calib = 1 AND pd_raw IS NOT NULL
 ),
 cal AS (
   SELECT b.*,
-    CASE WHEN b.sub_producto = 'PP_FACIL'
-           THEN 1.0 / (1.0 + exp(-(-0.115173 + 1.040498 * ln(b.p))))
-         WHEN b.sub_producto = 'PP_CD'
-           THEN iso.y_lo + (iso.y_hi - iso.y_lo) * (b.p - iso.x_lo) / (iso.x_hi - iso.x_lo)
-    END AS pcal
+    1.0 / (1.0 + exp(-(-0.115173 + 1.040498 * ln(b.p)))) AS pcal_facil,
+    iso.y_lo + (iso.y_hi - iso.y_lo) * (b.p - iso.x_lo) / (iso.x_hi - iso.x_lo) AS pcal_cd
   FROM base b
-  LEFT JOIN coef_iso iso ON b.sub_producto = 'PP_CD' AND b.p >= iso.x_lo AND b.p < iso.x_hi
+  LEFT JOIN coef_iso iso ON b.p >= iso.x_lo AND b.p < iso.x_hi
 ),
-sc AS (
+anch AS (
   SELECT c.*,
-    COALESCE(dt.delta, dn.delta, dp.delta, 0.0) AS delta,
-    COALESCE(ft.ft, 0.0) AS ft
+    CASE WHEN c.flg_clean = 0 THEN 0.032257
+         ELSE COALESCE(ff_t.delta, ff_n.delta, ff_p.delta, 0.0) END AS delta_facil,
+    CASE WHEN c.flg_clean = 0 THEN 0.032257
+         ELSE COALESCE(cc_t.delta, cc_n.delta, cc_p.delta, 0.0) END AS delta_cd,
+    ft.ft AS ft
   FROM cal c
-  LEFT JOIN coef_celda dt ON dt.ak = 't|' || c.sub_producto || '|' || c.tipo_ingreso || '|' || c.nodo
-  LEFT JOIN coef_celda dn ON dn.ak = 'n|' || c.sub_producto || '|' || c.nodo
-  LEFT JOIN coef_celda dp ON dp.ak = 'p|' || c.sub_producto
+  LEFT JOIN coef_celda ff_t ON ff_t.ak = 't|PP_FACIL|' || c.tipo_ingreso || '|' || c.nodo
+  LEFT JOIN coef_celda ff_n ON ff_n.ak = 'n|PP_FACIL|' || c.nodo
+  LEFT JOIN coef_celda ff_p ON ff_p.ak = 'p|PP_FACIL'
+  LEFT JOIN coef_celda cc_t ON cc_t.ak = 't|PP_CD|' || c.tipo_ingreso || '|' || c.nodo
+  LEFT JOIN coef_celda cc_n ON cc_n.ak = 'n|PP_CD|' || c.nodo
+  LEFT JOIN coef_celda cc_p ON cc_p.ak = 'p|PP_CD'
   LEFT JOIN coef_ft ft ON ft.codmes = c.codmes
 ),
 scored AS (
-  SELECT c.codmes, c.key_value, c.sub_producto, c.tipo_ingreso, c.nodo, c.pd_raw,
-    normal_cdf(0, 1,
-      (inverse_normal_cdf(0, 1, greatest(least(c.pcal, 1 - 1e-6), 1e-6))
-       + c.delta + 1.0 * c.ft) / 0.983260) AS pd_pit
-  FROM sc c
+  SELECT codmes, key_value, sub_producto, tipo_ingreso, nodo, flg_clean, pd_raw,
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(pcal_facil, 1 - 1e-6), 1e-6))
+                      + delta_facil + 1.0 * COALESCE(ft, 0.0)) / 0.983260) AS prob_facil,
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(pcal_cd, 1 - 1e-6), 1e-6))
+                      + delta_cd + 1.0 * COALESCE(ft, 0.0)) / 0.983260) AS prob_cd
+  FROM anch
 )
 SELECT
-  codmes, key_value, sub_producto, tipo_ingreso, nodo, pd_raw, pd_pit,
-  CASE WHEN sub_producto = 'PP_FACIL' THEN pd_pit END AS prob_modelo_ppfacil,
-  CASE WHEN sub_producto = 'PP_CD'    THEN pd_pit END AS prob_modelo_ppcd,
-  CASE WHEN sub_producto = 'PP_FACIL' THEN CAST(round(1000.0 * (1 - pd_pit)) AS integer) END AS puntuacion_modelo_ppfacil,
-  CASE WHEN sub_producto = 'PP_CD'    THEN CAST(round(1000.0 * (1 - pd_pit)) AS integer) END AS puntuacion_modelo_ppcd
+  codmes, key_value, sub_producto, tipo_ingreso, nodo, flg_clean, pd_raw,
+  prob_facil AS prob_modelo_ppfacil,
+  prob_cd    AS prob_modelo_ppcd,
+  CAST(round(1000.0 * (1 - prob_facil)) AS integer) AS puntuacion_modelo_ppfacil,
+  CAST(round(1000.0 * (1 - prob_cd))    AS integer) AS puntuacion_modelo_ppcd
 FROM scored
