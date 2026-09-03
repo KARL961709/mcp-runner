@@ -1,7 +1,7 @@
 -- ============================================================================
 -- a01. CREATE altas_ec_cal = espejo ds_ec_cdd_cal (sub_producto='EC') + PD calibrada (SINGLE MODEL).
 --      calib=platt A=0.835677 B=-0.832216 lambda=1.86 rho=0.0332. SIN MoC (PD calibrada pura PIT).
---      LRA = regimen actual (202311-202507); macro ft/beta REUSADA de TC (EC IBK-only). pd_cal solo si pd_raw no null.
+--      LRA = regimen actual (202311-202507). macro ft/beta REUSADA de TC (EC IBK-only). pd_cal solo si pd_raw no null.
 -- ============================================================================
 CREATE TABLE disc_model_owner.altas_ec_cal
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes'],
