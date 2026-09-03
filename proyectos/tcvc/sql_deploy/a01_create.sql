@@ -1,7 +1,7 @@
 -- ============================================================================
 -- a01. CREATE altas_adm_tcbank_cal = espejo ds_adm_tcbank_cal + PD calibrada (SINGLE MODEL).
---      calib=isotonica lambda=2.0 cap -0.0636/0.1286 dirty 0.2182. SIN MoC (PD calibrada pura PIT).
---      OVERLAY REGIMEN: dirty NODO 3 codmes>=202505 suma +0.2658 (changepoint z=8.4; conservador, cubre forward - subestimar = prohibido en riesgo).
+--      calib=isotonica cap -0.0636/0.1286. lambda CLEAN=2.000000 DIRTY=1.000000 (dirty idiosincratico, menos macro). dirty base 0.1841. SIN MoC.
+--      OVERLAY REGIMEN: dirty NODO 3 codmes>=202505 suma +0.2385 (changepoint z=8.4; conservador, cubre forward - subestimar = prohibido en riesgo).
 --      LRA = regimen actual (202311-202507, no TTC); el ciclo va por la macro. pd_cal solo si pd_raw no null. 1 a 1 con ds_adm.
 -- ============================================================================
 CREATE TABLE disc_model_owner.altas_adm_tcbank_cal
@@ -336,7 +336,7 @@ cal AS (
 ),
 anch AS (
   SELECT c.*,
-    CASE WHEN c.flg_clean = 0 THEN 0.2181969100 + (CASE WHEN c.nodo = 'NODO 3' AND c.codmes >= '202505' THEN 0.2657508544 ELSE 0.0 END)
+    CASE WHEN c.flg_clean = 0 THEN 0.1840689848 + (CASE WHEN c.nodo = 'NODO 3' AND c.codmes >= '202505' THEN 0.2385035485 ELSE 0.0 END)
          ELSE COALESCE(cc.delta, 0.0945542000) END AS delta,
     COALESCE(ft.ft, 0.0) AS ftv
   FROM cal c
@@ -346,7 +346,7 @@ anch AS (
 scored AS (
   SELECT a.*,
     CASE WHEN a.pd_raw IS NULL THEN NULL ELSE
-      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal, 1 - 1e-06), 1e-06)) + a.delta + 2.000000 * a.ftv) / 0.9832600000) END AS prob_c
+      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal, 1 - 1e-06), 1e-06)) + a.delta + (CASE WHEN a.flg_clean = 0 THEN 1.000000 ELSE 2.000000 END) * a.ftv) / 0.9832600000) END AS prob_c
   FROM anch a
 )
 SELECT
