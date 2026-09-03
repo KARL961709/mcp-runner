@@ -15,12 +15,12 @@ Producto **EC** (sub_producto CDD + EC). Espejo de tcvc/ppvc. Score pd_raw = scr
 - `i06` madurez por horizonte.
 - `i07` **dominio COMPLETO de ca_tipo_prod sobre `enr_ec_cdd` (pre-filtro): detecta CDA u otros valores que 02/03 excluyen.** Si `enr_ec_cdd` no existe, medir en los desembolsos _tmp.
 
-## 2. Export del fit + panel (parquet, CON -Bajar)
+## 2. Export del fit (parquet, CON -Bajar)
 
     .\Go.ps1 -SqlDir proyectos/ecvc/sql_prod -S3Datos "s3://ibk-discovery-riesgos-us-east-1-339712995012-data/discovery/model_owner/B46029/ecvc" -Bajar -LocalDatos "<ruta local, misma que TC pero carpeta EC VC>"
 
-Corre `e00 drop fit -> e01 fit -> e02 drop panel -> e03 panel` y sincroniza `.../ecvc/` (ecvc_fit/ + ecvc_panel/) a -LocalDatos. Primer deploy: los subfolders no existen, no hay que vaciar. Re-corrida: vaciar `.../ecvc/ecvc_fit/` y `.../ecvc/ecvc_panel/` antes.
+Corre `e00 drop fit -> e01 fit` y sincroniza `.../ecvc/ecvc_fit/` a -LocalDatos. Primer deploy: el subfolder no existe, no hay que vaciar. Re-corrida: vaciar `.../ecvc/ecvc_fit/` antes. NO hay panel: EC es IBK-only y row-level, del propio fit salen RD-hist + rho MoM + lambda.
 
-## Gate CDA (antes de exportar)
+## Alcance: SOLO sub_producto='EC' (decision usuario)
 
-Si `i07` muestra **CDA** en volumen relevante y en scope, hay que **re-correr el Recibido** con CDA agregado a los filtros (`02_Logica_nodos.sql:37`, `03_Reproceso_ec_cdd_nodos.sql:60`) y definir sus quintiles de nodo (`02:303-307`) ANTES de exportar. El export lee lo que tenga `ds_ec_cdd_cal`, asi que si se reconstruye con CDA, el mismo `e01/e03` lo baja.
+Single-model sobre `sub_producto='EC'` (796k, 88%). **CDD (85k) y CDA (21k) quedan FUERA por decision**, no por bug: i07 confirmo que CDA existe y lo botaba el filtro `in ('CDD','EC')`, pero se calibra solo EC. Por eso el export filtra `sub_producto='EC'` y NO se re-corre el Recibido. Macro: ft/beta sistemica reutilizada de TC (IBK-only); rho MoM y lambda sobre EC IBK.
