@@ -1,6 +1,6 @@
 -- ============================================================================
 -- a01. CREATE altas_ec_cal = espejo ds_ec_cdd_cal (sub_producto='EC') + PD calibrada (SINGLE MODEL).
---      calib=platt A=0.835677 B=-0.832216 lambda=1.86 rho=0.0332. SIN MoC (PD calibrada pura PIT).
+--      calib=platt A=0.835677 B=-0.832216 lambda=2.75 rho=0.0332. SIN MoC (PD calibrada pura PIT).
 --      LRA = regimen actual (202311-202507). macro ft/beta REUSADA de TC (EC IBK-only). pd_cal solo si pd_raw no null.
 -- ============================================================================
 CREATE TABLE disc_model_owner.altas_ec_cal
@@ -8,12 +8,12 @@ WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['
       external_location = '<S3_DATOS>/altas_ec_cal/') AS
 WITH
 coef_celda(ak, delta) AS (VALUES
-    (CAST('DEP|NODO 1' AS varchar), CAST(-0.0655700000 AS double)),
-    ('DEP|NODO 2', 0.0264100000),
-    ('DEP|NODO 3', 0.1336800000),
-    ('NO_DEP|NODO 1', 0.0397900000),
-    ('NO_DEP|NODO 2', 0.1365600000),
-    ('NO_DEP|NODO 3', 0.1358900000)
+    (CAST('DEP|NODO 1' AS varchar), CAST(-0.0333100000 AS double)),
+    ('DEP|NODO 2', 0.0587000000),
+    ('DEP|NODO 3', 0.1607600000),
+    ('NO_DEP|NODO 1', 0.0718500000),
+    ('NO_DEP|NODO 2', 0.1686700000),
+    ('NO_DEP|NODO 3', 0.1663100000)
 ),
 coef_ft(codmes, ft) AS (VALUES
     (CAST('201902' AS varchar), CAST(-0.0497768547 AS double)),
@@ -160,7 +160,7 @@ cal AS (
 ),
 anch AS (
   SELECT c.*,
-    COALESCE(cc.delta, 0.0914731000) AS delta,
+    COALESCE(cc.delta, 0.1230670400) AS delta,
     COALESCE(ft.ft, 0.0) AS ftv
   FROM cal c
   LEFT JOIN coef_celda cc ON cc.ak = c.tipo_ingreso || '|' || c.nodo
@@ -169,7 +169,7 @@ anch AS (
 scored AS (
   SELECT a.*,
     CASE WHEN a.pd_raw IS NULL THEN NULL ELSE
-      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal, 1 - 1e-06), 1e-06)) + a.delta + 1.860000 * a.ftv) / 0.9832600000) END AS prob_c
+      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal, 1 - 1e-06), 1e-06)) + a.delta + 2.750000 * a.ftv) / 0.9832600000) END AS prob_c
   FROM anch a
 )
 SELECT
