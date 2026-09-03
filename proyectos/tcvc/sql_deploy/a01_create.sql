@@ -1,6 +1,7 @@
 -- ============================================================================
 -- a01. CREATE altas_adm_tcbank_cal = espejo ds_adm_tcbank_cal + PD calibrada (SINGLE MODEL).
 --      calib=isotonica lambda=2.0 cap -0.0636/0.1286 dirty 0.2182. SIN MoC (PD calibrada pura PIT).
+--      OVERLAY REGIMEN: dirty NODO 3 codmes>=202505 suma +0.2658 (changepoint z=8.4; conservador, cubre forward - subestimar = prohibido en riesgo).
 --      LRA = regimen actual (202311-202507, no TTC); el ciclo va por la macro. pd_cal solo si pd_raw no null. 1 a 1 con ds_adm.
 -- ============================================================================
 CREATE TABLE disc_model_owner.altas_adm_tcbank_cal
@@ -335,7 +336,7 @@ cal AS (
 ),
 anch AS (
   SELECT c.*,
-    CASE WHEN c.flg_clean = 0 THEN 0.2181969100
+    CASE WHEN c.flg_clean = 0 THEN 0.2181969100 + (CASE WHEN c.nodo = 'NODO 3' AND c.codmes >= '202505' THEN 0.2657508544 ELSE 0.0 END)
          ELSE COALESCE(cc.delta, 0.0945542000) END AS delta,
     COALESCE(ft.ft, 0.0) AS ftv
   FROM cal c
