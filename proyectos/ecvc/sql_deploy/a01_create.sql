@@ -2,6 +2,7 @@
 -- a01. CREATE altas_ec_cal = espejo ds_ec_cdd_cal (sub_producto='EC') + PD calibrada (SINGLE MODEL).
 --      calib=platt A=0.835677 B=-0.832216 lambda=2.75 rho=0.0332. SIN MoC (PD calibrada pura PIT).
 --      LRA = regimen actual (202311-202507). macro ft/beta REUSADA de TC (EC IBK-only). pd_cal solo si pd_raw no null.
+--      OVERLAY forward-only NODO 2 (w=0.5, desde codmes>=202508): corrige sesgo backtest +30pct. maduro y N1/N3 intactos.
 -- ============================================================================
 CREATE TABLE disc_model_owner.altas_ec_cal
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes'],
@@ -148,6 +149,10 @@ coef_ft(codmes, ft) AS (VALUES
     ('202911', -0.0322322207),
     ('202912', -0.0314132786)
 ),
+coef_overlay(ak, ov) AS (VALUES
+    (CAST('DEP|NODO 2' AS varchar), CAST(-0.0804649500 AS double)),
+    ('NO_DEP|NODO 2', -0.0604623900)
+),
 base AS (
   SELECT tip_doc, key_value, cod_instit_financiera, flg_ibk, sub_producto, tipo_ingreso, nodo, pd_raw, flg_pd_raw, flg_calib, flg_clean, target_01m, target_02m, target_03m, target_04m, target_05m, target_06m, target_07m, target_08m, target_09m, target_10m, target_11m, target_12m, codmes,
          greatest(least(CAST(pd_raw AS double), 1 - 1e-06), 1e-06) AS p
@@ -160,10 +165,12 @@ cal AS (
 ),
 anch AS (
   SELECT c.*,
-    COALESCE(cc.delta, 0.1230670400) AS delta,
+    COALESCE(cc.delta, 0.1230670400)
+      + CASE WHEN c.nodo = 'NODO 2' AND c.codmes >= '202508' THEN COALESCE(ov.ov, 0.0) ELSE 0.0 END AS delta,
     COALESCE(ft.ft, 0.0) AS ftv
   FROM cal c
   LEFT JOIN coef_celda cc ON cc.ak = c.tipo_ingreso || '|' || c.nodo
+  LEFT JOIN coef_overlay ov ON ov.ak = c.tipo_ingreso || '|' || c.nodo
   LEFT JOIN coef_ft ft ON ft.codmes = c.codmes
 ),
 scored AS (
