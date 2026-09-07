@@ -248,12 +248,12 @@ coef_overlay_ec(ak,ov) AS (VALUES
 coef_ft_tc(codmes,ft) AS (VALUES
     (CAST('202606' AS varchar),CAST(0.0231667831 AS double)),
     (CAST('202607' AS varchar),CAST(0.0237955103 AS double)),
-    (CAST('202608' AS varchar),CAST(0.0297627459 AS double))
+    (CAST('202608' AS varchar),CAST(0.0303617718 AS double))
 ),
 coef_ft_pp(codmes,ft) AS (VALUES
     (CAST('202606' AS varchar),CAST(0.0858088723 AS double)),
     (CAST('202607' AS varchar),CAST(0.0867060744 AS double)),
-    (CAST('202608' AS varchar),CAST(0.0952213996 AS double))
+    (CAST('202608' AS varchar),CAST(0.0960767989 AS double))
 ),
 base AS (
   SELECT n.codmes, n.cod_tip_doc, n.key_value, n.tipo_ingreso,

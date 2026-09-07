@@ -43,3 +43,10 @@ u02_drop / u02_scored  ..._nodos -> 4 calibraciones (coefs inline) -> scr_vcadmb
 ```
 Árbol de nodos EXTRAÍDO de `EC VC/Reproceso/02_Logica_nodos.sql` (no transcrito). Coefs de los 3
 productos (`<prod> VC/calibracion/outputs/`). Piloto sugerido: correr **202608** primero.
+
+## Macro (ft por codmes)
+Crudo = **IPC Lima BCRP** (ticker `PN38705PM`), var. interanual. `ft = clip(β·(IPC_MA3 − μ), cap_lo, cap_hi)`.
+TC ft → TC **y** EC · PP ft → PP Fácil **y** PP CD. 202606/202607 = IPC observado (calzan exacto con BCRP).
+**202608 refrescado a IPC REAL** (BCRP 2026-09-07: 120.716351/115.586828 → infl 4.4378%, antes senda 4.3892%):
+`ft_tc` 0.0297627→0.0303618, `ft_pp` 0.0952214→0.0960768 (ΔPD ≈ +0.02 pp, inmaterial). Recompute auditable
+en `gen_u02_scored.py`. Las **altas** siguen con senda; refrescar altas 202608 si se quiere reconciliar universo↔altas.
