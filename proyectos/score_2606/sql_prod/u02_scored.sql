@@ -1,9 +1,9 @@
 -- ============================================================================
--- u02. Universo VC scoreado: 4 calibraciones (coefs inline 3 productos) sobre univ_vc_nodos.
+-- u02. Universo VC scoreado: 4 calibraciones (coefs inline 3 productos) sobre scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos.
 --      TC=iso lambda 2.0/1.0(dirty) + overlay N3 . EC=platt lambda 2.75 + overlay N2 (siempre clean) .
 --      PP=beta(facil)/iso(cd) lambda 1.0 + overlay dirty. rho piso Basel. puntuacion=round(1000*(1-pd)).
 -- ============================================================================
-CREATE TABLE disc_model_owner.univ_vc_scored
+CREATE TABLE disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH
 coef_iso_tc(x_lo,x_hi,y_lo,y_hi) AS (VALUES
@@ -260,7 +260,7 @@ base AS (
          n.nodo_tc, n.nodo_ec, n.nodo_ppfacil, n.nodo_ppcd, n.flg_dirty_tc, n.flg_dirty_pp,
          CAST(n.pd_raw AS double) AS pd_raw,
          greatest(least(CAST(n.pd_raw AS double), 1 - 1e-06), 1e-06) AS p
-  FROM disc_model_owner.univ_vc_nodos n
+  FROM disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos n
 ),
 cal AS (
   SELECT b.*,

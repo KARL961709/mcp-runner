@@ -37,8 +37,8 @@ EC no requiere `flg_dirty_ec` (siempre clean).
 
 ## Pipeline (sql_prod, CTAS de a uno con -Only)
 ```
-u00_drop / u01_nodos   scr_vcadmbnk enriquecida -> bins + nodo_tc/_ec/_ppfacil/_ppcd  -> univ_vc_nodos
-u02_drop / u02_scored  univ_vc_nodos -> 4 calibraciones (coefs inline) -> univ_vc_scored
+u00_drop / u01_nodos   scr_vcadmbnk -> bins + nodo_tc/_ec/_ppfacil/_ppcd  -> scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos
+u02_drop / u02_scored  ..._nodos -> 4 calibraciones (coefs inline) -> scr_vcadmbnk_final_hist_rsk_cal_2606_2608
                         (prob_modelo_cal_* + puntuacion_modelo_cal_* + puntuacion 0-1000)
 ```
 Árbol de nodos EXTRAÍDO de `EC VC/Reproceso/02_Logica_nodos.sql` (no transcrito). Coefs de los 3

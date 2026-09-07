@@ -8,4 +8,4 @@ SELECT COUNT(*) AS n,
   MIN(puntuacion_modelo_cal_ec) AS min_punt_ec, MAX(puntuacion_modelo_cal_ec) AS max_punt_ec,
   SUM(CASE WHEN prob_modelo_cal_ec IS NULL THEN 1 ELSE 0 END) AS ec_null,
   SUM(CASE WHEN prob_modelo_cal_tcbnk IS NULL THEN 1 ELSE 0 END) AS tc_null
-FROM disc_model_owner.univ_vc_scored_pilot
+FROM disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_pilot

@@ -3,7 +3,7 @@
 --   + tipo_ingreso (sit_lab/fuente, numcarga=1) + flg_dirty (clasif>CPP a m-2) + 4 nodos.
 --   Ventana 202608-202608 LIMIT 50000. pd_raw recuperado de score_vc_new_v2.
 -- ============================================================================
-CREATE TABLE disc_model_owner.univ_vc_nodos_pilot
+CREATE TABLE disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos_pilot
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH insumo AS (
   SELECT

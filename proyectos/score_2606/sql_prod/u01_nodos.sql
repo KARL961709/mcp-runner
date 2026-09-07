@@ -3,7 +3,7 @@
 --   + tipo_ingreso (sit_lab/fuente, numcarga=1) + flg_dirty (clasif>CPP a m-2) + 4 nodos.
 --   Ventana 202606-202608. pd_raw recuperado de score_vc_new_v2.
 -- ============================================================================
-CREATE TABLE disc_model_owner.univ_vc_nodos
+CREATE TABLE disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH insumo AS (
   SELECT

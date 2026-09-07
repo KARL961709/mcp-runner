@@ -1,2 +1,2 @@
--- u02_drop. DROP univ_vc_scored. Vaciar <S3_DATOS>/univ_vc_scored/ antes de re-crear.
-DROP TABLE IF EXISTS disc_model_owner.univ_vc_scored
+-- drop scr_vcadmbnk_final_hist_rsk_cal_2606_2608 (Athena-managed: DROP libera metadata, cada CTAS escribe a ruta nueva).
+DROP TABLE IF EXISTS disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608
