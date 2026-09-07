@@ -1,0 +1,2 @@
+-- drop scr_vcadmbnk_final_rsk_cal_2606_2608 (Athena-managed: DROP libera metadata, cada CTAS escribe a ruta nueva).
+DROP TABLE IF EXISTS disc_model_owner.scr_vcadmbnk_final_rsk_cal_2606_2608

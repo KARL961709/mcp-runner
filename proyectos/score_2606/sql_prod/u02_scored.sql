@@ -300,7 +300,11 @@ scored AS (
     normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_ppfacil, 1 - 1e-06), 1e-06)) + a.delta_ppfacil + 1.000000 * a.ftv_pp) / 0.9832598843) AS prob_ppfacil,
     normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_ppcd, 1 - 1e-06), 1e-06)) + a.delta_ppcd + 1.000000 * a.ftv_pp) / 0.9832598843) AS prob_ppcd,
     normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_ec, 1 - 1e-06), 1e-06)) + a.delta_ec + 2.750000 * a.ftv_tc) / 0.9832600000) AS prob_ec,
-    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_tc, 1 - 1e-06), 1e-06)) + a.delta_tc + (CASE WHEN a.flg_dirty_tc = 1 THEN 1.000000 ELSE 2.000000 END) * a.ftv_tc) / 0.9832600000) AS prob_tc
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_tc, 1 - 1e-06), 1e-06)) + a.delta_tc + (CASE WHEN a.flg_dirty_tc = 1 THEN 1.000000 ELSE 2.000000 END) * a.ftv_tc) / 0.9832600000) AS prob_tc,
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_ppfacil, 1 - 1e-06), 1e-06)) + a.delta_ppfacil) / 0.9832598843) AS prob_ppfacil_ttc,
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_ppcd, 1 - 1e-06), 1e-06)) + a.delta_ppcd) / 0.9832598843) AS prob_ppcd_ttc,
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_ec, 1 - 1e-06), 1e-06)) + a.delta_ec) / 0.9832600000) AS prob_ec_ttc,
+    normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_tc, 1 - 1e-06), 1e-06)) + a.delta_tc) / 0.9832600000) AS prob_tc_ttc
   FROM anch a
 )
 SELECT
