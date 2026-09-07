@@ -35,14 +35,18 @@ Deben venir con las MISMAS categorías/strings de `02_Logica_nodos.sql` (si no, 
 Llaves que ya trae: `codmes`, `cod_tip_doc`, `key_value`, `probabilidad` (= pd_raw).
 EC no requiere `flg_dirty_ec` (siempre clean).
 
-## Pipeline (sql_prod, CTAS de a uno con -Only)
+## Pipeline (sql_prod, CTAS de a uno con -Only). Cadena materializada: cada paso lee al anterior.
 ```
-u00_drop / u01_nodos   scr_vcadmbnk -> bins + nodo_tc/_ec/_ppfacil/_ppcd  -> scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos
-u02_drop / u02_scored  ..._nodos -> 4 calibraciones (coefs inline) -> scr_vcadmbnk_final_hist_rsk_cal_2606_2608
-                        (prob_modelo_cal_* + puntuacion_modelo_cal_* + puntuacion 0-1000)
+u00_drop_dirty / u01_dirty   RCC + t_consolidado_rsk + RENIEC + tbl_rcc_per_allsf_mdl (a m-2 + ventanas)
+                             -> ..._dirty  (flg_dirty_tc / flg_dirty_pp POR PRODUCTO; ver DIRTY_SPEC.md)
+u00_drop      / u01_nodos     scr_vcadmbnk -> bins + nodo_tc/_ec/_ppfacil/_ppcd  + JOIN ..._dirty
+                             -> ..._nodos
+u02_drop      / u02_scored    ..._nodos -> 4 calibraciones (coefs inline) -> scr_vcadmbnk_final_hist_rsk_cal_2606_2608
+                             (prob_modelo_cal_* + puntuacion_modelo_cal_* + ft_macro_* + puntuacion 0-1000)
 ```
-Árbol de nodos EXTRAÍDO de `EC VC/Reproceso/02_Logica_nodos.sql` (no transcrito). Coefs de los 3
-productos (`<prod> VC/calibracion/outputs/`). Piloto sugerido: correr **202608** primero.
+Dirty POR PRODUCTO (replica el flg_clean desplegado, a m-2; TC/PP difieren; EC all-clean): [DIRTY_SPEC.md](DIRTY_SPEC.md).
+Árbol de nodos EXTRAÍDO de `EC VC/Reproceso/02_Logica_nodos.sql`. Coefs de los 3 productos (`<prod> VC/calibracion/outputs/`).
+**Validar el dirty ANTES del full:** `u01_dirty_pilot` (202607) + `sql_val/d_dirty_vs_altas` -> TC/PP ~99% vs desplegado.
 
 ## Macro (ft por codmes)
 Crudo = **IPC Lima BCRP** (ticker `PN38705PM`), var. interanual. `ft = clip(β·(IPC_MA3 − μ), cap_lo, cap_hi)`.
