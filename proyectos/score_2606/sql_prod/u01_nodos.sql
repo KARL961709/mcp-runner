@@ -35,7 +35,7 @@ WITH bins AS (
     CASE WHEN cant_uso_tc_tot_5porc_u6m IN ('03.=3','04.=4','05.=5','06.=6') THEN 'B1'
     WHEN cant_uso_tc_tot_5porc_u6m IN ('00.NO_TC','01.=0','01.=1','02.=2') THEN 'B2' ELSE 'NA' END AS cant_uso_tc_tot_5porc_u6m_ppcd,
     CASE WHEN flg_top25 >= 0.5 THEN 'B1' WHEN flg_top25 < 0.5 THEN 'B2' ELSE 'NA' END AS bin_flg_top25
-  FROM disc_model_owner.scr_vcadmbnk_final_hist_rsk
+  FROM d_perm_aws.scr_vcadmbnk_final_hist_rsk
   WHERE CAST(codmes AS varchar) BETWEEN '202606' AND '202608'
     AND probabilidad IS NOT NULL
     AND cod_tip_doc = '1'
