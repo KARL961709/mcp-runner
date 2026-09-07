@@ -92,7 +92,7 @@ rcc_tc AS (
         SUM(CASE WHEN i.codmes = date_format(date_add('month',7,date_parse(CAST(b.codmes AS varchar)||'01','%Y%m%d')),'%Y%m') THEN b.deuda_vig ELSE 0 END) AS deuda_tc_tot_m6
     FROM insumo i
     LEFT JOIN e_perm_aws.t_rsk_rcc_stock b -- 201601-202607
-      ON b.linea_tc > 0 AND b.cartera = 1 AND trim(i.codsbs) = trim(b.codsbs)
+      ON b.linea_tc > 0 AND b.cartera = 1 AND trim(i.codsbs) = trim(b.codsbs) AND CAST(b.p_codmes AS varchar) BETWEEN '202511' AND '202606'
     GROUP BY i.codmes, i.key_value, i.tipdoc
 ),
 
@@ -112,7 +112,8 @@ plin AS (
     FROM (   -- [G1] L388-390: normalizacion de numero_trx
         SELECT codmes, tipo_transf, banco, cif_key,
                CAST(CAST(trim(numero_trx) AS decimal(10,2)) AS int) AS numero_trx
-        FROM e_perm_aws.t_agg_retail_user_trx_plin -- 202301-202608
+        FROM e_perm_aws.t_agg_retail_user_trx_plin
+        WHERE CAST(p_codmes AS varchar) BETWEEN '202512' AND '202607' -- 202301-202608
     )
     GROUP BY codmes, cif_key
 ),
@@ -328,6 +329,7 @@ dirty AS (
   FROM insumo i
   LEFT JOIN e_perm_aws.t_fact_report_rcc_rsk r
     ON r.key_value = i.key_value
+   AND CAST(r.p_codmes AS varchar) BETWEEN '202604' AND '202606'
    AND CAST(r.codmes AS varchar) = date_format(date_add('month', -2, date_parse(i.codmes, '%Y%m')), '%Y%m')
   GROUP BY i.codmes, i.key_value, i.tipdoc
 )
