@@ -2,7 +2,7 @@
 -- u01_dirty PILOTO: flg_dirty_tc / flg_dirty_pp por producto (replica flg_clean desplegado), a m-2 + ventanas.
 --   TC: clasif/castigo(u24m)/refin(u6m)/reest(o)/judicial(u24m)/bancarizado(u12m)/GH-convenio/edad.
 --   PP: clasif(ALLSF)/castigo(u24m)/refin(u6m)/reest(u6m)/judicial(u24m)/bancarizado(u12m)/edad/entidad00004. GH y SALDO_PP -> clean.
---   bancarizado = SIN sld_bank en u12m -> dirty. Ventana RCC 202506-202607. EC = all-clean (no lleva dirty).
+--   bancarizado = SIN sld_bank en u12m -> dirty. Ventana RCC 202406-202607. EC = all-clean (no lleva dirty).
 -- ============================================================================
 CREATE TABLE disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_dirty_pilot
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
@@ -26,7 +26,7 @@ WITH drv AS (
 rcc AS (
   SELECT tip_doc, key_value, CAST(codmes AS varchar) AS rmes, cod_cuenta_rcc, cod_clasificacion_deudor, cod_instit_financiera, tipo_credito
   FROM e_perm_aws.t_fact_report_rcc_rsk
-  WHERE CAST(codmes AS varchar) BETWEEN '202506' AND '202607'
+  WHERE CAST(codmes AS varchar) BETWEEN '202406' AND '202607'
 ),
 rccw AS (
   SELECT d.codmes, d.cod_tip_doc, d.key_value,
@@ -54,14 +54,19 @@ gh AS (
   GROUP BY d.codmes, d.key_value
 ),
 ed AS (
-  SELECT d.codmes, d.key_value,
-    MAX(CASE WHEN e.fec_nacimiento IS NOT NULL
-             AND (date_diff('year', CAST(e.fec_nacimiento AS date), date_parse(d.codmes, '%Y%m')) < 21
-               OR date_diff('year', CAST(e.fec_nacimiento AS date), date_parse(d.codmes, '%Y%m')) > 75)
-        THEN 1 ELSE 0 END) AS f_edad
-  FROM drv d
-  LEFT JOIN e_perm_aws.t_mst_reniec_rsk e ON CAST(e.tip_doc AS varchar) = d.cod_tip_doc AND e.key_value = d.key_value
-  GROUP BY d.codmes, d.key_value
+  SELECT codmes, cod_tip_doc, key_value, CASE WHEN edad < 21 OR edad > 75 THEN 1 ELSE 0 END AS f_edad
+  FROM (
+    SELECT d.codmes, d.cod_tip_doc, d.key_value,
+      CAST((CAST(SUBSTR(d.codmes, 1, 4) AS int) * 12 + CAST(SUBSTR(d.codmes, 5, 2) AS int)
+            - (year(e.bd) * 12 + month(e.bd))) * 1.0 / 12 AS int) AS edad,
+      ROW_NUMBER() OVER (PARTITION BY d.cod_tip_doc, d.key_value, d.codmes ORDER BY e.bd DESC) AS rn
+    FROM drv d
+    JOIN (
+      SELECT CAST(tip_doc AS varchar) AS tip_doc, key_value, CAST(fec_nacimiento AS date) AS bd
+      FROM e_perm_aws.t_mst_reniec_rsk WHERE fec_nacimiento IS NOT NULL
+    ) e ON e.tip_doc = d.cod_tip_doc AND e.key_value = d.key_value
+  )
+  WHERE rn = 1
 ),
 clpp AS (
   SELECT d.codmes, d.key_value,

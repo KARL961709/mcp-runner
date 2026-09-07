@@ -54,14 +54,19 @@ gh AS (
   GROUP BY d.codmes, d.key_value
 ),
 ed AS (
-  SELECT d.codmes, d.key_value,
-    MAX(CASE WHEN e.fec_nacimiento IS NOT NULL
-             AND (date_diff('year', CAST(e.fec_nacimiento AS date), date_parse(d.codmes, '%Y%m')) < 21
-               OR date_diff('year', CAST(e.fec_nacimiento AS date), date_parse(d.codmes, '%Y%m')) > 75)
-        THEN 1 ELSE 0 END) AS f_edad
-  FROM drv d
-  LEFT JOIN e_perm_aws.t_mst_reniec_rsk e ON CAST(e.tip_doc AS varchar) = d.cod_tip_doc AND e.key_value = d.key_value
-  GROUP BY d.codmes, d.key_value
+  SELECT codmes, cod_tip_doc, key_value, CASE WHEN edad < 21 OR edad > 75 THEN 1 ELSE 0 END AS f_edad
+  FROM (
+    SELECT d.codmes, d.cod_tip_doc, d.key_value,
+      CAST((CAST(SUBSTR(d.codmes, 1, 4) AS int) * 12 + CAST(SUBSTR(d.codmes, 5, 2) AS int)
+            - (year(e.bd) * 12 + month(e.bd))) * 1.0 / 12 AS int) AS edad,
+      ROW_NUMBER() OVER (PARTITION BY d.cod_tip_doc, d.key_value, d.codmes ORDER BY e.bd DESC) AS rn
+    FROM drv d
+    JOIN (
+      SELECT CAST(tip_doc AS varchar) AS tip_doc, key_value, CAST(fec_nacimiento AS date) AS bd
+      FROM e_perm_aws.t_mst_reniec_rsk WHERE fec_nacimiento IS NOT NULL
+    ) e ON e.tip_doc = d.cod_tip_doc AND e.key_value = d.key_value
+  )
+  WHERE rn = 1
 ),
 clpp AS (
   SELECT d.codmes, d.key_value,
