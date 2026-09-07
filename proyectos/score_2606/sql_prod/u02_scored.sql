@@ -1,6 +1,6 @@
 -- ============================================================================
 -- u02. Universo VC scoreado: 4 calibraciones (coefs inline 3 productos) sobre univ_vc_nodos.
---      TC=iso lambda 2.0/1.0(dirty) + overlay N3 ; EC=platt lambda 2.75 + overlay N2 (siempre clean) ;
+--      TC=iso lambda 2.0/1.0(dirty) + overlay N3 . EC=platt lambda 2.75 + overlay N2 (siempre clean) .
 --      PP=beta(facil)/iso(cd) lambda 1.0 + overlay dirty. rho piso Basel. puntuacion=round(1000*(1-pd)).
 -- ============================================================================
 CREATE TABLE disc_model_owner.univ_vc_scored
