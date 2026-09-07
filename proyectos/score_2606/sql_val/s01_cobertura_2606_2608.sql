@@ -1,5 +1,5 @@
 -- s01. Cobertura 202604-202608 en: score fuente (pd_raw), insumos ds_*_cal y desplegadas altas_*_cal
---      de los 4 modelos. n = filas ; n_valor = pd_raw NOT NULL (fuente/ds) o prob_modelo_cal NOT NULL (altas).
+--      de los 4 modelos. n = filas, n_valor = pd_raw NOT NULL (fuente/ds) o prob_modelo_cal NOT NULL (altas).
 --      Dice si hay que reprocesar el ds o solo re-scorear. READ-ONLY.
 SELECT fuente, codmes, COUNT(*) AS n, SUM(hasval) AS n_valor
 FROM (
