@@ -1,6 +1,6 @@
 -- ============================================================================
 -- u01 universo PILOTO: enriquecimiento (02_Logica_nodos VERBATIM) + insumo(scr LEFT SBS)
---   + tipo_ingreso (sit_lab/fuente, numcarga=1) + flg_dirty (clasif>CPP a m-2) + 4 nodos.
+--   + tipo_ingreso (sit_lab/fuente, numcarga=1) + flg_dirty_tc/pp (JOIN ..._dirty, cascada por producto) + 4 nodos.
 --   Ventana 202608-202608 LIMIT 50000. pd_raw recuperado de score_vc_new_v2.
 -- ============================================================================
 CREATE TABLE disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_nodos_pilot
@@ -321,24 +321,14 @@ tipoing AS (
     )
   )
   WHERE rn = 1
-),
-dirty AS (
-  SELECT i.codmes, i.key_value, i.tipdoc,
-    MAX(CASE WHEN r.cod_clasificacion_deudor IN ('2','3','4') THEN 1 ELSE 0 END) AS flg_dirty
-  FROM insumo i
-  LEFT JOIN e_perm_aws.t_fact_report_rcc_rsk r
-    ON r.key_value = i.key_value
-   AND CAST(r.p_codmes AS varchar) BETWEEN '202604' AND '202606'
-   AND CAST(r.codmes AS varchar) = date_format(date_add('month', -2, date_parse(i.codmes, '%Y%m')), '%Y%m')
-  GROUP BY i.codmes, i.key_value, i.tipdoc
 )
 SELECT
     b.tipdoc AS cod_tip_doc,
     b.key_value,
     (1 - b.score_vc_new_v2 / 1000.0) AS pd_raw,
     ti.tipo_ingreso,
-    COALESCE(d.flg_dirty, 0) AS flg_dirty_tc,
-    COALESCE(d.flg_dirty, 0) AS flg_dirty_pp,
+    COALESCE(dd.flg_dirty_tc, 0) AS flg_dirty_tc,
+    COALESCE(dd.flg_dirty_pp, 0) AS flg_dirty_pp,
     CASE
              WHEN cant_uso_tc_tot_5porc_u6m_tc='B1' AND bin_cant_trx_in_out_tot_u6m='B3' AND bin_nivel_profesional='B2' THEN 'NODO 1'
              WHEN cant_uso_tc_tot_5porc_u6m_tc='B1' AND bin_cant_trx_in_out_tot_u6m='B3' AND bin_nivel_profesional='B1' THEN 'NODO 1'
@@ -432,4 +422,4 @@ SELECT
     b.codmes
 FROM bins b
 LEFT JOIN tipoing ti ON ti.codmes = b.codmes AND ti.key_value = b.key_value AND ti.tipdoc = b.tipdoc
-LEFT JOIN dirty d ON d.codmes = b.codmes AND d.key_value = b.key_value AND d.tipdoc = b.tipdoc
+LEFT JOIN disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_dirty_pilot dd ON dd.codmes = b.codmes AND dd.key_value = b.key_value AND dd.cod_tip_doc = b.tipdoc

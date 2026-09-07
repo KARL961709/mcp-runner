@@ -1,0 +1,2 @@
+-- drop scr_vcadmbnk_final_hist_rsk_cal_2606_2608_dirty (Athena-managed).
+DROP TABLE IF EXISTS disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_dirty
