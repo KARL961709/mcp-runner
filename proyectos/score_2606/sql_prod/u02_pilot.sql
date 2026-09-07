@@ -4,8 +4,7 @@
 --      PP=beta(facil)/iso(cd) lambda 1.0 + overlay dirty. rho piso Basel. puntuacion=round(1000*(1-pd)).
 -- ============================================================================
 CREATE TABLE disc_model_owner.univ_vc_scored_pilot
-WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes'],
-      external_location = '<S3_DATOS>/univ_vc_scored_pilot/') AS
+WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH
 coef_iso_tc(x_lo,x_hi,y_lo,y_hi) AS (VALUES
     (CAST(0.0000010000 AS double),CAST(0.0040248926 AS double),CAST(0.0000000000 AS double),CAST(0.0000000000 AS double)),

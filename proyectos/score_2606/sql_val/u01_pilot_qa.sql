@@ -1,5 +1,6 @@
--- u01 pilot QA: valida el enriquecimiento en la muestra (nodos, tipo_ingreso, dirty, SIN_NODO).
+-- u01 pilot QA: 0 SIN_NODO + grano (n vs n_dist) + composicion (nodos/tipo_ingreso/dirty).
 SELECT COUNT(*) AS n,
+  COUNT(DISTINCT cod_tip_doc || '|' || key_value) AS n_dist,
   SUM(CASE WHEN tipo_ingreso IS NULL THEN 1 ELSE 0 END) AS ti_null,
   SUM(CASE WHEN tipo_ingreso = 'DEP' THEN 1 ELSE 0 END) AS ti_dep,
   ROUND(AVG(CAST(flg_dirty_tc AS double)), 4) AS dirty_rate,

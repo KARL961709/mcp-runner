@@ -4,8 +4,7 @@
 --   Ventana 202606-202608. pd_raw recuperado de score_vc_new_v2.
 -- ============================================================================
 CREATE TABLE disc_model_owner.univ_vc_nodos
-WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes'],
-      external_location = '<S3_DATOS>/univ_vc_nodos/') AS
+WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH insumo AS (
   SELECT
     CAST(a.codmes AS VARCHAR) AS codmes,
