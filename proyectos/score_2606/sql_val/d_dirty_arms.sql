@@ -7,7 +7,7 @@ WITH dp AS (
   FROM disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_dirty_pilot
 )
 SELECT 'pp_extra' AS caso, COUNT(*) AS n,
-  SUM(d.a_clas_pp) AS clas, SUM(d.a_cast) AS cast, SUM(d.a_ref) AS ref, SUM(d.a_ree_pp) AS ree,
+  SUM(d.a_clas_pp) AS clas, SUM(d.a_cast) AS castigo, SUM(d.a_ref) AS ref, SUM(d.a_ree_pp) AS ree,
   SUM(d.a_jud) AS jud, SUM(d.a_bank_pp) AS bank, SUM(d.a_edad) AS edad, SUM(d.a_ent4) AS ent4,
   CAST(0 AS bigint) AS gh, CAST(0 AS bigint) AS conv
 FROM disc_model_owner.altas_adm_pp_cdpp_cal a
