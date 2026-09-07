@@ -1,7 +1,7 @@
 -- ============================================================================
 -- u01_dirty PILOTO: flg_dirty_tc / flg_dirty_pp por producto (replica flg_clean desplegado), a m-2 + ventanas.
 --   TC: clasif/castigo(u24m)/refin(u6m)/reest(o)/judicial(u24m)/bancarizado(u12m)/GH-convenio/edad.
---   PP: clasif(ALLSF)/castigo(u24m)/refin(u6m)/reest(u6m)/judicial(u24m)/bancarizado(u12m)/edad/entidad00004. GH y SALDO_PP -> clean.
+--   PP: clasif>CPP (RCC a m-2) = el LEAN que reconcilia 99.4% (dirty desplegado PP es angosto ~0.2%). La cascada ancha sobre-marcaba.
 --   bancarizado = SIN sld_bank en u12m -> dirty. Ventana RCC 202406-202607. EC = all-clean (no lleva dirty).
 -- ============================================================================
 CREATE TABLE disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608_dirty_pilot
@@ -54,7 +54,7 @@ gh AS (
   GROUP BY d.codmes, d.key_value
 ),
 ed AS (
-  SELECT codmes, cod_tip_doc, key_value, CASE WHEN edad < 21 OR edad > 75 THEN 1 ELSE 0 END AS f_edad
+  SELECT codmes, cod_tip_doc, key_value, CASE WHEN edad BETWEEN 0 AND 100 AND (edad < 21 OR edad > 75) THEN 1 ELSE 0 END AS f_edad
   FROM (
     SELECT d.codmes, d.cod_tip_doc, d.key_value,
       CAST((CAST(SUBSTR(d.codmes, 1, 4) AS int) * 12 + CAST(SUBSTR(d.codmes, 5, 2) AS int)
@@ -81,10 +81,7 @@ SELECT
          OR COALESCE(w.f_ree_o,0)=1 OR COALESCE(w.f_jud_w,0)=1 OR COALESCE(w.f_bank_tc,0)=0
          OR COALESCE(g.f_gh,0)=1 OR COALESCE(g.f_conv,0)=1 OR COALESCE(ed.f_edad,0)=1
        THEN 1 ELSE 0 END AS flg_dirty_tc,
-  CASE WHEN COALESCE(cp.f_clas_pp,0)=1 OR COALESCE(w.f_cast_w,0)=1 OR COALESCE(w.f_ref_w,0)=1
-         OR COALESCE(w.f_ree_w,0)=1 OR COALESCE(w.f_jud_w,0)=1 OR COALESCE(w.f_bank_pp,0)=0
-         OR COALESCE(ed.f_edad,0)=1 OR COALESCE(w.f_ent4_o,0)=1
-       THEN 1 ELSE 0 END AS flg_dirty_pp,
+  CASE WHEN COALESCE(w.f_clas_o, 0) = 1 THEN 1 ELSE 0 END AS flg_dirty_pp,
   COALESCE(w.f_clas_o,0) AS a_clas_tc, COALESCE(cp.f_clas_pp,0) AS a_clas_pp,
   COALESCE(w.f_cast_w,0) AS a_cast, COALESCE(w.f_ref_w,0) AS a_ref,
   COALESCE(w.f_ree_o,0) AS a_ree_tc, COALESCE(w.f_ree_w,0) AS a_ree_pp, COALESCE(w.f_jud_w,0) AS a_jud,
