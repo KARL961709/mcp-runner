@@ -50,3 +50,8 @@ TC ft → TC **y** EC · PP ft → PP Fácil **y** PP CD. 202606/202607 = IPC ob
 **202608 refrescado a IPC REAL** (BCRP 2026-09-07: 120.716351/115.586828 → infl 4.4378%, antes senda 4.3892%):
 `ft_tc` 0.0297627→0.0303618, `ft_pp` 0.0952214→0.0960768 (ΔPD ≈ +0.02 pp, inmaterial). Recompute auditable
 en `gen_u02_scored.py`. Las **altas** siguen con senda; refrescar altas 202608 si se quiere reconciliar universo↔altas.
+
+El `ft` aplicado se **persiste por modelo** en la tabla: `ft_macro_ppfacil`, `ft_macro_ppcd`, `ft_macro_ec`,
+`ft_macro_tcbnk` (raw factor macro; `ec`=`tc`, `ppcd`=`ppfacil`). Es constante por codmes (dictionary-encoding
+Parquet → ~0 bytes). Con `pd_raw`+`nodo`+`tipo_ingreso`+`flg_dirty`+`ft` la fila reconstruye toda la cadena PIT
+(λ por modelo documentado: PP 1.0 · TC 2.0/1.0 dirty · EC 2.75).

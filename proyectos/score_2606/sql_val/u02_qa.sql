@@ -2,6 +2,8 @@
 SELECT codmes,
   COUNT(*) AS n,
   COUNT(DISTINCT cod_tip_doc || '|' || key_value) AS n_dist,
+  ROUND(MIN(ft_macro_tcbnk), 6) AS ft_tc_ec,
+  ROUND(MIN(ft_macro_ppfacil), 6) AS ft_pp,
   ROUND(AVG(prob_modelo_cal_ppfacil), 4) AS pd_ppf,
   ROUND(AVG(prob_modelo_cal_ppcd), 4)    AS pd_ppcd,
   ROUND(AVG(prob_modelo_cal_ec), 4)      AS pd_ec,

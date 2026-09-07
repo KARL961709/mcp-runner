@@ -314,5 +314,9 @@ SELECT
     CAST(round(1000.0 * (1 - prob_ppcd))    AS integer) AS puntuacion_modelo_cal_ppcd,
     CAST(round(1000.0 * (1 - prob_ec))      AS integer) AS puntuacion_modelo_cal_ec,
     CAST(round(1000.0 * (1 - prob_tc))      AS integer) AS puntuacion_modelo_cal_tcbnk,
+    ftv_pp AS ft_macro_ppfacil,
+    ftv_pp AS ft_macro_ppcd,
+    ftv_tc AS ft_macro_ec,
+    ftv_tc AS ft_macro_tcbnk,
     codmes
 FROM scored
