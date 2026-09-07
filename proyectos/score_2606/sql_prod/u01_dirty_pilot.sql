@@ -80,6 +80,13 @@ SELECT
          OR COALESCE(w.f_ree_w,0)=1 OR COALESCE(w.f_jud_w,0)=1 OR COALESCE(w.f_bank_pp,0)=0
          OR COALESCE(ed.f_edad,0)=1 OR COALESCE(w.f_ent4_o,0)=1
        THEN 1 ELSE 0 END AS flg_dirty_pp,
+  COALESCE(w.f_clas_o,0) AS a_clas_tc, COALESCE(cp.f_clas_pp,0) AS a_clas_pp,
+  COALESCE(w.f_cast_w,0) AS a_cast, COALESCE(w.f_ref_w,0) AS a_ref,
+  COALESCE(w.f_ree_o,0) AS a_ree_tc, COALESCE(w.f_ree_w,0) AS a_ree_pp, COALESCE(w.f_jud_w,0) AS a_jud,
+  CASE WHEN COALESCE(w.f_bank_tc,0)=0 THEN 1 ELSE 0 END AS a_bank_tc,
+  CASE WHEN COALESCE(w.f_bank_pp,0)=0 THEN 1 ELSE 0 END AS a_bank_pp,
+  COALESCE(g.f_gh,0) AS a_gh, COALESCE(g.f_conv,0) AS a_conv,
+  COALESCE(ed.f_edad,0) AS a_edad, COALESCE(w.f_ent4_o,0) AS a_ent4,
   d.codmes
 FROM drv d
 LEFT JOIN rccw w ON w.codmes=d.codmes AND w.cod_tip_doc=d.cod_tip_doc AND w.key_value=d.key_value
