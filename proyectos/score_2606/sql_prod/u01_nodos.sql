@@ -364,7 +364,7 @@ SELECT
              WHEN cant_uso_tc_tot_5porc_u6m_tc='B3' AND bin_cant_trx_in_out_tot_u6m='B1' AND bin_nivel_profesional='B3' THEN 'NODO 3'
              WHEN cant_uso_tc_tot_5porc_u6m_tc='B2' AND bin_cant_trx_in_out_tot_u6m='B3' AND bin_nivel_profesional='B3' THEN 'NODO 3'
              WHEN cant_uso_tc_tot_5porc_u6m_tc='B2' AND bin_cant_trx_in_out_tot_u6m='B2' AND bin_nivel_profesional='B3' THEN 'NODO 3'
-             ELSE 'SIN_NODO'
+             ELSE 'NODO 3'
            END AS nodo_tc,
     CASE
              WHEN bin_flg_inmueble='B1' AND bin_cant_trx_in_out_tot_u3m='B3' AND bin_flg_cs_v2='B2' THEN 'NODO 1'
@@ -379,7 +379,7 @@ SELECT
              WHEN bin_flg_inmueble='B2' AND bin_cant_trx_in_out_tot_u3m='B1' AND bin_flg_cs_v2='B1' THEN 'NODO 2'
              WHEN bin_flg_inmueble='B2' AND bin_cant_trx_in_out_tot_u3m='B3' AND bin_flg_cs_v2='B2' THEN 'NODO 3'
              WHEN bin_flg_inmueble='B2' AND bin_cant_trx_in_out_tot_u3m='B2' AND bin_flg_cs_v2='B2' THEN 'NODO 3'
-             ELSE 'SIN_NODO'
+             ELSE 'NODO 3'
            END AS nodo_ec,
     CASE
              WHEN bin_nro_inmuebles='B3' AND bin_cant_trx_out_yap_u6m='B1' AND bin_nivel_profesional='B1' THEN 'NODO 1'
@@ -409,7 +409,7 @@ SELECT
              WHEN bin_nro_inmuebles='B3' AND bin_cant_trx_out_yap_u6m='B2' AND bin_nivel_profesional='B2' THEN 'NODO 3'
              WHEN bin_nro_inmuebles='B3' AND bin_cant_trx_out_yap_u6m='B2' AND bin_nivel_profesional='B3' THEN 'NODO 3'
              WHEN bin_nro_inmuebles='B2' AND bin_cant_trx_out_yap_u6m='B3' AND bin_nivel_profesional='B3' THEN 'NODO 3'
-             ELSE 'SIN_NODO'
+             ELSE 'NODO 3'
            END AS nodo_ppfacil,
     CASE
              WHEN bin_nro_inmuebles='B3' AND cant_uso_tc_tot_5porc_u6m_ppcd='B1' AND bin_flg_top25='B1' THEN 'NODO 1'
@@ -424,7 +424,7 @@ SELECT
              WHEN bin_nro_inmuebles='B2' AND cant_uso_tc_tot_5porc_u6m_ppcd='B2' AND bin_flg_top25='B2' THEN 'NODO 2'
              WHEN bin_nro_inmuebles='B2' AND cant_uso_tc_tot_5porc_u6m_ppcd='B1' AND bin_flg_top25='B2' THEN 'NODO 2'
              WHEN bin_nro_inmuebles='B1' AND cant_uso_tc_tot_5porc_u6m_ppcd='B2' AND bin_flg_top25='B2' THEN 'NODO 2'
-             ELSE 'SIN_NODO'
+             ELSE 'NODO 2'
            END AS nodo_ppcd,
     b.codmes
 FROM bins b
