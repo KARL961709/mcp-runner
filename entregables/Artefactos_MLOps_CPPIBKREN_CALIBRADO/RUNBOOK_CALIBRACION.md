@@ -2,7 +2,7 @@
 
 Deja las dos tablas del artefacto con la calibración cableada. **El esquema de destino es automático** (lo fija la plataforma MLOps por config, como Hipotecario): `inference.sql` es `SELECT`-only, sin `INSERT` ni esquema hardcodeado.
 - **`ds`** (input) — features + `trf_tipo_ingreso_dep` (segmento, interno), `trf_macro01` (=f_t), `trf_macro02` (=x, macro transformada).
-- **`scr`** (output) — `grupo_calibracion` **vacío** · `prob_modelo_cal` (PIT λ=1) · `extra_01 = prob_modelo_cal_ttc` (λ=0) · `trf_macro01=f_t` · `trf_macro02=x`.
+- **`scr`** (output) — `grupo_calibracion` **vacío** · `prob_modelo_cal` (PIT λ=1) · `prob_modelo_cal_smacro` (λ=0, sin macro) · `trf_macro01=f_t` · `trf_macro02=x`.
 
 Coeficientes = `entrega_ree/outputs_v5`. Referencia verificada: `mcp-runner/proyectos/ree_scoring/sql_prod/71_scr_cal_202608.sql` (reproduce la vigente a 1e-10). Aritmética del `inference.py` vs `71`: **max_dif 0.0** (test local).
 
