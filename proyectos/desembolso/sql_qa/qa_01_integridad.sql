@@ -33,10 +33,14 @@ msrc AS (
   SELECT count(*) AS n FROM (
     SELECT DISTINCT cast(cod_mes AS int) AS cm, cod_tip_doc, key_value, desc_producto FROM d_perm_aws.user_desembolso
   ) z
+),
+msrcraw AS (
+  SELECT count(*) AS n FROM d_perm_aws.user_desembolso
 )
 SELECT bloque, chequeo, valor, esperado, estado FROM (
   SELECT 'BASE' AS bloque, '1 grano sin duplicados' AS chequeo, cast(mb.n AS varchar) AS valor, cast(mb.n_dist AS varchar) AS esperado, CASE WHEN mb.n = mb.n_dist THEN 'OK' ELSE 'FALLA' END AS estado FROM mb
   UNION ALL SELECT 'BASE', '2 filas = fuente distinct', cast(mb.n AS varchar), cast(msrc.n AS varchar), CASE WHEN mb.n = msrc.n THEN 'OK' ELSE 'FALLA' END FROM mb, msrc
+  UNION ALL SELECT 'BASE', '2b fuente RAW cubierta 1a1', cast(msrcraw.n AS varchar), cast(msrc.n AS varchar), CASE WHEN msrcraw.n = msrc.n THEN 'OK (1a1)' ELSE 'REVISAR (hay grano repetido, se agrego)' END FROM msrcraw, msrc
   UNION ALL SELECT 'BASE', '3 pd_raw en [0,1]', concat(cast(round(mb.pmin, 4) AS varchar), '..', cast(round(mb.pmax, 4) AS varchar)), '0..1', CASE WHEN mb.pmin >= 0 AND mb.pmax <= 1 THEN 'OK' ELSE 'FALLA' END FROM mb
   UNION ALL SELECT 'BASE', '4 as-of sin look-ahead lag>=0', cast(mb.lagmin AS varchar), '>=0', CASE WHEN mb.lagmin >= 0 THEN 'OK' ELSE 'FALLA' END FROM mb
   UNION ALL SELECT 'BASE', '5 sin_pd coherente', cast(mb.incoh AS varchar), '0', CASE WHEN mb.incoh = 0 THEN 'OK' ELSE 'FALLA' END FROM mb
