@@ -1384,7 +1384,7 @@ cls_ing as (
                then 'DEP' else 'NO DEP' end as tipo_ingreso_dep
      from e_perm_aws.ds_rtd_rskvol_cas_ingr_ir
     where cast(numcarga as int) = 1
-      and cast(periodo as varchar) >= '202312'
+      and cast(periodo as varchar) = date_format(date_add('month', -1, date_parse('202606', '%Y%m')), '%Y%m')
     group by 1, 2, 3
 )
 -- End: Add Calibration
