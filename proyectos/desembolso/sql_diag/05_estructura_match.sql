@@ -1,4 +1,4 @@
--- 05_estructura_match.sql | estructura del cruce user_desembolso vs ds Origen BPE por producto: % match exacto (mismo codmes), % como cliente (cualquier mes), y direccion temporal de la alta BPE respecto al desembolso (antes_igual = alta con codmes <= mes del desembolso, sirve para as-of sin look-ahead; despues = alta posterior, seria look-ahead). Decide como traer el pd_raw crudo por producto. READ-ONLY
+-- 05_estructura_match.sql | estructura del cruce user_desembolso vs ds Origen BPE por producto: % match exacto (mismo codmes), % como cliente (cualquier mes), y direccion temporal de la alta BPE respecto al desembolso (antes_igual = alta con codmes <= mes del desembolso, sirve para as-of sin look-ahead, y despues = alta posterior que seria look-ahead). Decide como traer el pd_raw crudo por producto. READ-ONLY
 WITH ud AS (
   SELECT DISTINCT cast(cod_mes AS int) AS cm, cod_tip_doc AS td, key_value AS kv, desc_producto AS prod
   FROM d_perm_aws.user_desembolso
