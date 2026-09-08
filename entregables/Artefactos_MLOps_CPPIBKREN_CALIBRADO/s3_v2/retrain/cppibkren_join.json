@@ -1,0 +1,6 @@
+{
+    "join": "left",
+    "col_target": "target_12m",
+    "add_codmes_target": 0,
+    "keys": ["cod_mes", "cod_tip_doc", "key_value"]
+}

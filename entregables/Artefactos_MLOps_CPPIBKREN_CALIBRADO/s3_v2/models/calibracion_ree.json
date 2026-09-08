@@ -1,0 +1,18 @@
+{
+  "product": "Reenganche",
+  "source_run": "entrega_ree/outputs_v5",
+  "reference_sql": "mcp-runner/proyectos/ree_scoring/sql_prod/71_scr_cal_202608.sql",
+  "chain": "pd_raw -> BetaCal(tipo_ingreso_dep) -> Phi_inv + delta_seg + delta_0 -> Vasicek PIT(f_t) -> prob_modelo_cal ; lambda=0 -> prob_modelo_cal_ttc",
+  "segment_col": "trf_tipo_ingreso_dep",
+  "f_t_col": "trf_macro01",
+  "segments": {
+    "DEP":    {"m": -1.4235902271832188, "a": 1.4307409240924087, "b": 0.11673242216482149, "probit_delta": 0.061973725544583},
+    "NO DEP": {"m": -1.8712301290911784, "a": 1.12194919105907,   "b": 0.5587876581505312,  "probit_delta": 0.10257577255744288}
+  },
+  "delta_0": 0.034261721611022956,
+  "rho": 0.038030115964094044,
+  "lambda": 1.0,
+  "clip_pd_cal": [1e-9, 0.999999999],
+  "clip_pd_final": [1e-4, 0.9999],
+  "note": "f_t se calcula en el ds (inference.sql) desde t_mst_bcrp_rsk.porc_ipc; aqui solo van los coeficientes fijos. Verificado: reproduce ree_scoring/71 (scr_stk_ree_pp_cal_202607) a 1e-10."
+}
