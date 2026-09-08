@@ -3,7 +3,7 @@ WITH j AS (
   SELECT
     CASE WHEN a.sub_producto='PP_CD' THEN a.puntuacion_modelo_cal_ppcd ELSE a.puntuacion_modelo_cal_ppfacil END AS punt,
     CASE WHEN a.sub_producto='PP_CD' THEN a.prob_modelo_cal_ppcd ELSE a.prob_modelo_cal_ppfacil END AS pd_cal,
-    a.sub_producto, a.tipo_ingreso, a.target_12m,
+    a.codmes, a.sub_producto, a.tipo_ingreso, a.target_12m,
     r.r_nivel, r.r_nivel_geo, r.r_nivel_reest,
     r.ubigeo_inei_nodo, r.ubigeo_formato_inei, r.flg_nodo, r.flg_concordancia,
     r.patron_evento, r.flg_regimen, r.flg_fuente, r.dist_ma_m, r.exp25, r.exp50, r.flg_reest
@@ -13,6 +13,7 @@ WITH j AS (
     AND a.codmes BETWEEN '202301' AND '202507'
 )
 SELECT
+  codmes,
   round(pd_cal, 5) AS pd,
   CASE WHEN punt >= 993 THEN 'G1' WHEN punt >= 972 THEN 'G2' WHEN punt >= 959 THEN 'G3'
        WHEN punt >= 921 THEN 'G4' WHEN punt >= 884 THEN 'G5' WHEN punt >= 850 THEN 'G6'
