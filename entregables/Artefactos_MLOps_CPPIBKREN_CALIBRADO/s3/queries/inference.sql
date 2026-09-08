@@ -37,7 +37,7 @@ with wrk_dim_tiempo as (
   Row_Number() Over(PARTITION BY substr(calendar_date,1,7)
   ORDER BY calendar_date DESC) rnk
   from e_perm_aws.t_calendar_summary
-  where calendar_date = date_format(date_parse('"+calcmes(date_time_obj, 0)+"','%Y%m'),'%Y-%m-%d'))Y
+  where calendar_date = date_format(date_parse('{codmes}','%Y%m'),'%Y-%m-%d'))Y
   where y.rnk = 1
 ),  
 wrk_base_bkp_cierre_mensual as (

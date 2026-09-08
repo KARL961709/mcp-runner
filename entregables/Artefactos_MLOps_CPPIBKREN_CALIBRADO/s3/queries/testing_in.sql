@@ -12,5 +12,5 @@
 */
 
 SELECT *
-FROM disc_model_owner.ds_cppibkren_rsk -- ds que crea inference.sql (nuestras tablas van a disc_model_owner)
+FROM disc_model_owner.ds_cppibkren_cal -- ds que crea el CTAS del notebook (build del ds con inference.sql)
 WHERE cod_mes = '202606' -- TODO: Reemplazar por el periodo a validar
