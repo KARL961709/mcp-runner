@@ -239,3 +239,12 @@ elnino_ibk/03_deck/_check/
 # Verificado ANTES del push: TODO es DISTRITAL agregado (Censo 2017 + score s). Cero key_value /
 # id_value / tip_doc / cif_key / id_hash, cero hashes de 64 chars, cero numeros de 8+ digitos,
 # cero dato de cliente. 1824 distritos con dato. Repo PRIVADO. Un push no se deshace.
+
+# --- Artefactos_MLOps_CPPIBKREN_CALIBRADO (2026-09-08): paquete MLOps de scoring
+# calibrado PP Reenganche listo para SageMaker (inference.py/.sql SELECT-only,
+# calibracion_ree.json, objeto_modelo_v2.pkl, diccionario+matriz, aprobaciones, runbook).
+# Artefactos de MODELO y GOBIERNO (coeficientes, esquema, .pkl), NO data de cliente ni
+# resultados de query. Repo PRIVADO. Un push no se deshace.
+!entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/
+!entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/
+!entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**
