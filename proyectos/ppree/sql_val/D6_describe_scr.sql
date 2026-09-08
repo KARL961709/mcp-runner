@@ -1,7 +1,10 @@
 -- ============================================================================
--- D6. DESCRIBE del scr: columnas y tipos de d_perm_aws.scr_cppibkren_rsk
---   Resuelve los tipos reales de grupo_calibracion, prob_modelo, prob_modelo_cal,
---   puntuacion_cal, extra_01 y trf_macro01/02 (conflicto int vs decimal del dict).
---   Si la tabla vive en otra base o sufijo, el _resumen dira el nombre exacto.
+-- D6. DESCRIBE de la tabla calibrada desplegada (existente y legible):
+--   d_perm_aws.scr_stk_ree_pp_cal_202607 (la que V5 ya leyo).
+--   Da los tipos reales de trf_f_t, prob_modelo_cal, puntuacion_cal,
+--   trf_tipo_ingreso_dep, probabilidad -> confirma la precision del trf_f_t
+--   (nota de V5) y sirve de referencia de tipos calibrados.
+--   (El scr propio scr_cppibkren_rsk se crea en disc_model_owner; sus tipos
+--    los fija el diccionario ya corregido.)
 -- ============================================================================
-DESCRIBE d_perm_aws.scr_cppibkren_rsk
+DESCRIBE d_perm_aws.scr_stk_ree_pp_cal_202607
