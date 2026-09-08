@@ -12,10 +12,10 @@ Coeficientes = `entrega_ree/outputs_v5`. Referencia verificada: `mcp-runner/proy
 
 | Archivo | Cambio |
 |---|---|
-| `s3/models/calibracion_ree.json` | **nuevo** — coeficientes (BetaCal a/b/m, δ_seg, δ₀, ρ, λ). Va en `models/` para que `load_calib` lo lea desde `DIR_MODELS`. |
-| `s3/scripts/inference.py` | `load_calib` + `postprocessing_fn` (PIT+TTC) + `output_fn` (llena calibración) + `main`. |
-| `s3/queries/inference.sql` | **`SELECT`-only** (sin `INSERT`/esquema; la plataforma crea la tabla) · +3 columnas + CTEs `cal_meses/ipc/mac/ft/cls_ing` (macro desde `t_mst_bcrp_rsk`, segmento desde `ds_rtd_rskvol_cas_ingr_ir`). |
-| `s3/queries/testing_out.sql` | contrato con columnas de calibración. |
+| `s3_v3/models/calibracion_ree.json` | **nuevo** — coeficientes (BetaCal a/b/m, δ_seg, δ₀, ρ, λ). Va en `models/` para que `load_calib` lo lea desde `DIR_MODELS`. |
+| `s3_v3/scripts/inference.py` | `load_calib` + `postprocessing_fn` (PIT + sin macro λ=0) + `output_fn` (llena calibración) + `main`. |
+| `s3_v3/queries/inference.sql` | **`SELECT`-only** (sin `INSERT`/esquema; la plataforma crea la tabla) · +3 columnas + CTEs `cal_meses/ipc/mac/ft/cls_ing` (macro desde `t_mst_bcrp_rsk`, segmento desde `ds_rtd_rskvol_cas_ingr_ir`). |
+| `s3_v3/queries/testing_out.sql` | contrato con columnas de calibración. |
 
 ---
 
