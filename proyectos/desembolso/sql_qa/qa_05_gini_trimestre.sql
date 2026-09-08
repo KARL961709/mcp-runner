@@ -1,12 +1,12 @@
 -- qa_05_gini_trimestre.sql | Gini del score crudo pd_raw contra target_12m por TRIMESTRE de cohorte (mismo metodo Mann-Whitney con rango promedio que qa_04). Solo filas con pd_raw NO NULL y target_12m NO NULL (madura a 12m). Muestra la evolucion del poder discriminante trimestre a trimestre, mas TOTAL. READ-ONLY
 WITH base AS (
   SELECT pd_raw AS s, cast(target_12m AS int) AS y,
-         concat(cast(cod_mes / 100 AS varchar), 'Q', cast((cod_mes % 100 - 1) / 3 + 1 AS varchar)) AS trim
+         concat(cast(cod_mes / 100 AS varchar), 'Q', cast((cod_mes % 100 - 1) / 3 + 1 AS varchar)) AS trimestre
   FROM disc_model_owner.b46029_desemb_cal_202609
   WHERE pd_raw IS NOT NULL AND target_12m IS NOT NULL
 ),
 dup AS (
-  SELECT s, y, trim AS grupo FROM base
+  SELECT s, y, trimestre AS grupo FROM base
   UNION ALL SELECT s, y, 'TOTAL' AS grupo FROM base
 ),
 ranked AS (
