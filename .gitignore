@@ -248,3 +248,6 @@ elnino_ibk/03_deck/_check/
 !entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/
 !entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/
 !entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**
+
+entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/__pycache__/
+entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/*.pyc
