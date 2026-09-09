@@ -38,9 +38,14 @@ Primero **valida el motor** (barato, segundos) y me pegas las 36 filas — confi
 ```
 Con el visto bueno, creo la tabla:
 ```
-.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_prod -Only s05_escenarios_202608 -TimeoutSec 3600
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_prod -Only s05_escenarios_202608_dir   -TimeoutSec 3600
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_prod -Only s05_escenarios_202608_reest -TimeoutSec 3600
 ```
-- `s05` → `fen_overlay_escenarios_202608` (**formato largo: 6 filas por cliente**). Por cliente×escenario: `pd_base_facil/cd` + `grado_base_*`, `pd_estres_facil/cd` + `grado_estres_*`, `recorte_duro` (r_reest≥4 = RECHAZO). Motor **idéntico** al simulador (`normal_cdf`/`inverse_normal_cdf` de Trino), R = `r_reest` (Ajuste Geo), pac=0 → sin estrés (PDx=pd0). Escenarios ESC1/ESC2/ESC21/ESC22/ESC31/ESC32 con sus (γ,wF,wA,recup) exactos.
+**Dos tablas hermanas** (una por vista del toggle R), formato largo (6 filas/cliente):
+- `fen_overlay_escenarios_202608_dir`   → R **directo/nativo** (`r_dir`): d=r_dir/5, pac=r_dir≥1, recorte=r_dir≥4.
+- `fen_overlay_escenarios_202608_reest` → R **geo/Ajuste Geo** (`r_reest`): d/pac/recorte de r_reest.
+
+Iguales salvo la R. Por cliente×escenario: `pd_base_facil/cd` + `grado_base_*`, `pd_estres_facil/cd` + `grado_estres_*`, `recorte_duro`. Motor **idéntico** al simulador (`normal_cdf`/`inverse_normal_cdf` de Trino), pac=0 → sin estrés (PDx=pd0). Escenarios ESC1/ESC2/ESC21/ESC22/ESC31/ESC32 con sus (γ,wF,wA,recup) exactos. El `k05` valida el motor para ambas (la fórmula es la misma, solo cambia qué R entra).
 
 > **Re-corrida (OJO: el esquema de `fen_ibk_plus` cambió en esta versión — ahora trae `normal`, `desvio_altas/pea`, `yaku_claw`, `regimen`).** En una corrida FRESCA no hay nada que hacer (el CTAS crea la tabla). Si la tabla YA existe de una corrida previa, Athena falla el CREATE: primero `DROP TABLE disc_model_owner.fen_ibk_plus` **y vaciar** `<S3_DATOS>/fen_ibk_plus/` (el DROP de una tabla externa no borra el S3; el CREATE falla si el location no está vacío). Misma regla para cualquier tabla que re-crees (s01/s03b/s03/s04*).
 
