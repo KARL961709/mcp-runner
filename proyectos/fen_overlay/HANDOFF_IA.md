@@ -28,6 +28,17 @@ necesitas está en el git; no dependes de la conversación de origen. Uso: **ori
 ```
 `output\k02_universo_fen_agg.csv` = celdas `grado,r,tipo,pac,n,pd` (~150 filas). **Esta es la vista "Universo" del artifact.**
 
+## Paso 2b — TABLA CONSOLIDADA "con todo" (recomendado para el universo/PEA)
+En vez de pegar `s`/IBK+ localmente, se puede consolidar TODO en el banco (una tabla tipo reniec pero con `s` + valor IBK+):
+```
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_prod -Only s01_seed_s_indirecto,s02_seed_ibk_plus
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_prod -Only s03_fen_overlay_input_202608 -TimeoutSec 3600 -Bajar
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val  -Only s04_fen_overlay_agg
+```
+- `s01`/`s02` siembran `s` (Censo, 1891 distritos) e IBK+ (12 deptos×codmes, con `ibk_centrado`=depto−nac) como tablas del banco.
+- `s03` = `disc_model_owner.fen_overlay_input_202608` (por cliente: PD+grado+R_reest+`s`+valor IBK+ centrado+físico) → parquet `-Bajar`.
+- `s04` = `output\s04_fen_overlay_agg.csv` = celdas grado×R×tipo×pac×**depto** con `n, pd, s (real), ibk_c`. **Este es el embed del universo con datos reales** → el artifact se mueve con `s` real e IBK+ (no el proxy). Con `s04` NO hace falta el Paso 4 local para el universo.
+
 ## Paso 3 — Altas PP (libro vigente + validación)
 ```
 .\Go.ps1 -SqlDir proyectos\fen_valida_rd\sql_val -Only j03_altas_recientes,j01_altas_1a1 -TimeoutSec 1800

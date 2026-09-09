@@ -26,7 +26,15 @@ Objetivo: que la máquina que **recibe** este git (con acceso AWS) corra las que
 | G | **γ / ICEN** (intensidad lluvia) | `met.igp.gob.pe/datos/ICEN.txt` (público). Selector externo Apoyo (base/pesimista) | escenario | — |
 | H | **Artifact simulador** | `elnino_ibk/03_deck/estres_fen_pp_cdpp.html` (URL `claude.ai/code/artifact/d1098522-...`) | — | se re-embebe y republica |
 
-**Orden de ejecución en el banco:** `k00` (esquema) → `k01` (CTAS 14M, con `-Bajar`) → `k02` (agregado) · en paralelo `j01`/`j03` (altas).
+### Tabla CONSOLIDADA (todo lo necesario para dinamizar el artifact, en una sola tabla del banco)
+| # | Pieza | Query | Qué consolida |
+|---|---|---|---|
+| S1 | **Semilla `s` indirecto** | `sql_prod/s01_seed_s_indirecto.sql` | `disc_model_owner.fen_s_indirecto` (ubigeo→`s_total`, 1891 distritos) — siembra el `s` LOCAL en el banco |
+| S2 | **Semilla IBK+** | `sql_prod/s02_seed_ibk_plus.sql` | `disc_model_owner.fen_ibk_plus` (depto×codmes: `ibk_plus`, `ibk_nac`, **`ibk_centrado`=depto−nac**, 648 filas) |
+| S3 | **CONSOLIDADA** | `sql_prod/s03_fen_overlay_input_202608.sql` | `disc_model_owner.fen_overlay_input_202608` = universo ⨝ reniec (score) ⨝ `s` ⨝ IBK+ → **por cliente: PD+grado+R_reest+`s`+valor IBK+ centrado+físico** (CTAS→parquet, `-Bajar`) |
+| S4 | **Agregado real** | `sql_val/s04_fen_overlay_agg.sql` | celdas grado×R×tipo×pac×**depto** con `n, pd, s real, ibk_centrado` → el **embed del artifact con datos reales** (mueve con `s` real + IBK+) |
+
+**Orden en el banco:** `k00`+`k00b` (checks) → **`s01`,`s02` (semillas)** → **`s03` (consolidada, `-Bajar`)** → **`s04` (agregado real)** · en paralelo `j01`/`j03` (altas). *(La ruta `k01`/`k02` = el universo SIN `s`/IBK+; `s03`/`s04` es la versión enriquecida "con todo" — usar esta para dinamizar el artifact.)*
 
 ---
 
