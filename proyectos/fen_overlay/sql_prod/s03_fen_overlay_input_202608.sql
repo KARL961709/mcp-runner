@@ -2,7 +2,7 @@
 CREATE TABLE disc_model_owner.fen_overlay_input_202608
 WITH (format='PARQUET', write_compression='SNAPPY', external_location='<S3_DATOS>/fen_overlay_input_202608/') AS
 SELECT
-  u.key_value, u.codmes, u.tipo_ingreso, u.nodo,
+  u.key_value, u.codmes, u.tipo_ingreso,
   u.prob_modelo_cal_ppfacil AS pd_ppfacil,
   u.prob_modelo_cal_ppcd    AS pd_ppcd,
   CASE WHEN u.puntuacion_modelo_cal_ppfacil>=993 THEN 'G1' WHEN u.puntuacion_modelo_cal_ppfacil>=972 THEN 'G2'
@@ -14,7 +14,7 @@ SELECT
   CASE WHEN r.r_nivel_reest>=1 THEN 1 ELSE 0 END AS pac,
   r.ubigeo_inei_nodo AS ubigeo_dom, substr(r.ubigeo_inei_nodo,1,2) AS depto,
   round(r.dist_ma_m,1) AS dist_ma_m, round(r.exp25,4) AS exp25, round(r.exp50,4) AS exp50,
-  r.patron_evento, r.flg_regimen,
+  r.flg_regimen,
   -- score indirecto s (fen_s_indirecto, por ubigeo domicilio)
   s.s_total, s.nivel AS s_nivel,
   -- resiliencia IBK+ (fen_ibk_plus, por depto): desvio de su propia normal gated por Yaku-2023, sin dato -> 0 (peor caso, nunca resiliente)
