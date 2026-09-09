@@ -178,7 +178,8 @@ tr:hover td{background:var(--card2);}
   function cvar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
 
   var RHO=0.15, KAPPA=0.25, LAMBDA=Math.sqrt(RHO/(1-RHO));
-  var S_HI=0.65, S_LO=0.25;  // proxy de exposición de actividad: NO_DEP (independiente) vs DEP (asalariado)
+  var S_HI=0.65, S_LO=0.25;  // proxy de actividad (fallback si la celda no trae s real de s04): NO_DEP vs DEP
+  var IBK_K=0.02;  // sensibilidad de la recuperación al IBK+ centrado (depto-nac); PROVISIONAL (pend. fase/polaridad)
   var P={gamma:3.0,wF:0.5,wA:0.5,recup:0.3,expo:0.5};
   var activeScen='ESC2';
   var SCEN=[
@@ -199,7 +200,7 @@ tr:hover td{background:var(--card2);}
 
   function grade(pd){var c=DATA.cutoffs;for(var i=0;i<c.length;i++)if(pd<=c[i])return i;return c.length;}
   function rnum(rl){return +String(rl).replace('R','');}
-  function stressCell(c){var d=rnum(c.r)/5, s=(c.tipo==='NO_DEP')?S_HI:S_LO, e=P.wF*d+P.wA*s+KAPPA*d*s, ep=e*(1-P.recup), shift=LAMBDA*P.gamma*(c.pac?1:0)*ep;
+  function stressCell(c){var d=rnum(c.r)/5, s=(c.s!=null)?Math.max(c.s,0):((c.tipo==='NO_DEP')?S_HI:S_LO), e=P.wF*d+P.wA*s+KAPPA*d*s, rec=(c.ibk_c!=null)?cl(P.recup+IBK_K*c.ibk_c,0,0.9):P.recup, ep=e*(1-rec), shift=LAMBDA*P.gamma*(c.pac?1:0)*ep;
     return cl(nCDF(nInv(cl(c.pd,1e-4,0.985))+shift),1e-4,0.999);}
 
   function compute(){
