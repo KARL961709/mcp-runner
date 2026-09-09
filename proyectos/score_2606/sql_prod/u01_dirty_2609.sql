@@ -1,0 +1,97 @@
+-- ============================================================================
+-- u01_dirty 202609: flg_dirty_tc / flg_dirty_pp por producto (MISMA logica validada 2606_2608), a m-2 + ventanas.
+--   Driver: disc_riesgos.scr_vcbankv3_repro_ (poda p_codmes). TC: clasif/castigo(u24m)/refin(u6m)/reest(o)/judicial(u24m)/bancarizado(u12m)/GH-convenio/edad.
+--   PP: clasif>CPP (RCC a m-2). EC = all-clean (no lleva dirty). Ventana RCC 202408-202609. Rezago m-2 (origen=202607).
+-- ============================================================================
+CREATE TABLE disc_model_owner.scr_vcadmbnk_final_rsk_cal_2609_dirty
+WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
+WITH drv AS (
+  SELECT a.codmes, a.key_value, a.cod_tip_doc, b.sbs_value
+  FROM (
+    SELECT CAST(codmes AS varchar) AS codmes, key_value, CAST(cod_tip_doc AS varchar) AS cod_tip_doc, probabilidad,
+           ROW_NUMBER() OVER (PARTITION BY codmes, key_value, cod_tip_doc ORDER BY probabilidad DESC) AS rn
+    FROM disc_riesgos.scr_vcbankv3_repro_
+    WHERE probabilidad IS NOT NULL AND CAST(cod_tip_doc AS varchar) = '1'
+      AND CAST(p_codmes AS varchar) = '202609'
+      AND CAST(codmes AS varchar) BETWEEN '202609' AND '202609'
+  ) a
+  LEFT JOIN (
+    SELECT tip_doc, key_value, sbs_value,
+           ROW_NUMBER() OVER (PARTITION BY tip_doc, key_value ORDER BY fch_actualizacion DESC) AS rnb
+    FROM e_perm_aws.t_mst_ctarcc_rsk
+    WHERE tip_doc = '1' AND tip_persona = '1' AND key_value IS NOT NULL AND sbs_value IS NOT NULL
+  ) b ON CAST(b.tip_doc AS varchar) = a.cod_tip_doc AND b.key_value = a.key_value AND b.rnb = 1
+  WHERE a.rn = 1
+),
+rcc AS (
+  SELECT tip_doc, key_value, CAST(codmes AS varchar) AS rmes, cod_cuenta_rcc, cod_clasificacion_deudor, cod_instit_financiera, tipo_credito
+  FROM e_perm_aws.t_fact_report_rcc_rsk
+  WHERE CAST(codmes AS varchar) BETWEEN '202408' AND '202609'
+),
+rccw AS (
+  SELECT d.codmes, d.cod_tip_doc, d.key_value,
+    MAX(CASE WHEN r.rmes = date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND (r.cod_clasificacion_deudor IN ('2','3','4')) THEN 1 ELSE 0 END) AS f_clas_o,
+    MAX(CASE WHEN r.rmes BETWEEN date_format(date_add('month', -25, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND (SUBSTR(r.cod_cuenta_rcc,1,2)='81' AND SUBSTR(r.cod_cuenta_rcc,4,3) IN ('302','925')) THEN 1 ELSE 0 END) AS f_cast_w,
+    MAX(CASE WHEN r.rmes BETWEEN date_format(date_add('month', -7, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND (((SUBSTR(r.cod_cuenta_rcc,1,2)='14' AND SUBSTR(r.cod_cuenta_rcc,4,1)='4') OR (SUBSTR(r.cod_cuenta_rcc,1,2)||'0'||SUBSTR(r.cod_cuenta_rcc,4,1) IN ('1405','1406') AND SUBSTR(r.cod_cuenta_rcc,7,2)='19')) AND r.cod_clasificacion_deudor<>'8') THEN 1 ELSE 0 END) AS f_ref_w,
+    MAX(CASE WHEN r.rmes = date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND (((SUBSTR(r.cod_cuenta_rcc,1,2)='14' AND SUBSTR(r.cod_cuenta_rcc,4,1)='3') OR (SUBSTR(r.cod_cuenta_rcc,1,2)||'0'||SUBSTR(r.cod_cuenta_rcc,4,1) IN ('1405','1406') AND SUBSTR(r.cod_cuenta_rcc,7,2)='22')) AND r.cod_clasificacion_deudor<>'8') THEN 1 ELSE 0 END) AS f_ree_o,
+    MAX(CASE WHEN r.rmes BETWEEN date_format(date_add('month', -7, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND (((SUBSTR(r.cod_cuenta_rcc,1,2)='14' AND SUBSTR(r.cod_cuenta_rcc,4,1)='3') OR (SUBSTR(r.cod_cuenta_rcc,1,2)||'0'||SUBSTR(r.cod_cuenta_rcc,4,1) IN ('1405','1406') AND SUBSTR(r.cod_cuenta_rcc,7,2)='22')) AND r.cod_clasificacion_deudor<>'8') THEN 1 ELSE 0 END) AS f_ree_w,
+    MAX(CASE WHEN r.rmes BETWEEN date_format(date_add('month', -25, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND (SUBSTR(r.cod_cuenta_rcc,1,2)='14' AND SUBSTR(r.cod_cuenta_rcc,4,1)='6' AND r.cod_clasificacion_deudor<>'8') THEN 1 ELSE 0 END) AS f_jud_w,
+    MAX(CASE WHEN r.rmes BETWEEN date_format(date_add('month', -13, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND ((((SUBSTR(r.cod_cuenta_rcc,1,2)='81' AND SUBSTR(r.cod_cuenta_rcc,4,3)='923') OR (SUBSTR(r.cod_cuenta_rcc,1,2)||'0'||SUBSTR(r.cod_cuenta_rcc,4,3)='720506') OR (SUBSTR(r.cod_cuenta_rcc,1,2)='14' AND SUBSTR(r.cod_cuenta_rcc,4,1) IN ('1','3','4','5','6')) OR (SUBSTR(r.cod_cuenta_rcc,1,2)='81' AND SUBSTR(r.cod_cuenta_rcc,4,3) IN ('302','925'))) AND r.tipo_credito IN ('11','12','13')) OR ((SUBSTR(r.cod_cuenta_rcc,1,2)='81' AND SUBSTR(r.cod_cuenta_rcc,4,3) IN ('302','925')) AND r.tipo_credito IN ('99'))) THEN 1 ELSE 0 END) AS f_bank_tc,
+    MAX(CASE WHEN r.rmes BETWEEN date_format(date_add('month', -13, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND ((SUBSTR(r.cod_cuenta_rcc,1,2)='81' AND SUBSTR(r.cod_cuenta_rcc,4,3)='923') OR (SUBSTR(r.cod_cuenta_rcc,1,2)||'0'||SUBSTR(r.cod_cuenta_rcc,4,3)='720506') OR (SUBSTR(r.cod_cuenta_rcc,1,2)='14' AND SUBSTR(r.cod_cuenta_rcc,4,1) IN ('1','3','4','5','6')) OR (SUBSTR(r.cod_cuenta_rcc,1,2)='81' AND SUBSTR(r.cod_cuenta_rcc,4,3) IN ('302','925'))) THEN 1 ELSE 0 END) AS f_bank_pp,
+    MAX(CASE WHEN r.rmes = date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m') AND r.cod_instit_financiera = '00004' THEN 1 ELSE 0 END) AS f_ent4_o
+  FROM drv d
+  JOIN rcc r ON CAST(r.tip_doc AS varchar) = d.cod_tip_doc AND r.key_value = d.key_value
+            AND r.rmes BETWEEN date_format(date_add('month', -25, date_parse(d.codmes, '%Y%m')), '%Y%m') AND date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m')
+  GROUP BY d.codmes, d.cod_tip_doc, d.key_value
+),
+gh AS (
+  SELECT d.codmes, d.key_value,
+    MAX(CASE WHEN c.cons_salgarhip > 0 THEN 1 ELSE 0 END) AS f_gh,
+    MAX(CASE WHEN c.cons_salprestnorevconv > 0 OR c.cons_salprestrevconv > 0 OR c.cons_salpresconvob > 0 THEN 1 ELSE 0 END) AS f_conv
+  FROM drv d
+  LEFT JOIN e_perm_aws.t_consolidado_rsk c
+    ON c.sbs_value = d.sbs_value AND CAST(c.cons_periodo AS varchar) = date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m')
+  GROUP BY d.codmes, d.key_value
+),
+ed AS (
+  SELECT codmes, cod_tip_doc, key_value, CASE WHEN edad BETWEEN 0 AND 100 AND (edad < 21 OR edad > 75) THEN 1 ELSE 0 END AS f_edad
+  FROM (
+    SELECT d.codmes, d.cod_tip_doc, d.key_value,
+      CAST((CAST(SUBSTR(d.codmes, 1, 4) AS int) * 12 + CAST(SUBSTR(d.codmes, 5, 2) AS int)
+            - (year(e.bd) * 12 + month(e.bd))) * 1.0 / 12 AS int) AS edad,
+      ROW_NUMBER() OVER (PARTITION BY d.cod_tip_doc, d.key_value, d.codmes ORDER BY e.bd DESC) AS rn
+    FROM drv d
+    JOIN (
+      SELECT CAST(tip_doc AS varchar) AS tip_doc, key_value, CAST(fec_nacimiento AS date) AS bd
+      FROM e_perm_aws.t_mst_reniec_rsk WHERE fec_nacimiento IS NOT NULL
+    ) e ON e.tip_doc = d.cod_tip_doc AND e.key_value = d.key_value
+  )
+  WHERE rn = 1
+),
+clpp AS (
+  SELECT d.codmes, d.key_value,
+    MAX(CASE WHEN l.pct_clasif_def_m01 > 0 OR l.pct_clasif_dud_m01 > 0 OR l.pct_clasif_per_m01 > 0 THEN 1 ELSE 0 END) AS f_clas_pp
+  FROM drv d
+  LEFT JOIN e_perm_aws.tbl_rcc_per_allsf_mdl l ON l.key_value = d.key_value AND CAST(l.codmes AS varchar) = date_format(date_add('month', -2, date_parse(d.codmes, '%Y%m')), '%Y%m')
+  GROUP BY d.codmes, d.key_value
+)
+SELECT
+  d.cod_tip_doc, d.key_value,
+  CASE WHEN COALESCE(w.f_clas_o,0)=1 OR COALESCE(w.f_cast_w,0)=1 OR COALESCE(w.f_ref_w,0)=1
+         OR COALESCE(w.f_ree_o,0)=1 OR COALESCE(w.f_jud_w,0)=1 OR COALESCE(w.f_bank_tc,0)=0
+         OR COALESCE(g.f_gh,0)=1 OR COALESCE(g.f_conv,0)=1 OR COALESCE(ed.f_edad,0)=1
+       THEN 1 ELSE 0 END AS flg_dirty_tc,
+  CASE WHEN COALESCE(w.f_clas_o, 0) = 1 THEN 1 ELSE 0 END AS flg_dirty_pp,
+  COALESCE(w.f_clas_o,0) AS a_clas_tc, COALESCE(cp.f_clas_pp,0) AS a_clas_pp,
+  COALESCE(w.f_cast_w,0) AS a_cast, COALESCE(w.f_ref_w,0) AS a_ref,
+  COALESCE(w.f_ree_o,0) AS a_ree_tc, COALESCE(w.f_ree_w,0) AS a_ree_pp, COALESCE(w.f_jud_w,0) AS a_jud,
+  CASE WHEN COALESCE(w.f_bank_tc,0)=0 THEN 1 ELSE 0 END AS a_bank_tc,
+  CASE WHEN COALESCE(w.f_bank_pp,0)=0 THEN 1 ELSE 0 END AS a_bank_pp,
+  COALESCE(g.f_gh,0) AS a_gh, COALESCE(g.f_conv,0) AS a_conv,
+  COALESCE(ed.f_edad,0) AS a_edad, COALESCE(w.f_ent4_o,0) AS a_ent4,
+  d.codmes
+FROM drv d
+LEFT JOIN rccw w ON w.codmes=d.codmes AND w.cod_tip_doc=d.cod_tip_doc AND w.key_value=d.key_value
+LEFT JOIN gh g   ON g.codmes=d.codmes AND g.key_value=d.key_value
+LEFT JOIN ed     ON ed.codmes=d.codmes AND ed.key_value=d.key_value
+LEFT JOIN clpp cp ON cp.codmes=d.codmes AND cp.key_value=d.key_value
