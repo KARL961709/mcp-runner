@@ -9,7 +9,7 @@
   --green:#00D400;--green2:#22B04B;--green-dk:#0A4B0A;--green-tint:rgba(0,212,0,.10);
   --steel:#6E8390;--blue:#3E86D6;
   --warn:#E0A44A;--warn2:#E58A3C;--red:#E0574A;--red-tint:rgba(224,87,74,.14);--warn-tint:rgba(224,164,74,.13);
-  --g1:#2FB56B;--g2:#7FB84E;--g3:#C9C24A;--g4:#E0A44A;--g5:#E5823C;--g6:#E0574A;--gr:#B23A3A;
+  --g1:#2FB56B;--g2:#7FB84E;--g3:#C9C24A;--g4:#E0A44A;--g5:#E5823C;--g6:#D93A2E;--gr:#284C86;
   --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -322,14 +322,14 @@ tr:hover td{background:var(--card2);}
       rib+='<path class="rb" data-s="'+a+'" data-d="'+b+'" d="M'+x1+' '+y1.toFixed(1)+' C'+mx+' '+y1.toFixed(1)+' '+mx+' '+y2.toFixed(1)+' '+x2+' '+y2.toFixed(1)+' L'+x2+' '+(y2+th).toFixed(1)+' C'+mx+' '+(y2+th).toFixed(1)+' '+mx+' '+(y1+th).toFixed(1)+' '+x1+' '+(y1+th).toFixed(1)+' Z" fill="'+(down?wn:cvar(GCOL[a]))+'" opacity="'+(down?0.52:0.12)+'"><title>'+DATA.grados[a]+' → '+DATA.grados[b]+': '+nf(fn)+' ('+pct(fn/tot)+')'+(down?' · baja de grado':' · se mantiene')+'</title></path>';
     }
     function node(gi,x,seg,side,cnt){
-      var s='',cy=seg.y+seg.h/2,p=cnt/tot,ox=side==='L'?x-9:x+nodeW+9,an=side==='L'?'end':'start';
+      var s='',cy=seg.y+seg.h/2,p=cnt/tot,ox=side==='L'?x-9:x+nodeW+9,an=side==='L'?'end':'start'; var tin=(gi>=5)?'#EAF2EA':dark, tin2=(gi>=5)?'rgba(234,242,234,.85)':'rgba(10,15,10,.78)';
       s+='<rect class="nd" data-'+(side==='L'?'s':'d')+'="'+gi+'" x="'+x+'" y="'+seg.y.toFixed(1)+'" width="'+nodeW+'" height="'+Math.max(seg.h,0).toFixed(1)+'" rx="3" fill="'+cvar(GCOL[gi])+'"><title>'+DATA.grados[gi]+' '+(side==='L'?'hoy':'con FEN')+': '+nf(cnt)+' ('+pct(p)+')</title></rect>';
       if(seg.h>=25){
-        s+='<text x="'+(x+nodeW/2)+'" y="'+(cy-3).toFixed(1)+'" text-anchor="middle" font-size="12.5" font-weight="800" fill="'+dark+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
-        s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+11).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(10,15,10,.78)" font-family="var(--mono)">'+pct(p)+'</text>';
+        s+='<text x="'+(x+nodeW/2)+'" y="'+(cy-3).toFixed(1)+'" text-anchor="middle" font-size="12.5" font-weight="800" fill="'+tin+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
+        s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+11).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+tin2+'" font-family="var(--mono)">'+pct(p)+'</text>';
         s+='<text x="'+ox+'" y="'+(cy+3.5).toFixed(1)+'" text-anchor="'+an+'" font-size="9.5" font-weight="600" fill="'+fa+'" font-family="var(--mono)">'+nf(cnt)+'</text>';
       } else if(seg.h>=13){
-        s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+3.7).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+dark+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
+        s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+3.7).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+tin+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
         s+='<text x="'+ox+'" y="'+(cy+3.5).toFixed(1)+'" text-anchor="'+an+'" font-size="10" font-weight="700" fill="'+mu+'" font-family="var(--mono)">'+pct(p)+'</text>';
       } else if(seg.h>0){
         s+='<text x="'+ox+'" y="'+(cy+3).toFixed(1)+'" text-anchor="'+an+'" font-size="9.5" font-weight="700" fill="'+mu+'">'+DATA.grados[gi]+' · '+pct(p)+'</text>';
