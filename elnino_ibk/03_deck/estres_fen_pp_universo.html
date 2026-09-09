@@ -93,6 +93,12 @@ input.geo::-webkit-slider-thumb{background:var(--warn);box-shadow:none;}
 .gkey{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;font-weight:600;color:var(--muted);margin-top:10px;}
 .gkey span{display:inline-flex;align-items:center;gap:5px;}.gkey i{width:10px;height:10px;border-radius:3px;}
 .migflowwrap{max-width:840px;margin:18px auto 4px;}
+#mig_flow text{pointer-events:none;}
+#mig_flow .rb,#mig_flow .nd{cursor:pointer;transition:opacity .13s;}
+#mig_flow svg.tracing .rb{opacity:.05!important;}
+#mig_flow svg.tracing .rb.hot{opacity:.75!important;}
+#mig_flow svg.tracing .nd{opacity:.26;}
+#mig_flow svg.tracing .nd.hot{opacity:1;}
 #mig_hl{font-size:13px;color:var(--muted);line-height:1.7;margin:16px auto 0;text-align:center;max-width:780px;}
 #mig_hl b{color:var(--ink);font-weight:700;}#mig_hl b.warn{color:var(--warn);}
 .mpar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px;}
@@ -159,7 +165,7 @@ tr:hover td{background:var(--card2);}
 
       <div class="card" style="margin-top:20px">
         <div class="ct">Migración de grados — quién baja y hacia dónde</div>
-        <div class="cs">Cada columna es la <b>distribución de la cartera por grado</b>: a la izquierda <b>hoy</b>, a la derecha <b>con el estrés FEN</b>. Las cintas <b style="color:var(--warn)">ámbar</b> son los clientes que <b>bajan</b> de grado; en tenue, quienes se mantienen. El <b>% dentro</b> de cada bloque es su peso en la cartera.</div>
+        <div class="cs">Cada columna es la <b>distribución de la cartera por grado</b>: a la izquierda <b>hoy</b>, a la derecha <b>con el estrés FEN</b>. Las cintas <b style="color:var(--warn)">ámbar</b> son los clientes que <b>bajan</b> de grado; en tenue, quienes se mantienen. El <b>% dentro</b> de cada bloque es su peso en la cartera. <b style="color:var(--ink)">Pasa el cursor</b> por un grado para seguir su recorrido.</div>
         <div class="migflowwrap"><div id="mig_flow"></div></div>
         <div id="mig_hl"></div>
         <div class="mpar" id="mig_par"></div>
@@ -280,11 +286,11 @@ tr:hover td{background:var(--card2);}
     var wn=cvar('--warn'), mu=cvar('--muted'), fa=cvar('--faint'), rib='';
     for(a=0;a<NG;a++)for(b=0;b<NG;b++){var fn=R.flows[a][b]; if(fn<=0)continue; var th=fn*sc; if(th<0.25)continue;
       var y1=lc[a],y2=rc[b]; lc[a]+=th; rc[b]+=th; var x1=lx+nodeW,x2=rx,mx=(x1+x2)/2, down=b>a;
-      rib+='<path d="M'+x1+' '+y1.toFixed(1)+' C'+mx+' '+y1.toFixed(1)+' '+mx+' '+y2.toFixed(1)+' '+x2+' '+y2.toFixed(1)+' L'+x2+' '+(y2+th).toFixed(1)+' C'+mx+' '+(y2+th).toFixed(1)+' '+mx+' '+(y1+th).toFixed(1)+' '+x1+' '+(y1+th).toFixed(1)+' Z" fill="'+(down?wn:cvar(GCOL[a]))+'" opacity="'+(down?0.52:0.12)+'"><title>'+DATA.grados[a]+' → '+DATA.grados[b]+': '+nf(fn)+' ('+pct(fn/tot)+')'+(down?' · baja de grado':' · se mantiene')+'</title></path>';
+      rib+='<path class="rb" data-s="'+a+'" data-d="'+b+'" d="M'+x1+' '+y1.toFixed(1)+' C'+mx+' '+y1.toFixed(1)+' '+mx+' '+y2.toFixed(1)+' '+x2+' '+y2.toFixed(1)+' L'+x2+' '+(y2+th).toFixed(1)+' C'+mx+' '+(y2+th).toFixed(1)+' '+mx+' '+(y1+th).toFixed(1)+' '+x1+' '+(y1+th).toFixed(1)+' Z" fill="'+(down?wn:cvar(GCOL[a]))+'" opacity="'+(down?0.52:0.12)+'"><title>'+DATA.grados[a]+' → '+DATA.grados[b]+': '+nf(fn)+' ('+pct(fn/tot)+')'+(down?' · baja de grado':' · se mantiene')+'</title></path>';
     }
     function node(gi,x,seg,side,cnt){
       var s='',cy=seg.y+seg.h/2,p=cnt/tot,ox=side==='L'?x-9:x+nodeW+9,an=side==='L'?'end':'start';
-      s+='<rect x="'+x+'" y="'+seg.y.toFixed(1)+'" width="'+nodeW+'" height="'+Math.max(seg.h,0).toFixed(1)+'" rx="3" fill="'+cvar(GCOL[gi])+'"><title>'+DATA.grados[gi]+': '+nf(cnt)+' ('+pct(p)+')</title></rect>';
+      s+='<rect class="nd" data-'+(side==='L'?'s':'d')+'="'+gi+'" x="'+x+'" y="'+seg.y.toFixed(1)+'" width="'+nodeW+'" height="'+Math.max(seg.h,0).toFixed(1)+'" rx="3" fill="'+cvar(GCOL[gi])+'"><title>'+DATA.grados[gi]+' '+(side==='L'?'hoy':'con FEN')+': '+nf(cnt)+' ('+pct(p)+')</title></rect>';
       if(seg.h>=25){
         s+='<text x="'+(x+nodeW/2)+'" y="'+(cy-3).toFixed(1)+'" text-anchor="middle" font-size="12.5" font-weight="800" fill="'+dark+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
         s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+11).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(10,15,10,.78)" font-family="var(--mono)">'+pct(p)+'</text>';
@@ -386,6 +392,25 @@ tr:hover td{background:var(--card2);}
   }
   var pend=false;function sched(){if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;render();});}
 
-  paintScen();mkSliders('sl_scen',SL_SCEN);render();renderMap();
+  // hover-para-rastrear: pasar el cursor por un grado (o una cinta) resalta su recorrido y atenúa el resto
+  function wireMigHover(){
+    var host=document.getElementById('mig_flow');
+    function clear(){var svg=host.querySelector('svg');if(svg)svg.classList.remove('tracing');}
+    host.addEventListener('mouseover',function(e){
+      var t=e.target,svg=host.querySelector('svg');if(!svg)return;
+      var hasS=t.getAttribute&&t.getAttribute('data-s')!=null, hasD=t.getAttribute&&t.getAttribute('data-d')!=null;
+      if(!hasS&&!hasD){clear();return;}
+      var s=t.getAttribute('data-s'),d=t.getAttribute('data-d');
+      svg.classList.add('tracing');
+      Array.prototype.forEach.call(svg.querySelectorAll('.rb'),function(p){
+        var hot=(hasS&&hasD)?(p.getAttribute('data-s')===s&&p.getAttribute('data-d')===d):hasS?(p.getAttribute('data-s')===s):(p.getAttribute('data-d')===d);
+        p.classList.toggle('hot',hot);});
+      Array.prototype.forEach.call(svg.querySelectorAll('.nd'),function(n){
+        n.classList.toggle('hot',hasS?(n.getAttribute('data-s')===s):(n.getAttribute('data-d')===d));});
+    });
+    host.addEventListener('mouseleave',clear);
+  }
+
+  paintScen();mkSliders('sl_scen',SL_SCEN);render();renderMap();wireMigHover();
 })();
 </script>
