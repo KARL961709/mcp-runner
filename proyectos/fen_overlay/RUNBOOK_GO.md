@@ -47,6 +47,18 @@ Con el visto bueno, creo la tabla:
 
 Iguales salvo la R. Por cliente×escenario: `pd_base_facil/cd` + `grado_base_*`, `pd_estres_facil/cd` + `grado_estres_*`, `recorte_duro`. Motor **idéntico** al simulador (`normal_cdf`/`inverse_normal_cdf` de Trino), pac=0 → sin estrés (PDx=pd0). Escenarios ESC1/ESC2/ESC21/ESC22/ESC31/ESC32 con sus (γ,wF,wA,recup) exactos. El `k05` valida el motor para ambas (la fórmula es la misma, solo cambia qué R entra).
 
+## QA — verificar la ejecución
+Después de `s03`:
+```
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val -Only qa01_salud_input
+```
+Después de los dos `s05`:
+```
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val -Only qa02_escenarios
+```
+- `qa01` (1 fila): cobertura de `s`/IBK+, R medio dir/reest, nº en gate y nº recorte por R → sanidad del insumo.
+- `qa02` (12 filas): por vista×escenario, `pd_base`→`pd_estres`, migración (`n_baja_grado`, `n_entra_gr`) y **controles del motor `viola_monotonia`=0 y `viola_pac0`=0** (si no dan 0, hay un problema). Ambos chicos, vuelven por `_resultados.txt`.
+
 > **Re-corrida (OJO: el esquema de `fen_ibk_plus` cambió en esta versión — ahora trae `normal`, `desvio_altas/pea`, `yaku_claw`, `regimen`).** En una corrida FRESCA no hay nada que hacer (el CTAS crea la tabla). Si la tabla YA existe de una corrida previa, Athena falla el CREATE: primero `DROP TABLE disc_model_owner.fen_ibk_plus` **y vaciar** `<S3_DATOS>/fen_ibk_plus/` (el DROP de una tabla externa no borra el S3; el CREATE falla si el location no está vacío). Misma regla para cualquier tabla que re-crees (s01/s03b/s03/s04*).
 
 ## Qué me pegas de vuelta
