@@ -82,6 +82,8 @@ elnino_ibk/01_inputs/*
 !elnino_ibk/01_inputs/geo/
 elnino_ibk/01_inputs/geo/*
 !elnino_ibk/01_inputs/geo/peru_dist.geojson
+!elnino_ibk/01_inputs/ibk_plus/
+!elnino_ibk/01_inputs/ibk_plus/*.csv
 !elnino_ibk/02_pipeline/out/
 elnino_ibk/02_pipeline/out/*
 !elnino_ibk/02_pipeline/out/grado_fen_v3.csv
