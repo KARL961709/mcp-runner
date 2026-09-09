@@ -40,14 +40,19 @@ Por cada cliente/celda, con la llave del DOMICILIO `ubigeo_dom` (= `ubigeo_inei_
 - **IBK+ (recuperación):** `elnino_ibk/02_pipeline/ibk_panel.json` → serie por depto; usar **`IBK+_depto − IBK+_nacional`** (centrado) con `depto = substr(ubigeo_dom,1,2)`. Deptos sin serie → 0 (Tumbes `24` → proxiar con Piura `20`).
 - **Cruce por NOMBRE, jamás por ubigeo RENIEC crudo** (mentiría el distrito en ~91% de los casos — por eso usamos `ubigeo_inei_nodo`, ya resuelto por la cascada `Downloads/resumen_cascada_ubigeo.py`).
 
-## Paso 5 — Engranar al artifact
-Artifact: `elnino_ibk/03_deck/estres_fen_pp_cdpp.html`. Embebe datos en `var DATA={...}` (celdas) y `var MAPDATA=[...]`.
-1. Construye el objeto de celdas `{g, r, tipo, pac, n, pd (, rd)}` desde el CSV (para Altas usa `j03`; para Universo usa `k02`).
+## Paso 5 — Engranar los DOS artifacts (uno Altas, uno PEA)
+Ambos HTML viven en `elnino_ibk/03_deck/` y embeben datos en `var DATA={...}` (celdas) + `var MAPDATA=[...]` (compartido).
+
+**Artifact 1 — Altas:** `estres_fen_pp_cdpp.html` (URL existente `d1098522-...`). Datos = `j03` (libro vigente 202605‑07; muestra la MIGRACIÓN de grados) — valida con `j01`. Trae `rd`.
+**Artifact 2 — PEA/Universo:** `estres_fen_pp_universo.html` (ya retitulado; **datos hoy son PLACEHOLDER**). Datos = `k02` (agregado del universo 202608). **NO trae `rd`** (universo sin madurar) — la variante ya quitó el KPI "RD ✓".
+
+Por cada uno:
+1. Construye las celdas `{g, r, tipo, pac, n, pd (, rd)}` desde el CSV correspondiente.
 2. Pega `s` real y `IBK+` (Paso 4).
-3. Reemplaza `var DATA={...}` en el HTML (regex `/var DATA=\{[\s\S]*?\]\};/` — NO toca `MAPDATA`).
-4. **Aplica los fixes obligatorios del motor** (README §5): `ρ→0,0332`; `shift = λ·γ·costa·max(e′,0)` (piso monotonía); usar el **`s` distrital real** (no el proxy 0,25/0,65); topear γ; quitar el "✓ validado" del KPI (reclasificar a "gate QA de anclaje"); decidir el carril (redistributivo recomendado).
-5. **Verifica render headless** (Chrome `--headless=new --screenshot`, `--user-data-dir` propio, `--virtual-time-budget=9000`) — los files fuera del project pane no corren JS.
-6. **Republica a la MISMA URL** `claude.ai/code/artifact/d1098522-43de-856c-d4c877462b79` (Artifact publish con `url=`).
+3. Reemplaza `var DATA={...}` (regex `/var DATA=\{[\s\S]*?\]\};/` — NO toca `MAPDATA`).
+4. **Aplica los fixes obligatorios del motor** (README §5, a los DOS): `ρ→0,0332`; `shift = λ·γ·costa·max(e′,0)`; usar `s` distrital real (no el proxy 0,25/0,65); topear γ; quitar cualquier claim "validado"; carril redistributivo (recomendado).
+5. **Verifica render headless** (Chrome `--headless=new --screenshot`, `--user-data-dir` propio, `--virtual-time-budget=9000`).
+6. **Publica:** Altas → a la MISMA URL `claude.ai/code/artifact/d1098522-...` (Artifact publish con `url=`). PEA → **nueva URL** (Artifact publish sin `url`, favicon distinto p.ej. 👥) y guarda el URL resultante.
 
 ## Paso 6 — Antes de entregar
 - NO afirmes "validado/calibrado con precisión". Etiqueta escenarios como "gobierno, no pronóstico".

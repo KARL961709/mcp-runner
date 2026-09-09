@@ -75,13 +75,16 @@ Objetivo: que la máquina que **recibe** este git (con acceso AWS) corra las que
 
 ---
 
-## 4. Cómo se engrana al artifact
+## 4. Cómo se engrana — DOS artifacts separados
 
-El artifact `estres_fen_pp_cdpp.html` embebe los datos en `var DATA={...}` (celdas grado×R×tipo) y `var MAPDATA=[...]` (distritos).
-Para engranar: **(a)** parsear los CSV/parquet que producen las queries; **(b)** construir el objeto de celdas `{g,r,tipo,pac,n,pd(,rd)}`;
-**(c)** pegar `s` real por `ubigeo_dom` (archivo E) e IBK+ por `depto` (archivo F); **(d)** reemplazar `var DATA=` en el HTML; **(e)** verificar render headless; **(f)** republicar a la MISMA URL. Detalle exacto en **[HANDOFF_IA.md](HANDOFF_IA.md)**.
+| Artifact | HTML | Datos | URL |
+|---|---|---|---|
+| **1 · Altas** (libro vigente que "se mueve") | `elnino_ibk/03_deck/estres_fen_pp_cdpp.html` | `j03` (3 meses 202605‑07) · valida con `j01` | `claude.ai/code/artifact/d1098522-...` (ya publicado) |
+| **2 · PEA / Universo** (los 14M scoreados) | `elnino_ibk/03_deck/estres_fen_pp_universo.html` | `k02` (agregado del universo 202608) | **por publicar** tras inyectar `k02` |
 
-Dos vistas en el artifact: **Altas** (j03, libro vigente) y **Universo** (k02, los 14M scoreados de 202608).
+Para cada uno: **(a)** parsear el CSV/parquet; **(b)** construir las celdas `{g,r,tipo,pac,n,pd(,rd)}` (el Universo NO trae `rd`); **(c)** pegar `s` real por `ubigeo_dom` (E) e IBK+ por `depto` (F); **(d)** reemplazar `var DATA=` (regex `/var DATA=\{[\s\S]*?\]\};/`, NO toca `MAPDATA`); **(e)** aplicar los fixes del motor (§5); **(f)** verificar headless; **(g)** publicar (Altas → misma URL d1098522; Universo → nueva URL). Detalle en **[HANDOFF_IA.md](HANDOFF_IA.md)**.
+
+> **Todo el score sale de `mca_bd_reniec_xy_r_reest`** (directo `r_label/r_nivel` + geo `r_label_geo` + **REESTRUCTURADO** `r_label_reest` + físico `dist_ma_m/exp25/exp50/flg_ma_*` + ubigeos `ubigeo_inei_nodo/formato_inei/reniec` + cascada `flg_nodo/concordancia`). `j01`/`j03`/`k01` ya traen el set **completo** — si se necesita otro campo de esa tabla, se agrega ahí (es la única fuente del score).
 
 ---
 
