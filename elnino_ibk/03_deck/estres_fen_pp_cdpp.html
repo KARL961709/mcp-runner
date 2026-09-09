@@ -201,13 +201,14 @@ tr:hover td{background:var(--card2);}
   function f1(v){return v.toFixed(1).replace('.',',');}
   function f2(v){return v.toFixed(2).replace('.',',');}
   function f3(v){return v.toFixed(3).replace('.',',');}
+  function f4(v){return v.toFixed(4).replace('.',',');}
   function pctf(v){return Math.round(v*100)+'%';}
   function cvar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
   function parChip(l,v){return '<span class="pchip"><i>'+l+'</i><b>'+v+'</b></span>';}
 
   var S_HI=0.65, S_LO=0.25;  // proxy de actividad (fallback si la celda no trae s real de s04): NO_DEP vs DEP
   var IBK_K=0.02;  // sensibilidad de la recuperación al IBK+ centrado (depto-nac); PROVISIONAL (inerte hasta s04)
-  var P={gamma:3.0,wF:0.5,wA:0.5,recup:0.3,rho:0.033,kappa:0.25};  // rho = correlación de consumo (calibración), NO la hipotecaria 0,15
+  var P={gamma:3.0,wF:0.5,wA:0.5,recup:0.3,rho:0.0332,kappa:0.25};  // rho=0,0332 = la de la calibración PP VC (30_scr_cal.sql, √(1−ρ)=0,98326), NO la hipotecaria 0,15
   function lam(){return Math.sqrt(P.rho/(1-P.rho));}
   var activeScen='ESC2';
   var SCEN=[
@@ -376,9 +377,9 @@ tr:hover td{background:var(--card2);}
     document.getElementById('mig_flow').innerHTML=migSankey(R);
     var modeB=0,modeA=0;for(var mi=1;mi<R.baseN.length;mi++){if(R.baseN[mi]>R.baseN[modeB])modeB=mi;if(R.strN[mi]>R.strN[modeA])modeA=mi;}
     document.getElementById('mig_hl').innerHTML='<b class="warn">'+pct(R.mig/R.totN)+'</b> de la cartera baja de grado ('+nf(R.mig)+' clientes) · la concentración se corre de <b>'+DATA.grados[modeB]+'</b> a <b class="warn">'+DATA.grados[modeA]+'</b> · <b class="warn">+'+nf(R.toRej)+'</b> entran a <b>GR</b> (rechazo) bajo <b>'+(activeScen||'el escenario')+'</b>.';
-    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',pctf(P.recup))+parChip('ρ correlación',f3(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f2(lam()))+parChip('escenario',activeScen||'personalizado');
+    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',pctf(P.recup))+parChip('ρ correlación',f4(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f3(lam()))+parChip('escenario',activeScen||'personalizado');
     document.getElementById('gkey').innerHTML=DATA.grados.map(function(g,i){return '<span><i style="background:'+cvar(GCOL[i])+'"></i>'+g+'</span>';}).join('');
-    document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ)) y <b>ρ = 0,033 = correlación de consumo del producto</b> (fija, de la calibración — no la hipotecaria 0,15, que sobre-escalaría ~2,3×), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25 fija), e′ = e·(1−recup) con <b>recup 0–100%</b> (100% anula el estrés). <b>PD₀ = pd_calib real</b> por celda grado×R×tipo (81 728 altas PP CD/CDPP, clean, cierre 202607; PD media 7,31% ≈ RD 12m real 7,24% ✓). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
+    document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ))=0,185 y <b>ρ = 0,0332 = la de la calibración PP VC</b> (la misma que su conversión TTC→PIT usa como √(1−ρ)=0,983; no la hipotecaria 0,15, que sobre-escalaría ~2,3×), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25 fija), e′ = e·(1−recup) con <b>recup 0–100%</b> (100% anula el estrés). <b>PD₀ = pd_calib real</b> por celda grado×R×tipo (81 728 altas PP CD/CDPP, clean, cierre 202607; PD media 7,31% ≈ RD 12m real 7,24% ✓). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
     paintMap();if(mapLayer==='impact')mapLegend();
   }
 
@@ -402,7 +403,7 @@ tr:hover td{background:var(--card2);}
     });});
   }
   function renderConsts(){
-    var rows=[['Correlación ρ','consumo · producto (fija)',f3(P.rho)],['Interacción κ','físico × actividad',f2(P.kappa)],['λ = √(ρ/1−ρ)','loading del shift',f2(lam())]];
+    var rows=[['Correlación ρ','calibración PP VC · fija',f4(P.rho)],['Interacción κ','físico × actividad',f2(P.kappa)],['λ = √(ρ/1−ρ)','loading del shift',f3(lam())]];
     document.getElementById('constbox').innerHTML=rows.map(function(r){return '<div class="cbrow"><span>'+r[0]+' <i class="cn">'+r[1]+'</i></span><b>'+r[2]+'</b></div>';}).join('');
   }
   var pend=false;function sched(){if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;render();});}
