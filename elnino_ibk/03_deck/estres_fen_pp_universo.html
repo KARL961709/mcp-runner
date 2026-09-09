@@ -163,7 +163,7 @@ tr:hover td{background:var(--card2);}
       <div class="divider"></div>
       <div class="sect mt">Score físico (R)</div>
       <div class="rtog" id="rtog"></div>
-      <div class="rhint">El canal físico usa <b>d = R/5</b>. <b>Reestructurado</b>: R con la reestructuración (default). <b>Directo</b>: score R directo, sin reestructurar.</div>
+      <div class="rhint">El canal físico usa <b>d = R/5</b>. <b>Ajuste Geo</b>: R con ajuste geográfico (reestructurado de reniec, default). <b>Directo</b>: R sin ese ajuste.</div>
       <div class="rtt" id="rtt" hidden></div>
       <div class="divider"></div>
       <div class="sect mt">Constantes del modelo</div>
@@ -403,7 +403,7 @@ tr:hover td{background:var(--card2);}
     document.getElementById('mig_flow').innerHTML=migSankey(R);
     var modeB=0,modeA=0;for(var mi=1;mi<R.baseN.length;mi++){if(R.baseN[mi]>R.baseN[modeB])modeB=mi;if(R.strN[mi]>R.strN[modeA])modeA=mi;}
     document.getElementById('mig_hl').innerHTML='<b class="warn">'+pct(R.mig/R.totN)+'</b> de la cartera baja de grado ('+nf(R.mig)+' clientes) · la concentración se corre de <b>'+DATA.grados[modeB]+'</b> a <b class="warn">'+DATA.grados[modeA]+'</b> · <b class="warn">+'+nf(R.toRej)+'</b> entran a <b>GR</b> (rechazo) bajo <b>'+(activeScen||'el escenario')+'</b>.';
-    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',pctf(P.recup))+parChip('ρ correlación',f4(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f3(lam()))+parChip('score R',useReest?'reestructurado':'directo')+parChip('escenario',activeScen||'personalizado');
+    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',pctf(P.recup))+parChip('ρ correlación',f4(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f3(lam()))+parChip('score R',useReest?'Ajuste Geo':'Directo')+parChip('escenario',activeScen||'personalizado');
     document.getElementById('gkey').innerHTML=DATA.grados.map(function(g,i){return '<span><i style="background:'+cvar(GCOL[i])+'"></i>'+g+'</span>';}).join('');
     document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ))=0,185 (el loading sistémico de la propia calibración) y <b>ρ = 0,0332 estimada de la oscilación de la RD del producto</b> (ρ = Var(Φ⁻¹(RD))/(1+Var), excl. COVID — la misma que la calibración PP VC usa en su TTC→PIT, √(1−ρ)=0,983; no un benchmark ni la hipotecaria 0,15), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25 fija), e′ = e·(1−recup) con <b>recup 0–100%</b> (100% anula el estrés). <b>PD₀ = pd_calib</b> por celda grado×R×tipo (<b style="color:var(--warn)">datos PLACEHOLDER</b> — al inyectar <b>k02</b>: universo PEA scoreable ~14M, corte 202608; universo sin RD madura → no se valida contra RD). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
     paintMap();if(mapLayer==='impact')mapLegend();
@@ -431,11 +431,11 @@ tr:hover td{background:var(--card2);}
   function renderRtog(){
     var dirOn=!!DATA.cellsDir, box=document.getElementById('rtog'), tt=document.getElementById('rtt'); if(!box)return;
     var TXT={
-      reest:'<b>R reestructurado</b> (R0–R5) — el score físico FEN <i>directo</i> re-evaluado por la <b>reestructuración</b> del crédito (refin/reprogramación). Es el <b>default</b> del overlay.<br><b>Proceso:</b> entra como <b>d = R/5</b> en el canal físico → e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s → e′ = e·(1−recup) → <b>PD* = Φ(Φ⁻¹(PD₀) + λ·γ·costa·e′)</b>.',
-      dir:'<b>R directo</b> (R0–R5) — el score físico FEN <b>crudo</b>, sin ajustar por reestructuración. '+(dirOn?'Entra igual como <b>d = R/5</b>: mismo proceso, cambia solo el R.':'<br><b style="color:var(--warn)">¿Por qué pendiente?</b> El artifact hoy trae la cartera agregada por R <b>reestructurado</b>; esta vista necesita la MISMA cartera agregada por R <b>directo</b> (query <b>j04</b>: ambos R del mismo universo). Al correr j04 y embeber los datos, el botón se activa y podrás comparar el estrés con uno u otro R.')
+      reest:'<b>Ajuste Geo</b> (R0–R5) — el score físico FEN R con <b>ajuste geográfico</b> (el R <i>reestructurado</i> de reniec, tabla mca_bd_reniec_xy_r_reest). Es el <b>default</b> del overlay.<br><b>Proceso:</b> entra como <b>d = R/5</b> en el canal físico → e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s → e′ = e·(1−recup) → <b>PD* = Φ(Φ⁻¹(PD₀) + λ·γ·costa·e′)</b>.',
+      dir:'<b>Directo</b> (R0–R5) — el score físico FEN R <b>sin el ajuste geográfico</b> (R directo de reniec). '+(dirOn?'Entra igual como <b>d = R/5</b>: mismo proceso, cambia solo el R.':'<br><b style="color:var(--warn)">¿Por qué pendiente?</b> El artifact hoy trae la cartera agregada por el R con <b>Ajuste Geo</b>; esta vista necesita la MISMA cartera por R <b>directo</b> (query <b>j04</b>: ambos R del mismo universo). Al correr j04 y embeber los datos, el botón se activa y podrás comparar el estrés con uno u otro R.')
     };
-    box.innerHTML='<button class="rbtn'+(useReest?' on':'')+'" data-r="reest">reestructurado</button>'+
-      '<button class="rbtn'+((!useReest&&dirOn)?' on':'')+(dirOn?'':' dis')+'" data-r="dir">directo'+(dirOn?'':' · pendiente')+'</button>';
+    box.innerHTML='<button class="rbtn'+(useReest?' on':'')+'" data-r="reest">Ajuste Geo</button>'+
+      '<button class="rbtn'+((!useReest&&dirOn)?' on':'')+(dirOn?'':' dis')+'" data-r="dir">Directo'+(dirOn?'':' · pendiente')+'</button>';
     Array.prototype.forEach.call(box.querySelectorAll('.rbtn'),function(b){var v=b.getAttribute('data-r');
       b.addEventListener('click',function(){if(v==='dir'&&!DATA.cellsDir)return;useReest=(v==='reest');renderRtog();sched();});
       b.addEventListener('mouseenter',function(){if(tt){tt.innerHTML=TXT[v];tt.hidden=false;}});});
