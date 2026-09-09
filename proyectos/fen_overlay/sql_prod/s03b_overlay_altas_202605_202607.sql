@@ -23,7 +23,7 @@ SELECT
   round(r.dist_ma_m,1) AS dist_ma_m, round(r.exp25,4) AS exp25, round(r.exp50,4) AS exp50,
   r.patron_evento, r.flg_regimen,
   s.s_total, s.nivel AS s_nivel,
-  ibk.ibk_altas AS ibk_plus, ibk.ibk_c_altas AS ibk_centrado, ibk.resil_altas AS resiliente
+  ibk.ibk_altas AS ibk_plus, coalesce(ibk.ibk_c_altas, 0) AS ibk_centrado, coalesce(ibk.resil_altas, 0) AS resiliente
 FROM a
 JOIN disc_model_owner.mca_bd_reniec_xy_r_reest r ON a.key_value = r.key_value
 LEFT JOIN disc_model_owner.fen_s_indirecto s ON r.ubigeo_inei_nodo = s.ubigeo

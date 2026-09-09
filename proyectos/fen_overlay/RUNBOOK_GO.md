@@ -13,7 +13,7 @@ Todo lo que el `./Go` tiene que producir, en orden. Los CTAS se corren **de a un
 .\Go.ps1 -SqlDir proyectos\fen_overlay\sql_prod -Only s01_seed_s_indirecto,s02_seed_ibk_plus
 ```
 - `s01` → `fen_s_indirecto` (s por distrito, Censo; nivel S0-S4 cortes fijos 0,20).
-- `s02` → `fen_ibk_plus` (IBK+ centrado por depto: **ibk_c_altas** = avg 202605-207, **ibk_c_pea** = 202608; panel más reciente hasta Set-26). IBK+ **solo atenúa**; resiliente = centrado > 0.
+- `s02` → `fen_ibk_plus` (resiliencia IBK+ por depto: **desvío de su PROPIA normal pre-FEN** + gate **Yaku-2023**; **ibk_c_altas/pea** = atenuación *gated*, > 0 SOLO si RESILIENTE = hoy ≥ su normal **Y** recuperó en Yaku; regímenes R/V/F en la columna `regimen`). IBK+ **solo atenúa**. Depto **sin serie propia → peor caso = Junín** (recuperación más lenta) → sin alivio; nunca resiliente sin dato (`coalesce(ibk_c,0)` aguas abajo). Panel hasta Set-26 (12 deptos + nac).
 
 ## Paso 2 — CONSOLIDADAS "mca con todo" (CTAS, de a uno, -Bajar)
 ```
@@ -30,6 +30,8 @@ Cada cliente con: PD, grado, **R directo / geo / reest**, pac, ubigeo_dom, depto
 ```
 - `s04a` / `s04b` = celdas grado×tipo×**r_dir×r_reest** → n, pd, (rd altas), **s real, ibk_c**. Trae AMBOS R → el toggle Ajuste Geo/Directo se deriva del MISMO dato; s e IBK+ dejan de ser proxy.
 - `s04c` = por distrito → n, depto, s, **share_r45 y avg_r (dir y reest)** → el mapa pinta el R de reniec y su recorte R4/R5 CAMBIA con el toggle.
+
+> **Re-corrida (OJO: el esquema de `fen_ibk_plus` cambió en esta versión — ahora trae `normal`, `desvio_altas/pea`, `yaku_claw`, `regimen`).** En una corrida FRESCA no hay nada que hacer (el CTAS crea la tabla). Si la tabla YA existe de una corrida previa, Athena falla el CREATE: primero `DROP TABLE disc_model_owner.fen_ibk_plus` **y vaciar** `<S3_DATOS>/fen_ibk_plus/` (el DROP de una tabla externa no borra el S3; el CREATE falla si el location no está vacío). Misma regla para cualquier tabla que re-crees (s01/s03b/s03/s04*).
 
 ## Qué me pegas de vuelta
 Los CSV de `output\` de **s04a, s04b, s04c** (agregados chicos). Con eso re-embebo el artifact: celdas reales (toggle vivo), s real, IBK+ por depto, y el mapa por R de reniec. Los parquet de s03/s03b (`-Bajar`) quedan para auditoría 1-a-1.

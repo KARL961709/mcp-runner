@@ -17,8 +17,8 @@ SELECT
   r.patron_evento, r.flg_regimen,
   -- score indirecto s (fen_s_indirecto, por ubigeo domicilio)
   s.s_total, s.nivel AS s_nivel,
-  -- valor IBK+ (fen_ibk_plus, por depto, centrado depto-nac, mes de la PEA 202608 = proyeccion)
-  ibk.ibk_pea AS ibk_plus, ibk.ibk_c_pea AS ibk_centrado, ibk.resil_pea AS resiliente
+  -- resiliencia IBK+ (fen_ibk_plus, por depto): desvio de su propia normal gated por Yaku-2023, sin dato -> 0 (peor caso, nunca resiliente)
+  ibk.ibk_pea AS ibk_plus, coalesce(ibk.ibk_c_pea, 0) AS ibk_centrado, coalesce(ibk.resil_pea, 0) AS resiliente
 FROM disc_model_owner.scr_vcadmbnk_final_hist_rsk_cal_2606_2608 u
 JOIN disc_model_owner.mca_bd_reniec_xy_r_reest r ON u.key_value = r.key_value
 LEFT JOIN disc_model_owner.fen_s_indirecto s ON r.ubigeo_inei_nodo = s.ubigeo
