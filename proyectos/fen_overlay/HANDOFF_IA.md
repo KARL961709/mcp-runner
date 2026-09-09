@@ -8,12 +8,12 @@ necesitas está en el git; no dependes de la conversación de origen. Uso: **ori
 > hasta cerrar gobierno (auditoría). NO etiquetes el resultado como "validado". El `7,31≈7,24` es un **gate QA de anclaje**,
 > no validación. Ver [README §5](README.md#5-condiciones-bloqueantes-pendientes).
 
-## Paso 0 — Esquema (evita reventar el CTAS de 14M)
+## Paso 0 — Esquema + LLAVES (evita reventar el CTAS de 14M y un join que miente en silencio)
 ```
-.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val -Only k00_esquema
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val -Only k00_esquema,k00b_llaves
 ```
-Lee `output\k00_esquema.csv`. Confirma que existen las columnas de `k01`/`k02`. Si un nombre difiere (p.ej. `tipo_ingreso`
-o `nodo` en el universo), **corrige `k01`/`k02` antes de seguir** — no adivines.
+- `k00_esquema.csv`: confirma que existen las columnas de `k01`/`k02`. Si un nombre difiere (p.ej. `tipo_ingreso` o `nodo` en el universo), **corrige `k01`/`k02` antes de seguir** — no adivines.
+- `k00b_llaves.csv`: **regla del banco (identidad por código).** `pct_match` (universo→reniec por `key_value`) debe ser ALTO y `ulen_*`=`rlen_*` (mismo formato de llave). Si `pct_match` es bajo o las longitudes difieren, el `key_value` NO calza entre las 2 tablas → **hay que puentear la llave antes del CTAS** (no confíes el join). Es la misma trampa del ubigeo RENIEC crudo, ahora en la llave.
 
 ## Paso 1 — Universo 14M FEN (202608) → parquet, y bájalo
 ```
