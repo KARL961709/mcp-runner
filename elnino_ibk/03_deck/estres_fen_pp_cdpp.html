@@ -105,6 +105,11 @@ input.geo::-webkit-slider-thumb{background:var(--warn);box-shadow:none;}
 .pchip{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:11px;}
 .pchip i{font-style:normal;color:var(--faint);font-weight:600;}.pchip b{font-family:var(--mono);color:var(--ink);font-weight:700;}
 .gkey.ctr{justify-content:center;margin-top:14px;}
+.constbox{margin-top:8px;display:flex;flex-direction:column;}
+.cbrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--line2);font-size:12.5px;color:var(--ink);font-weight:600;}
+.cbrow:last-child{border-bottom:0;}
+.cbrow .cn{color:var(--faint);font-size:10px;font-style:normal;font-weight:400;}
+.cbrow b{font-family:var(--mono);color:var(--green);font-weight:700;font-variant-numeric:tabular-nums;}
 table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
 th{text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);padding:8px 10px;border-bottom:1.5px solid var(--line);}
 th:first-child,td:first-child{text-align:left;}
@@ -141,6 +146,9 @@ tr:hover td{background:var(--card2);}
       <div class="sect">Escenario FEN</div>
       <div class="scen" id="scen"></div>
       <div id="sl_scen"></div>
+      <div class="divider"></div>
+      <div class="sect mt">Constantes del modelo</div>
+      <div class="constbox" id="constbox"></div>
     </aside>
 
     <div class="viz">
@@ -192,13 +200,15 @@ tr:hover td{background:var(--card2);}
   function nf(n){return Math.round(n).toLocaleString('es-PE');}
   function f1(v){return v.toFixed(1).replace('.',',');}
   function f2(v){return v.toFixed(2).replace('.',',');}
+  function f3(v){return v.toFixed(3).replace('.',',');}
+  function pctf(v){return Math.round(v*100)+'%';}
   function cvar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
   function parChip(l,v){return '<span class="pchip"><i>'+l+'</i><b>'+v+'</b></span>';}
 
-  var RHO=0.15, KAPPA=0.25, LAMBDA=Math.sqrt(RHO/(1-RHO));
   var S_HI=0.65, S_LO=0.25;  // proxy de actividad (fallback si la celda no trae s real de s04): NO_DEP vs DEP
-  var IBK_K=0.02;  // sensibilidad de la recuperación al IBK+ centrado (depto-nac); PROVISIONAL (pend. fase/polaridad)
-  var P={gamma:3.0,wF:0.5,wA:0.5,recup:0.3,expo:0.5};
+  var IBK_K=0.02;  // sensibilidad de la recuperación al IBK+ centrado (depto-nac); PROVISIONAL (inerte hasta s04)
+  var P={gamma:3.0,wF:0.5,wA:0.5,recup:0.3,rho:0.033,kappa:0.25};  // rho = correlación de consumo (calibración), NO la hipotecaria 0,15
+  function lam(){return Math.sqrt(P.rho/(1-P.rho));}
   var activeScen='ESC2';
   var SCEN=[
     {id:'ESC1', lab:'Extraordinario', sub:'sin recuperación', g:4.2,f:.5,a:.5,r:0},
@@ -209,16 +219,17 @@ tr:hover td{background:var(--card2);}
     {id:'ESC32',lab:'Moderado', sub:'con recuperación', g:2,f:.5,a:.5,r:.5}
   ];
   var SL_SCEN=[
-    {k:'gamma',lab:'☔ Lluvia FEN · intensidad (γ)',min:0,max:4.5,step:.1,fmt:f1,hint:'2 moderado · 3 fuerte · 4,2 extraordinario',rain:true,scen:true},
+    {k:'gamma',lab:'☔ Lluvia FEN · intensidad (γ)',min:0,max:7,step:.1,fmt:f1,hint:'2 moderado · 3 fuerte · 4,2 extraordinario · >5 hipotético',rain:true,scen:true},
     {k:'wF',lab:'Físico · peso canal directo',min:0,max:1,step:.05,fmt:f2,hint:'inundación (requiere R por cliente)',twin:'wA',scen:true},
     {k:'wA',lab:'Actividad · peso canal indirecto',min:0,max:1,step:.05,fmt:f2,hint:'dependencia del agua · proxy NO_DEP',twin:'wF',scen:true},
-    {k:'recup',lab:'Recuperación · atenúa el estrés',min:0,max:.6,step:.05,fmt:f2,hint:'0 sin recuperación',scen:true}
+    {k:'recup',lab:'Recuperación · atenúa el estrés',min:0,max:1,step:.05,fmt:pctf,hint:'0 sin recuperación · 100% anula el estrés (e′=0)',scen:true}
   ];
+  // ρ (correlación del producto · consumo) y κ (interacción) = CONSTANTES del modelo, fijas — no son perillas
   // físico por cliente d = R/5 (R directo reestructurado real de cada celda); s = tipo de ingreso (NO_DEP/DEP); costa = gate Pacífico
 
   function grade(pd){var c=DATA.cutoffs;for(var i=0;i<c.length;i++)if(pd<=c[i])return i;return c.length;}
   function rnum(rl){return +String(rl).replace('R','');}
-  function stressCell(c){var d=rnum(c.r)/5, s=(c.s!=null)?Math.max(c.s,0):((c.tipo==='NO_DEP')?S_HI:S_LO), e=P.wF*d+P.wA*s+KAPPA*d*s, rec=(c.ibk_c!=null)?cl(P.recup+IBK_K*c.ibk_c,0,0.9):P.recup, ep=e*(1-rec), shift=LAMBDA*P.gamma*(c.pac?1:0)*ep;
+  function stressCell(c){var d=rnum(c.r)/5, s=(c.s!=null)?Math.max(c.s,0):((c.tipo==='NO_DEP')?S_HI:S_LO), e=P.wF*d+P.wA*s+P.kappa*d*s, rec=cl((c.ibk_c!=null)?P.recup+IBK_K*c.ibk_c:P.recup,0,1), ep=e*(1-rec), shift=lam()*P.gamma*(c.pac?1:0)*ep;
     return cl(nCDF(nInv(cl(c.pd,1e-4,0.985))+shift),1e-4,0.999);}
 
   function compute(){
@@ -318,7 +329,7 @@ tr:hover td{background:var(--card2);}
   var mapLayer='impact';
   function heat2(t){t=cl(t,0,1);var c1=[38,51,42],c2=[46,139,158],c3=[102,214,232],r,g,b,u;if(t<0.5){u=t/0.5;r=Math.round(c1[0]+(c2[0]-c1[0])*u);g=Math.round(c1[1]+(c2[1]-c1[1])*u);b=Math.round(c1[2]+(c2[2]-c1[2])*u);}else{u=(t-0.5)/0.5;r=Math.round(c2[0]+(c3[0]-c2[0])*u);g=Math.round(c2[1]+(c3[1]-c2[1])*u);b=Math.round(c2[2]+(c3[2]-c2[2])*u);}return 'rgb('+r+','+g+','+b+')';}
   function heatWarm(t){t=cl(t,0,1);var c1=[35,48,40],c2=[224,164,74],c3=[224,87,74],r,g,b,u;if(t<0.5){u=t/0.5;r=Math.round(c1[0]+(c2[0]-c1[0])*u);g=Math.round(c1[1]+(c2[1]-c1[1])*u);b=Math.round(c1[2]+(c2[2]-c1[2])*u);}else{u=(t-0.5)/0.5;r=Math.round(c2[0]+(c3[0]-c2[0])*u);g=Math.round(c2[1]+(c3[1]-c2[1])*u);b=Math.round(c2[2]+(c3[2]-c2[2])*u);}return 'rgb('+r+','+g+','+b+')';}
-  function distShift(f){var d=f.r/5,e=P.wF*d+P.wA*f.s+KAPPA*d*f.s;return LAMBDA*P.gamma*(f.pac?1:0)*(e*(1-P.recup));}
+  function distShift(f){var d=f.r/5,e=P.wF*d+P.wA*f.s+P.kappa*d*f.s;return lam()*P.gamma*(f.pac?1:0)*(e*(1-cl(P.recup,0,1)));}
   function distDPD(f){return nCDF(nInv(DATA.total.pd)+distShift(f))-DATA.total.pd;}
   function mapColor(f){
     if(mapLayer==='impact'){if(f.r>=4)return '#D01B22';var dpd=distDPD(f);return dpd<=0.0005?'#233026':heatWarm(cl(dpd/0.18,0,1));}
@@ -351,7 +362,7 @@ tr:hover td{background:var(--card2);}
     var R=compute();
     document.getElementById('mN').textContent=nf(DATA.total.n);
     document.getElementById('mPD').textContent=pct2(DATA.total.pd);
-    var d=(R.aPds-R.aPd0)*100;
+    var d=Math.max(0,(R.aPds-R.aPd0)*100);
     var kp=[
       {l:'Cartera',v:nf(R.totN),s:'clientes clean',c:'cart'},
       {l:'PD calibrada',v:pct2(R.aPd0),s:'RD real '+pct2(R.aRd)+' ✓',c:'base'},
@@ -365,9 +376,9 @@ tr:hover td{background:var(--card2);}
     document.getElementById('mig_flow').innerHTML=migSankey(R);
     var modeB=0,modeA=0;for(var mi=1;mi<R.baseN.length;mi++){if(R.baseN[mi]>R.baseN[modeB])modeB=mi;if(R.strN[mi]>R.strN[modeA])modeA=mi;}
     document.getElementById('mig_hl').innerHTML='<b class="warn">'+pct(R.mig/R.totN)+'</b> de la cartera baja de grado ('+nf(R.mig)+' clientes) · la concentración se corre de <b>'+DATA.grados[modeB]+'</b> a <b class="warn">'+DATA.grados[modeA]+'</b> · <b class="warn">+'+nf(R.toRej)+'</b> entran a <b>GR</b> (rechazo) bajo <b>'+(activeScen||'el escenario')+'</b>.';
-    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',f2(P.recup))+parChip('λ=√(ρ/1−ρ)',f2(LAMBDA))+parChip('escenario',activeScen||'personalizado');
+    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',pctf(P.recup))+parChip('ρ correlación',f3(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f2(lam()))+parChip('escenario',activeScen||'personalizado');
     document.getElementById('gkey').innerHTML=DATA.grados.map(function(g,i){return '<span><i style="background:'+cvar(GCOL[i])+'"></i>'+g+'</span>';}).join('');
-    document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ))=0,42 (ρ=0,15), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25), e′ = e·(1−recup). <b>PD₀ = pd_calib real</b> por celda grado×R×tipo (81 728 altas PP CD/CDPP, clean, cierre 202607; PD media 7,31% ≈ RD 12m real 7,24% ✓). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
+    document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ)) y <b>ρ = 0,033 = correlación de consumo del producto</b> (fija, de la calibración — no la hipotecaria 0,15, que sobre-escalaría ~2,3×), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25 fija), e′ = e·(1−recup) con <b>recup 0–100%</b> (100% anula el estrés). <b>PD₀ = pd_calib real</b> por celda grado×R×tipo (81 728 altas PP CD/CDPP, clean, cierre 202607; PD media 7,31% ≈ RD 12m real 7,24% ✓). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
     paintMap();if(mapLayer==='impact')mapLegend();
   }
 
@@ -378,7 +389,7 @@ tr:hover td{background:var(--card2);}
   }
   function applyScen(id){var sc=null;for(var i=0;i<SCEN.length;i++)if(SCEN[i].id===id)sc=SCEN[i];if(!sc)return;
     P.gamma=sc.g;P.wF=sc.f;P.wA=sc.a;P.recup=sc.r;activeScen=id;
-    [['gamma',f1],['wF',f2],['wA',f2],['recup',f2]].forEach(function(x){var el=document.getElementById('s_'+x[0]);if(el)el.value=P[x[0]];var v=document.getElementById('v_'+x[0]);if(v)v.textContent=x[1](P[x[0]]);});
+    [['gamma',f1],['wF',f2],['wA',f2],['recup',pctf]].forEach(function(x){var el=document.getElementById('s_'+x[0]);if(el)el.value=P[x[0]];var v=document.getElementById('v_'+x[0]);if(v)v.textContent=x[1](P[x[0]]);});
     paintScen();sched();
   }
   function mkSliders(box,arr){
@@ -389,6 +400,10 @@ tr:hover td{background:var(--card2);}
       if(s.scen){activeScen=null;paintScen();}
       sched();
     });});
+  }
+  function renderConsts(){
+    var rows=[['Correlación ρ','consumo · producto (fija)',f3(P.rho)],['Interacción κ','físico × actividad',f2(P.kappa)],['λ = √(ρ/1−ρ)','loading del shift',f2(lam())]];
+    document.getElementById('constbox').innerHTML=rows.map(function(r){return '<div class="cbrow"><span>'+r[0]+' <i class="cn">'+r[1]+'</i></span><b>'+r[2]+'</b></div>';}).join('');
   }
   var pend=false;function sched(){if(pend)return;pend=true;requestAnimationFrame(function(){pend=false;render();});}
 
@@ -411,6 +426,6 @@ tr:hover td{background:var(--card2);}
     host.addEventListener('mouseleave',clear);
   }
 
-  paintScen();mkSliders('sl_scen',SL_SCEN);render();renderMap();wireMigHover();
+  paintScen();mkSliders('sl_scen',SL_SCEN);renderConsts();render();renderMap();wireMigHover();
 })();
 </script>
