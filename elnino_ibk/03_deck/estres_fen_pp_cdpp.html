@@ -122,6 +122,8 @@ input.geo::-webkit-slider-thumb{background:var(--warn);box-shadow:none;}
 .rbtn.on{border-color:var(--green);background:var(--green-tint);color:var(--ink);}
 .rbtn.dis{opacity:.45;cursor:not-allowed;}
 .rhint{font-size:10.5px;color:var(--faint);margin-top:6px;line-height:1.4;}
+.rtt{margin-top:8px;background:var(--bg3);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:11px;color:var(--muted);line-height:1.55;}
+.rtt b{color:var(--ink);}.rtt sub{font-size:9px;}
 table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
 th{text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);padding:8px 10px;border-bottom:1.5px solid var(--line);}
 th:first-child,td:first-child{text-align:left;}
@@ -162,6 +164,7 @@ tr:hover td{background:var(--card2);}
       <div class="sect mt">Score físico (R)</div>
       <div class="rtog" id="rtog"></div>
       <div class="rhint">El canal físico usa <b>d = R/5</b>. <b>Reestructurado</b>: R con la reestructuración (default). <b>Directo</b>: score R directo, sin reestructurar.</div>
+      <div class="rtt" id="rtt" hidden></div>
       <div class="divider"></div>
       <div class="sect mt">Constantes del modelo</div>
       <div class="constbox" id="constbox"></div>
@@ -426,10 +429,17 @@ tr:hover td{background:var(--card2);}
     });});
   }
   function renderRtog(){
-    var dirOn=!!DATA.cellsDir, box=document.getElementById('rtog'); if(!box)return;
+    var dirOn=!!DATA.cellsDir, box=document.getElementById('rtog'), tt=document.getElementById('rtt'); if(!box)return;
+    var TXT={
+      reest:'<b>R reestructurado</b> (R0–R5) — el score físico FEN <i>directo</i> re-evaluado por la <b>reestructuración</b> del crédito (refin/reprogramación). Es el <b>default</b> del overlay.<br><b>Proceso:</b> entra como <b>d = R/5</b> en el canal físico → e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s → e′ = e·(1−recup) → <b>PD* = Φ(Φ⁻¹(PD₀) + λ·γ·costa·e′)</b>.',
+      dir:'<b>R directo</b> (R0–R5) — el score físico FEN <b>crudo</b>, sin ajustar por reestructuración. '+(dirOn?'Entra igual como <b>d = R/5</b>: mismo proceso, cambia solo el R.':'<br><b style="color:var(--warn)">¿Por qué pendiente?</b> El artifact hoy trae la cartera agregada por R <b>reestructurado</b>; esta vista necesita la MISMA cartera agregada por R <b>directo</b> (query <b>j04</b>: ambos R del mismo universo). Al correr j04 y embeber los datos, el botón se activa y podrás comparar el estrés con uno u otro R.')
+    };
     box.innerHTML='<button class="rbtn'+(useReest?' on':'')+'" data-r="reest">reestructurado</button>'+
-      '<button class="rbtn'+((!useReest&&dirOn)?' on':'')+(dirOn?'':' dis')+'" data-r="dir"'+(dirOn?'':' title="requiere correr j04 (agregado r_dir)"')+'>directo'+(dirOn?'':' · pendiente')+'</button>';
-    Array.prototype.forEach.call(box.querySelectorAll('.rbtn'),function(b){b.addEventListener('click',function(){var v=b.getAttribute('data-r');if(v==='dir'&&!DATA.cellsDir)return;useReest=(v==='reest');renderRtog();sched();});});
+      '<button class="rbtn'+((!useReest&&dirOn)?' on':'')+(dirOn?'':' dis')+'" data-r="dir">directo'+(dirOn?'':' · pendiente')+'</button>';
+    Array.prototype.forEach.call(box.querySelectorAll('.rbtn'),function(b){var v=b.getAttribute('data-r');
+      b.addEventListener('click',function(){if(v==='dir'&&!DATA.cellsDir)return;useReest=(v==='reest');renderRtog();sched();});
+      b.addEventListener('mouseenter',function(){if(tt){tt.innerHTML=TXT[v];tt.hidden=false;}});});
+    box.onmouseleave=function(){if(tt)tt.hidden=true;};
   }
   function renderConsts(){
     var rows=[['Correlación ρ','oscilación de la RD · calibración PP VC',f4(P.rho)],['Interacción κ','físico × actividad',f2(P.kappa)],['λ = √(ρ/1−ρ)','loading del shift',f3(lam())]];
