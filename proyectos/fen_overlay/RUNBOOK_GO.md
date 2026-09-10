@@ -26,10 +26,10 @@ Cada cliente con: PD, grado, **R directo / geo / reest**, pac, ubigeo_dom, depto
 
 ## Paso 3 — AGREGADOS para el artifact (pegables por _resultados.txt)
 ```
-.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val -Only s04a_agg_altas_cells,s04b_agg_pea_cells,s04c_agg_mapa_distrito
+.\Go.ps1 -SqlDir proyectos\fen_overlay\sql_val -Only s04a_altas_reest,s04a_altas_dir,s04b_pea_reest,s04b_pea_dir
 ```
-- `s04a` / `s04b` = celdas grado×tipo×**r_dir×r_reest** → n, pd, (rd altas), **s real, ibk_c**. Trae AMBOS R → el toggle Ajuste Geo/Directo se deriva del MISMO dato; s e IBK+ dejan de ser proxy.
-- `s04c` = por distrito → n, depto, s, **share_r45 y avg_r (dir y reest)** → el mapa pinta el R de reniec y su recorte R4/R5 CAMBIA con el toggle.
+- **4 marginales (~84 filas c/u = entran completas):** `s04a_altas_reest`/`_dir` = celdas Altas (`cells`/`cellsDir`); `s04b_pea_reest`/`_dir` = celdas PEA. grado×tipo×R → n, pd(_facil/_cd), (rd en altas), s real, ibk_c. Con las 2 vistas R el artifact deriva el toggle Directo/Geo; s e IBK+ dejan de ser proxy.
+- **Mapa distrital** (`s04c_agg_mapa_distrito`, 860 filas): NO entra por `_resultados.txt` (cap 100). El mapa usa por ahora el R distrital embebido (clasificador FEN); refrescarlo con R real por cliente = aparte (roll-up a depto o por tramos).
 
 ## Paso 4 — TABLA DE ESCENARIOS 202608 (PD estresada por los 6 escenarios de gobierno)
 Primero **valida el motor** (barato, segundos) y me pegas las 36 filas — confirmo que cuadran 1‑a‑1 con el simulador:
