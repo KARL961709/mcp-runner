@@ -381,7 +381,7 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
   function distShift(f){var d=f.r/5,e=P.wF*d+P.wA*f.s+P.kappa*d*f.s;return lam()*P.gamma*(f.pac?1:0)*(e*(1-cl(P.recup,0,1)));}
   function distDPD(f){return nCDF(nInv(DATA.total.pd)+distShift(f))-DATA.total.pd;}
   function mapColor(f){
-    if(mapLayer==='impact'){if(f.r>=4)return '#D01B22';var dpd=distDPD(f);return dpd<=0.0005?'#233026':heatWarm(cl(dpd/0.18,0,1));}
+    if(mapLayer==='impact'){var dpd=distDPD(f);return dpd<=0.0005?'#233026':heatWarm(cl(dpd/0.18,0,1));}
     if(mapLayer==='cut')return f.r>=4?(f.r===5?'#B23A3A':'#E0574A'):['#2A3A2A','#2E6E4E','#2E9E6B','#2FB56B'][f.r];
     if(mapLayer==='r')return RCOL[f.r];
     if(mapLayer==='s')return f.s>0.02?heat2(f.s):'#2A3A2A';
@@ -397,12 +397,12 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
   function paintMap(){if(!_mp)return;var dist=document.getElementById('mapDist'),dep=document.getElementById('mapDep'),i;
     if(mapLayer==='ibk'){if(dist)dist.style.display='none';if(dep)dep.style.display='';for(i=0;i<_mpDep.length;i++){var _dp=+_mpDep[i].getAttribute('data-dp'),_v=IBKC[_dp],_has=IBKREG[_dp]!=null;_mpDep[i].setAttribute('fill',(_v!=null&&_v>0)?heat2(cl(_v/0.9,0,1)):(_has?'#2A3A2A':'url(#nodata)'));}}
     else{if(dist)dist.style.display='';if(dep)dep.style.display='none';var f=MAPDATA.feats;for(i=0;i<_mp.length;i++)_mp[i].setAttribute('fill',mapColor(f[i]));}}
-  function mapButtons(){var btns=[['impact','Impacto FEN'],['cut','Recorte duro'],['r','R directo (v3)'],['s','s indirecto'],['ibk','IBK+ · recuperación'],['pac','Gate Pacífico']];
+  function mapButtons(){var btns=[['impact','Impacto FEN'],['r','R directo (v3)'],['s','s indirecto'],['ibk','IBK+ · recuperación'],['pac','Gate Pacífico']];
     document.getElementById('layerbtns').innerHTML=btns.map(function(b){return '<button class="lbtn'+(mapLayer===b[0]?' on':'')+'" data-l="'+b[0]+'">'+b[1]+'</button>';}).join('');
     Array.prototype.forEach.call(document.querySelectorAll('#layerbtns .lbtn'),function(b){b.addEventListener('click',function(){mapLayer=b.getAttribute('data-l');mapButtons();mapLegend();paintMap();});});}
   function mapLegend(){var m=MAPDATA,i,lg='';var _sb=document.getElementById('ibk_spark');if(_sb)_sb.hidden=true;
-    if(mapLayer==='impact'){var mx=0,hc=0;for(i=0;i<m.feats.length;i++){if(m.feats[i].r>=4){hc++;continue;}var dp=distDPD(m.feats[i]);if(dp>mx)mx=dp;}
-      lg='<div style="font-size:12px;color:var(--muted)">Impacto del escenario · ΔPD de un cliente típico (base '+pct(DATA.total.pd)+')</div><div style="height:12px;border-radius:6px;margin:9px 0 3px;background:linear-gradient(90deg,#233026,#E0A44A,#E0574A)"></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--faint)"><span>0</span><span>+18 pp</span></div><div class="rleg" style="margin-top:11px"><div class="rr"><i style="background:#D01B22"></i>R4/R5 · recorte duro (fuera) <b>'+hc+'</b></div></div><div class="note" style="margin-top:9px;font-size:11.5px;color:var(--muted);line-height:1.5">Se recolorea al mover γ, pesos y recuperación (solo distritos Pacífico se activan). Impacto máx actual ≈ <b style="color:var(--ink)">+'+(mx*100).toFixed(1).replace(".",",")+' pp</b>.</div>';}
+    if(mapLayer==='impact'){var mx=0;for(i=0;i<m.feats.length;i++){var dp=distDPD(m.feats[i]);if(dp>mx)mx=dp;}
+      lg='<div style="font-size:12px;color:var(--muted)">Impacto del escenario · ΔPD de un cliente típico (base '+pct(DATA.total.pd)+')</div><div style="height:12px;border-radius:6px;margin:9px 0 3px;background:linear-gradient(90deg,#233026,#E0A44A,#E0574A)"></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--faint)"><span>0</span><span>+18 pp</span></div><div class="note" style="margin-top:9px;font-size:11.5px;color:var(--muted);line-height:1.5">Se recolorea al mover γ, pesos y recuperación (solo distritos Pacífico se activan). Impacto máx actual ≈ <b style="color:var(--ink)">+'+(mx*100).toFixed(1).replace(".",",")+' pp</b>.</div>';}
     else if(mapLayer==='cut'){var hcc=0,zs=0;for(i=0;i<m.feats.length;i++){if(m.feats[i].r>=4)hcc++;else zs++;}
       lg='<div class="rleg"><div class="rr"><i style="background:#B23A3A"></i>R5–R4 · recorte duro (siempre fuera) <b>'+hcc+'</b></div><div class="rr"><i style="background:#2FB56B"></i>R3–R0 · zona de score (se estresa) <b>'+zs+'</b></div></div><div class="note" style="margin-top:11px;font-size:12px;color:var(--muted);line-height:1.5">R4/R5 = inundación alta/muy alta → <b style="color:var(--ink)">filtro duro</b>, no entran. En R0–R3 se juega con el score.</div>';}
     else if(mapLayer==='r'){var cnt=[0,0,0,0,0,0];for(i=0;i<m.feats.length;i++)cnt[m.feats[i].r]++;var lab=['sin exposición','','','','','muy alto'];
