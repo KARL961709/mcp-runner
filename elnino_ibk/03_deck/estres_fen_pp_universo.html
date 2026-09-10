@@ -329,7 +329,7 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
   function migSankey(R){
     var NG=DATA.grados.length, tot=R.totN||1, dark='#0a0f0a';
     var W=520,H=304, padT=38, padB=16, nodeW=46, lx=80, rx=W-80-nodeW, i,a,b;
-    var sc=(H-padT-padB)/tot;               // columnas continuas (sin huecos) = la distribución real
+    var sc=(H-padT-padB)/tot;
     var lY=[],rY=[],y=padT;
     for(i=0;i<NG;i++){var hh=R.baseN[i]*sc; lY[i]={y:y,h:hh}; y+=hh;}
     y=padT; for(i=0;i<NG;i++){var h2=R.strN[i]*sc; rY[i]={y:y,h:h2}; y+=h2;}
@@ -339,23 +339,32 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
       var y1=lc[a],y2=rc[b]; lc[a]+=th; rc[b]+=th; var x1=lx+nodeW,x2=rx,mx=(x1+x2)/2, down=b>a;
       rib+='<path class="rb" data-s="'+a+'" data-d="'+b+'" d="M'+x1+' '+y1.toFixed(1)+' C'+mx+' '+y1.toFixed(1)+' '+mx+' '+y2.toFixed(1)+' '+x2+' '+y2.toFixed(1)+' L'+x2+' '+(y2+th).toFixed(1)+' C'+mx+' '+(y2+th).toFixed(1)+' '+mx+' '+(y1+th).toFixed(1)+' '+x1+' '+(y1+th).toFixed(1)+' Z" fill="'+(down?wn:cvar(GCOL[a]))+'" opacity="'+(down?0.52:0.12)+'"><title>'+DATA.grados[a]+' → '+DATA.grados[b]+': '+nf(fn)+' ('+pct(fn/tot)+')'+(down?' · baja de grado':' · se mantiene')+'</title></path>';
     }
+    var outL=[];
     function node(gi,x,seg,side,cnt){
-      var s='',cy=seg.y+seg.h/2,p=cnt/tot,ox=side==='L'?x-9:x+nodeW+9,an=side==='L'?'end':'start'; var tin=(gi>=5)?'#EAF2EA':dark, tin2=(gi>=5)?'rgba(234,242,234,.85)':'rgba(10,15,10,.78)';
+      var s='',cy=seg.y+seg.h/2,p=cnt/tot,ox=side==='L'?x-9:x+nodeW+9,edge=side==='L'?x:x+nodeW,an=side==='L'?'end':'start'; var tin=(gi>=5)?'#EAF2EA':dark, tin2=(gi>=5)?'rgba(234,242,234,.85)':'rgba(10,15,10,.78)';
       s+='<rect class="nd" data-'+(side==='L'?'s':'d')+'="'+gi+'" x="'+x+'" y="'+seg.y.toFixed(1)+'" width="'+nodeW+'" height="'+Math.max(seg.h,0).toFixed(1)+'" rx="3" fill="'+cvar(GCOL[gi])+'"><title>'+DATA.grados[gi]+' '+(side==='L'?'hoy':'con FEN')+': '+nf(cnt)+' ('+pct(p)+')</title></rect>';
       if(seg.h>=25){
         s+='<text x="'+(x+nodeW/2)+'" y="'+(cy-3).toFixed(1)+'" text-anchor="middle" font-size="12.5" font-weight="800" fill="'+tin+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
         s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+11).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="'+tin2+'" font-family="var(--mono)">'+pct(p)+'</text>';
-        s+='<text x="'+ox+'" y="'+(cy+3.5).toFixed(1)+'" text-anchor="'+an+'" font-size="9.5" font-weight="600" fill="'+fa+'" font-family="var(--mono)">'+nf(cnt)+'</text>';
+        outL.push({side:side,y0:cy,x:ox,edge:edge,an:an,fs:9.5,fill:fa,text:nf(cnt)});
       } else if(seg.h>=13){
         s+='<text x="'+(x+nodeW/2)+'" y="'+(cy+3.7).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="800" fill="'+tin+'" font-family="var(--mono)">'+DATA.grados[gi]+'</text>';
-        s+='<text x="'+ox+'" y="'+(cy+3.5).toFixed(1)+'" text-anchor="'+an+'" font-size="10" font-weight="700" fill="'+mu+'" font-family="var(--mono)">'+pct(p)+'</text>';
+        outL.push({side:side,y0:cy,x:ox,edge:edge,an:an,fs:10,fill:mu,text:pct(p)});
       } else if(seg.h>0){
-        s+='<text x="'+ox+'" y="'+(cy+3).toFixed(1)+'" text-anchor="'+an+'" font-size="9.5" font-weight="700" fill="'+mu+'">'+DATA.grados[gi]+' · '+pct(p)+'</text>';
+        outL.push({side:side,y0:cy,x:ox,edge:edge,an:an,fs:9.5,fill:mu,text:DATA.grados[gi]+' · '+pct(p)});
       }
       return s;
     }
     var nd='';
     for(i=0;i<NG;i++){ if(lY[i].h>0)nd+=node(i,lx,lY[i],'L',R.baseN[i]); if(rY[i].h>0)nd+=node(i,rx,rY[i],'R',R.strN[i]); }
+    ['L','R'].forEach(function(sd){
+      var arr=outL.filter(function(o){return o.side===sd;}).sort(function(u,v){return u.y0-v.y0;}), g=11.5;
+      for(var k=0;k<arr.length;k++){ var yy=arr[k].y0; if(k>0 && yy<arr[k-1].yF+g) yy=arr[k-1].yF+g; arr[k].yF=yy; }
+      arr.forEach(function(o){
+        if(Math.abs(o.yF-o.y0)>1.5) nd+='<line x1="'+o.edge+'" y1="'+o.y0.toFixed(1)+'" x2="'+o.x+'" y2="'+o.yF.toFixed(1)+'" stroke="'+fa+'" stroke-width="0.6" opacity="0.55"/>';
+        nd+='<text x="'+o.x+'" y="'+(o.yF+3).toFixed(1)+'" text-anchor="'+o.an+'" font-size="'+o.fs+'" font-weight="700" fill="'+o.fill+'" font-family="var(--mono)">'+o.text+'</text>';
+      });
+    });
     var hd='<text x="'+(lx+nodeW/2)+'" y="15" text-anchor="middle" font-size="11" font-weight="800" fill="'+fa+'" letter-spacing="1.5">HOY</text>'+
            '<text x="'+(lx+nodeW/2)+'" y="28" text-anchor="middle" font-size="9" fill="'+fa+'" font-family="var(--mono)">'+nf(tot)+'</text>'+
            '<text x="'+(rx+nodeW/2)+'" y="15" text-anchor="middle" font-size="11" font-weight="800" fill="'+wn+'" letter-spacing="1.5">CON FEN</text>'+
