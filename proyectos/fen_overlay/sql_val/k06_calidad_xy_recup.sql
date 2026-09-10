@@ -1,4 +1,4 @@
--- k06: de los 3.83M sin r_reest que SI estan en t_mst_reniec_rsk_api, mide la CALIDAD de su XY para saber cuantos son recuperables via point-in-polygon a distrito. Abre por flg_xy_sospechoso x prec_tier + cuenta XY no-nulo. Si el grueso tiene XY no sospechoso y prec_tier decente -> recuperables limpios; el resto es XY dudoso (decision MRM). Read-only, pocas filas
+-- k06: de los 3.83M sin r_reest que SI estan en t_mst_reniec_rsk_api, mide la CALIDAD de su XY para saber cuantos son recuperables via point-in-polygon a distrito. Abre por flg_xy_sospechoso x prec_tier + cuenta XY no-nulo. Si el grueso tiene XY no sospechoso y prec_tier decente -> recuperables limpios, el resto es XY dudoso (decision MRM). Read-only, pocas filas
 SELECT
   m.flg_xy_sospechoso,
   m.prec_tier,
