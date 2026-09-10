@@ -1,6 +1,6 @@
 -- d_impact_pp_arms_2609. Atribucion: entre los que HOY son clean (flg_dirty_pp=0), cuantos tripea cada brazo portable.
 --   Dice cual brazo mueve mas gente clean->dirty. n_any = union = total que pasaria a dirty con la correccion.
---   Nota: a_bank_pp es por presencia (no saldo) -> n_bank es cota ALTA; en el build fiel el bancarizado va por saldo>0.
+--   Nota: a_bank_pp es por presencia (no saldo) -> n_bank es cota ALTA. En el build fiel el bancarizado va por saldo>0.
 SELECT
   COUNT(*) AS n_clean_actual,
   SUM(d.a_cast)   AS n_castigo,
