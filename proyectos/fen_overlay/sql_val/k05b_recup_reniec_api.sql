@@ -1,4 +1,4 @@
--- k05b: de los 3.83M del universo VC 202608 SIN XY geo (no cruzan r_reest), cuantos existen en t_mst_reniec_rsk_api (master RENIEC). Si ~3.83M -> tienen registro RENIEC y (probable) ubigeo declarado -> R directo distrital RECUPERABLE, subimos cobertura hacia ~13M. Join solo por key_value (seguro; si la tabla no tiene key_value, k05a lo dice y esta falla sin tumbar al resto). Read-only, 1 fila
+-- k05b: de los 3.83M del universo VC 202608 SIN XY geo (no cruzan r_reest), cuantos existen en t_mst_reniec_rsk_api (master RENIEC). Si ~3.83M -> tienen registro RENIEC y (probable) ubigeo declarado -> R directo distrital RECUPERABLE, subimos cobertura hacia ~13M. Join solo por key_value (seguro, si la tabla no tiene key_value k05a lo dice y esta falla sin tumbar al resto). Read-only, 1 fila
 SELECT
   count(*)           AS n_sin_geo,
   count(m.key_value) AS n_en_reniec_master,
