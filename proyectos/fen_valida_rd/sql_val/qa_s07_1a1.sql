@@ -1,4 +1,4 @@
--- qa_s07_1a1: VALIDACION NO CIRCULAR del artifact Altas. Motor del overlay UNO-A-UNO POR CLIENTE en SQL sobre los 19.539, promediado. Debe coincidir con el artifact (base 9,70 · ESC2 11,06 · ESC1 12,67 · ESC32 10,32) dentro de ~0,05pp. Mismo motor que qa_s06_1a1 (Phi=normal_cdf, Phi-1=inverse_normal_cdf). Read-only, 3 filas
+-- qa_s07_1a1: VALIDACION NO CIRCULAR del artifact Altas. Motor del overlay UNO-A-UNO POR CLIENTE en SQL sobre los 19.539, promediado. Debe coincidir con el artifact (base 9,70 - ESC2 11,06 - ESC1 12,67 - ESC32 10,32) dentro de ~0,05pp. Mismo motor que qa_s06_1a1 (Phi=normal_cdf, Phi-1=inverse_normal_cdf). Read-only, 3 filas
 WITH b AS (
   SELECT
     pd,
