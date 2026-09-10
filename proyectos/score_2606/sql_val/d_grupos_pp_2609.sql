@@ -1,4 +1,4 @@
--- d_grupos_pp_2609. Cambio de composicion G1-GR de PP Fácil en 202609: score ACTUAL (dirty clasif-only) vs CORREGIDO (dirty riesgo-puro).
+-- d_grupos_pp_2609. Cambio de composicion G1-GR de PP Facil en 202609: score ACTUAL (dirty clasif-only) vs CORREGIDO (dirty riesgo-puro).
 --   Corregido = re-scoreo solo de los que pasan clean->dirty por riesgo (castigo/refin/reest/judicial), aplicando overlay 0.0722597767.
 --   Calibrador beta y constantes = las mismas del build u02_scored_2609 (M=-0.1460672524, A=1.0405635434, B=2.5746e-11, ft_pp=0.1002652693, sqrt(1-rho)=0.9832598843, lambda=1).
 --   Cortes G1>=993 G2>=972 G3>=959 G4>=921 G5>=884 G6>=850 GR>=0.
