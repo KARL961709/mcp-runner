@@ -1,4 +1,4 @@
--- g01 panel RD 12m MENSUAL por zona FEN (bajo/medio/alto) sobre pp_vc_ds_po_origpp IBK flg_calib_rd=1. MADUREZ: flg_target_pp_12m NO nulo Y codmes <= 202507 (ultima RD12 con 12m cerrado en este vintage; verificado en master_ppvc: target null desde 202508, originaciones hasta 202607). Bump 202507 en el proximo refresh. Formato ancho (1 fila por codmes) para paste chico. Alimenta Canal A (regresion vs ICEN) y la permutacion. Espejo de e01. READ-ONLY.
+-- g01 panel RD 12m MENSUAL por zona FEN (bajo/medio/alto) sobre pp_vc_ds_po_origpp IBK flg_calib_rd=1. MADUREZ: flg_target_pp_12m NO nulo Y codmes <= 202507 (ultima RD12 con 12m cerrado en este vintage, verificado en master_ppvc: target null desde 202508, originaciones hasta 202607). Bump 202507 en el proximo refresh. Formato ancho (1 fila por codmes) para paste chico. Alimenta Canal A (regresion vs ICEN) y la permutacion. Espejo de e01. READ-ONLY.
 WITH g AS (
   SELECT upper(trim(departamento)) AS dep,
          CASE WHEN cod_ubigeo IN ('110301','110302','110303','110304','110305') THEN 'NASCA'
