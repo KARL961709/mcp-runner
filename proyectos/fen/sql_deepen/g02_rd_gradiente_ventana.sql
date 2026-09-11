@@ -37,7 +37,8 @@ j AS (
   LEFT JOIN r ON r.key_value = a.id_value
   LEFT JOIN g ON g.dep = r.dep AND g.prov = r.prov AND g.dist = r.dist
   WHERE a.cod_instit_financiera = '00002' AND a.flg_calib_rd = 1
-    AND a.flg_target_pp_12m IS NOT NULL AND a.codmes <= 202508
+    AND a.flg_target_pp_12m IS NOT NULL
+    AND a.codmes <= (SELECT max(codmes) - 100 FROM disc_model_owner.pp_vc_ds_po_origpp WHERE cod_instit_financiera = '00002' AND flg_calib_rd = 1)
 )
 SELECT ventana,
        count(*)                                                  AS n,

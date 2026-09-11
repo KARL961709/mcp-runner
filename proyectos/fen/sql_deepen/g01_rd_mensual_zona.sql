@@ -1,4 +1,4 @@
--- g01 panel RD 12m MENSUAL por zona FEN (bajo/medio/alto) sobre pp_vc_ds_po_origpp IBK flg_calib_rd=1, madurez target no nulo hasta 202508. Formato ancho (1 fila por codmes) para paste chico. Alimenta Canal A (regresion vs ICEN) y la permutacion. Espejo de e01, extendido a 202508. READ-ONLY.
+-- g01 panel RD 12m MENSUAL por zona FEN (bajo/medio/alto) sobre pp_vc_ds_po_origpp IBK flg_calib_rd=1. MADUREZ 12m CERRADO garantizada: cutoff dinamico codmes <= max(codmes)-100 (=-12 meses) de la propia tabla, para que ninguna cohorte quede censurada sin importar la frescura. Formato ancho (1 fila por codmes) para paste chico. Alimenta Canal A (regresion vs ICEN) y la permutacion. Espejo de e01. READ-ONLY.
 WITH g AS (
   SELECT upper(trim(departamento)) AS dep,
          CASE WHEN cod_ubigeo IN ('110301','110302','110303','110304','110305') THEN 'NASCA'
@@ -33,7 +33,8 @@ j AS (
   LEFT JOIN r ON r.key_value = a.id_value
   LEFT JOIN g ON g.dep = r.dep AND g.prov = r.prov AND g.dist = r.dist
   WHERE a.cod_instit_financiera = '00002' AND a.flg_calib_rd = 1
-    AND a.flg_target_pp_12m IS NOT NULL AND a.codmes <= 202508
+    AND a.flg_target_pp_12m IS NOT NULL
+    AND a.codmes <= (SELECT max(codmes) - 100 FROM disc_model_owner.pp_vc_ds_po_origpp WHERE cod_instit_financiera = '00002' AND flg_calib_rd = 1)
 )
 SELECT codmes,
        count(*)                                                  AS n,
