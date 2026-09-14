@@ -26,7 +26,8 @@ mc AS (
   SELECT count(*) AS n,
          sum(CASE WHEN meses_madurez IS NULL THEN 1 ELSE 0 END) AS sin_fila_target,
          coalesce(min(lag_meses), 0) AS lagmin,
-         sum(CASE WHEN (sin_pd = 1 AND pd_raw IS NOT NULL) OR (sin_pd = 0 AND pd_raw IS NULL) THEN 1 ELSE 0 END) AS incoh
+         sum(CASE WHEN (sin_pd = 1 AND pd_raw IS NOT NULL) OR (sin_pd = 0 AND pd_raw IS NULL) THEN 1 ELSE 0 END) AS incoh,
+         sum(CASE WHEN desc_cliente IS NULL OR desc_campania IS NULL THEN 1 ELSE 0 END) AS sin_desc
   FROM disc_model_owner.b46029_desemb_cal_202609
 ),
 msrc AS (
@@ -53,5 +54,6 @@ SELECT bloque, chequeo, valor, esperado, estado FROM (
   UNION ALL SELECT 'INSUMO', '2 todas con fila target', cast(mc.sin_fila_target AS varchar), '0', CASE WHEN mc.sin_fila_target = 0 THEN 'OK' ELSE 'FALLA' END FROM mc
   UNION ALL SELECT 'INSUMO', '3 as-of sin look-ahead', cast(mc.lagmin AS varchar), '>=0', CASE WHEN mc.lagmin >= 0 THEN 'OK' ELSE 'FALLA' END FROM mc
   UNION ALL SELECT 'INSUMO', '4 sin_pd coherente', cast(mc.incoh AS varchar), '0', CASE WHEN mc.incoh = 0 THEN 'OK' ELSE 'FALLA' END FROM mc
+  UNION ALL SELECT 'INSUMO', '5 desc_cliente y desc_campania sin nulo', cast(mc.sin_desc AS varchar), '0', CASE WHEN mc.sin_desc = 0 THEN 'OK' ELSE 'FALLA' END FROM mc
 ) q
 ORDER BY bloque, chequeo

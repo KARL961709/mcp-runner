@@ -2,6 +2,7 @@
 CREATE TABLE disc_model_owner.b46029_desemb_cal_202609
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
 SELECT b.cod_mes, b.cod_tip_doc, b.key_value, b.desc_producto,
+       b.desc_cliente, b.desc_campania,
        b.n_desemb, b.mto_desembolso, b.flg_desembolso,
        b.pd_raw, b.pd_codmes, b.lag_meses, b.sin_pd, b.flg_impulsa,
        t.target_01m, t.target_02m, t.target_03m, t.target_04m, t.target_05m, t.target_06m,

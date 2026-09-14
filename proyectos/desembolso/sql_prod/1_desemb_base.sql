@@ -1,11 +1,13 @@
--- 1_desemb_base.sql | tabla NUEVA disc_model_owner.b46029_desemb_base_202609: universo de desembolsos (d_perm_aws.user_desembolso, TODAS las filas) con el pd_raw CRUDO del scorecard Origen BPE = probabilidad de e_perm_aws.scr_admbankbpe_rsk (fuente cruda confirmada en f3_cal/4b_cal.sql y f6/4b_scoring_v1v2.sql). OFFSET +1 verificado (PASO 0, sql_diag/09): el score de la particion p_codmes representa el mes score_codmes = p_codmes + 1. Se trae AS-OF: el score con score_codmes menor o igual al mes del desembolso, el mas cercano, sin look-ahead. Grano cod_mes x cod_tip_doc x key_value x desc_producto. sin_pd=1 si no hay score previo. flg_impulsa=1 en IMPULSO 202402-202412. lag_meses = cod_mes - score_codmes. Base para la nueva calibracion, el target se agrega en el paso 2
+-- 1_desemb_base.sql | tabla NUEVA disc_model_owner.b46029_desemb_base_202609: universo de desembolsos (d_perm_aws.user_desembolso, TODAS las filas) con el pd_raw CRUDO del scorecard Origen BPE = probabilidad de e_perm_aws.scr_admbankbpe_rsk (fuente cruda confirmada en f3_cal/4b_cal.sql y f6/4b_scoring_v1v2.sql). OFFSET +1 verificado (PASO 0, sql_diag/09): el score de la particion p_codmes representa el mes score_codmes = p_codmes + 1. Se trae AS-OF: el score con score_codmes menor o igual al mes del desembolso, el mas cercano, sin look-ahead. Grano cod_mes x cod_tip_doc x key_value x desc_producto (arrastra las 8 columnas de user_desembolso, desc_cliente y desc_campania por max, lossless por ser 1a1). sin_pd=1 si no hay score previo. flg_impulsa=1 en IMPULSO 202402-202412. lag_meses = cod_mes - score_codmes. Base para la nueva calibracion, el target se agrega en el paso 2
 CREATE TABLE disc_model_owner.b46029_desemb_base_202609
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
 WITH ud AS (
   SELECT cast(cod_mes AS int) AS cod_mes, cod_tip_doc, key_value, desc_producto,
          count(*) AS n_desemb,
          sum(cast(mto_desembolso AS double)) AS mto_desembolso,
-         max(flg_desembolso) AS flg_desembolso
+         max(flg_desembolso) AS flg_desembolso,
+         max(desc_cliente) AS desc_cliente,
+         max(desc_campania) AS desc_campania
   FROM d_perm_aws.user_desembolso
   GROUP BY cast(cod_mes AS int), cod_tip_doc, key_value, desc_producto
 ),
@@ -28,6 +30,7 @@ asof AS (
   LEFT JOIN scr s ON s.tip_doc = udk.cod_tip_doc AND s.key_value = udk.key_value AND s.score_codmes <= udk.cod_mes
 )
 SELECT ud.cod_mes, ud.cod_tip_doc, ud.key_value, ud.desc_producto,
+       ud.desc_cliente, ud.desc_campania,
        ud.n_desemb, round(ud.mto_desembolso, 2) AS mto_desembolso, ud.flg_desembolso,
        a.pd_raw, a.score_codmes AS pd_codmes,
        cast(ud.cod_mes - a.score_codmes AS integer) AS lag_meses,
