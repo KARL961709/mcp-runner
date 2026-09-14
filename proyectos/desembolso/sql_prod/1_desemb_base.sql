@@ -1,4 +1,4 @@
--- 1_desemb_base.sql | tabla NUEVA disc_model_owner.b46029_desemb_base_202609: universo de desembolsos (d_perm_aws.user_desembolso, TODAS las filas) con el pd_raw CRUDO del scorecard Origen BPE = probabilidad de e_perm_aws.scr_admbankbpe_rsk (fuente cruda confirmada en f3_cal/4b_cal.sql y f6/4b_scoring_v1v2.sql). CRUCE por MES DE NEGOCIO codmes = cod_mes (misma campana del desembolso). scr_admbankbpe_rsk es un panel MENSUAL (una fila por cliente y codmes, grano 1a1 verificado en diag 28) y su p_codmes es solo la particion de descarga (= codmes+1), NO se usa. No hay as-of ni offset. Grano cod_mes x cod_tip_doc x key_value x desc_producto (arrastra las 8 columnas de user_desembolso, desc_cliente y desc_campania por max, lossless por ser 1a1). sin_pd=1 si el cliente no tiene score en codmes=cod_mes. flg_impulsa=1 en IMPULSO 202402-202412. lag_meses = cod_mes - score_codmes (0 por construccion). Base para la nueva calibracion, el target se agrega en el paso 2
+-- 1_desemb_base.sql | tabla NUEVA disc_model_owner.b46029_desemb_base_202609: universo de desembolsos (d_perm_aws.user_desembolso, TODAS las filas) con el pd_raw CRUDO del scorecard Origen BPE = probabilidad de e_perm_aws.scr_admbankbpe_rsk (fuente cruda confirmada en f3_cal/4b_cal.sql y f6/4b_scoring_v1v2.sql). CRUCE por MES DE NEGOCIO codmes = cod_mes (misma campana del desembolso). scr_admbankbpe_rsk es un panel MENSUAL (una fila por cliente y codmes, grano 1a1 verificado en diag 28) y su p_codmes es solo la particion de descarga (= codmes+1), NO se usa. No hay as-of ni offset. Un solo modelo ADMBANKBPE (diag 29); el max(probabilidad) solo colapsa 4 filas duplicadas de probabilidad identica (diag 28), no elige score. Grano cod_mes x cod_tip_doc x key_value x desc_producto (arrastra las 8 columnas de user_desembolso, desc_cliente y desc_campania por max, lossless por ser 1a1). sin_pd=1 si el cliente no tiene score en codmes=cod_mes. flg_impulsa=1 en IMPULSO 202402-202412. lag_meses = cod_mes - score_codmes (0 por construccion). Base para la nueva calibracion, el target se agrega en el paso 2
 CREATE TABLE disc_model_owner.b46029_desemb_base_202609
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
 WITH ud AS (
@@ -19,7 +19,7 @@ scr AS (
          cast(codmes AS int) AS score_codmes,
          max(cast(probabilidad AS double)) AS pd_raw
   FROM e_perm_aws.scr_admbankbpe_rsk
-  WHERE probabilidad IS NOT NULL AND codmes BETWEEN '202301' AND '202608'
+  WHERE probabilidad IS NOT NULL AND modelo = 'ADMBANKBPE' AND codmes BETWEEN '202301' AND '202608'
   GROUP BY cast(tip_doc AS varchar), key_value, cast(codmes AS int)
 ),
 asof AS (
