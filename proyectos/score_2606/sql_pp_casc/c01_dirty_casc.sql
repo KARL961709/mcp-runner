@@ -1,6 +1,6 @@
 -- c01 dirty CASCADA PILOTO 202401 (opt). flg_dirty_pp_casc = clasif(m-2) OR castigo(u24m) OR refin(u7m) OR reest(u7m) OR judicial(u25m). SIN bancarizado ni entidad 0004.
 --   Emite tambien flg_dirty_pp (clasif-only, = 2609) para comparar. Codigos de cuenta VERBATIM de u01_dirty_2609. RCC m-25..m-2 = 202112..202311. Driver opt.
-CREATE TABLE disc_model_owner.scr_ppvc_opt_dirty_casc_pil
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606_dirty_casc
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH drv AS (
   SELECT codmes, key_value, cod_tip_doc FROM (

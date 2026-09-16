@@ -1,6 +1,6 @@
 -- c03 scored CASCADA PILOTO 202401 PP-only (Facil+CD): reusa nodos_pil, joina dirty_casc_pil y usa flg_dirty_pp_casc para overlay/flg_clean. ft_pp REAL 202401=0.0500972213.
 --   flg_clean = 1 - flg_dirty_pp_casc (cascada). puntuacion = round(1000*(1-prob)). PIT y TTC. Sin EC ni TC. Para comparar vs scored_pil (clasif-only).
-CREATE TABLE disc_model_owner.scr_ppvc_opt_scored_casc_pil
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606_casc
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH
 coef_iso_pc(x_lo, x_hi, y_lo, y_hi) AS (VALUES
@@ -55,8 +55,8 @@ base AS (
          COALESCE(dc.flg_dirty_pp_casc, 0) AS flg_dirty_pp, n.codmes,
          CAST(n.pd_raw AS double) AS pd_raw,
          greatest(least(CAST(n.pd_raw AS double), 1 - 1e-06), 1e-06) AS p
-  FROM disc_model_owner.scr_ppvc_opt_nodos_pil n
-  LEFT JOIN disc_model_owner.scr_ppvc_opt_dirty_casc_pil dc
+  FROM disc_model_owner.scr_admvc_pp_cal_202401_202606_nodos n
+  LEFT JOIN disc_model_owner.scr_admvc_pp_cal_202401_202606_dirty_casc dc
     ON dc.codmes = n.codmes AND dc.key_value = n.key_value AND dc.cod_tip_doc = n.cod_tip_doc
 ),
 cal AS (

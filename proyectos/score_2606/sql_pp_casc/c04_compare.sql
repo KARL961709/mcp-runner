@@ -12,6 +12,6 @@ SELECT
   round(AVG(s.prob_modelo_cal_ppcd) * 100, 4) AS pd_ppcd_clasif_pct,
   round(AVG(c.prob_modelo_cal_ppcd) * 100, 4) AS pd_ppcd_casc_pct,
   round(AVG(c.prob_modelo_cal_ppcd - s.prob_modelo_cal_ppcd) * 100, 4) AS d_pd_ppcd_pct
-FROM disc_model_owner.scr_ppvc_opt_scored_pil s
-JOIN disc_model_owner.scr_ppvc_opt_scored_casc_pil c
+FROM disc_model_owner.scr_admvc_pp_cal_202401_202606 s
+JOIN disc_model_owner.scr_admvc_pp_cal_202401_202606_casc c
   ON c.codmes = s.codmes AND c.key_value = s.key_value AND c.cod_tip_doc = s.cod_tip_doc

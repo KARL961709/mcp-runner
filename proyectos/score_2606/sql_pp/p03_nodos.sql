@@ -3,7 +3,7 @@
 --   + tipo_ingreso + flg_dirty_pp (JOIN dirty_pil) + 4 nodos. PP-only.
 --   Driver disc_riesgos.scr_vcbankv3_repro_opt_ (cod_mes/prob_model). PILOTO 202401. Lookbacks uso_tc 202306-202311, plin 202307-202312.
 -- ============================================================================
-CREATE TABLE disc_model_owner.scr_ppvc_opt_nodos_pil
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606_nodos
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH insumo AS (
   SELECT
@@ -418,4 +418,4 @@ SELECT
     b.codmes
 FROM bins b
 LEFT JOIN tipoing ti ON ti.codmes = b.codmes AND ti.key_value = b.key_value AND ti.tipdoc = b.tipdoc
-LEFT JOIN disc_model_owner.scr_ppvc_opt_dirty_pil dd ON dd.codmes = b.codmes AND dd.key_value = b.key_value AND dd.cod_tip_doc = b.tipdoc
+LEFT JOIN disc_model_owner.scr_admvc_pp_cal_202401_202606_dirty dd ON dd.codmes = b.codmes AND dd.key_value = b.key_value AND dd.cod_tip_doc = b.tipdoc

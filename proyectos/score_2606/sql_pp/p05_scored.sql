@@ -1,6 +1,6 @@
 -- p05 scored PILOTO 202401 PP-only (Facil+CD) desde nodos_pil. beta/iso + celda/overlay + Vasicek(lambda1, sqrt0.98326) con ft_pp REAL 202401=0.0500972213.
 --   flg_clean = 1 - flg_dirty_pp (clasif-only, idem 2609). puntuacion = round(1000*(1-prob)). PIT y TTC. Sin EC ni TC.
-CREATE TABLE disc_model_owner.scr_ppvc_opt_scored_pil
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH
 coef_iso_pc(x_lo, x_hi, y_lo, y_hi) AS (VALUES
@@ -54,7 +54,7 @@ base AS (
   SELECT n.cod_tip_doc, n.key_value, n.tipo_ingreso, n.nodo_ppfacil, n.nodo_ppcd, n.flg_dirty_pp, n.codmes,
          CAST(n.pd_raw AS double) AS pd_raw,
          greatest(least(CAST(n.pd_raw AS double), 1 - 1e-06), 1e-06) AS p
-  FROM disc_model_owner.scr_ppvc_opt_nodos_pil n
+  FROM disc_model_owner.scr_admvc_pp_cal_202401_202606_nodos n
 ),
 cal AS (
   SELECT b.*,

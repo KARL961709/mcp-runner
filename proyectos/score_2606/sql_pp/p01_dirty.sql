@@ -1,5 +1,5 @@
 -- p01 dirty PILOTO 202401 (opt). flg_dirty_pp = clasif RCC deudor IN (2,3,4) exactamente a m-2 (=202311). Idem 2609 (f_clas_o). Driver opt.
-CREATE TABLE disc_model_owner.scr_ppvc_opt_dirty_pil
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606_dirty
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH drv AS (
   SELECT codmes, key_value, cod_tip_doc FROM (
