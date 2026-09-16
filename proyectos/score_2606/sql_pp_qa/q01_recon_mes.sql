@@ -1,11 +1,12 @@
--- q01 QA reconciliacion por mes: driver opt -> nodos (pd_raw) -> scored (pd cal). Deltas deben ser 0 y n_*_sin_cal = 0 (nada sin calibrar). Read-only. Piloto 202401.
+-- q01 QA reconciliacion por mes: driver opt -> nodos (pd_raw) -> scored (pd cal). Deltas deben ser 0 y n_*_sin_cal = 0 (nada sin calibrar). Read-only. Rango 202401-202606.
 WITH opt AS (
   SELECT codmes, COUNT(*) AS n_opt_dedup FROM (
     SELECT CAST(cod_mes AS varchar) AS codmes, key_value, CAST(cod_tip_doc AS varchar) AS cod_tip_doc,
            ROW_NUMBER() OVER (PARTITION BY cod_mes, key_value, cod_tip_doc ORDER BY prob_model DESC) AS rn
     FROM disc_riesgos.scr_vcbankv3_repro_opt_
     WHERE prob_model IS NOT NULL AND CAST(cod_tip_doc AS varchar) = '1'
-      AND CAST(cod_mes AS varchar) BETWEEN '202401' AND '202401'
+      AND CAST(cod_mes AS varchar) BETWEEN '202401' AND '202606'
+      AND CAST(p_codmes AS varchar) = CAST(cod_mes AS varchar)
   ) WHERE rn = 1
   GROUP BY codmes
 ),
