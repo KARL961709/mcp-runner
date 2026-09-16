@@ -3,11 +3,11 @@ SELECT o.codmes, COUNT(*) AS n_opt,
        SUM(CASE WHEN t.key_value IS NOT NULL THEN 1 ELSE 0 END) AS n_match_tipoing
 FROM (
   SELECT codmes, key_value, tipdoc FROM (
-    SELECT CAST(codmes AS varchar) AS codmes, key_value, CAST(cod_tip_doc AS varchar) AS tipdoc,
-           ROW_NUMBER() OVER (PARTITION BY CAST(codmes AS varchar), key_value, CAST(cod_tip_doc AS varchar) ORDER BY probabilidad DESC) AS rn
+    SELECT CAST(cod_mes AS varchar) AS codmes, key_value, CAST(cod_tip_doc AS varchar) AS tipdoc,
+           ROW_NUMBER() OVER (PARTITION BY CAST(cod_mes AS varchar), key_value, CAST(cod_tip_doc AS varchar) ORDER BY prob_model DESC) AS rn
     FROM disc_riesgos.scr_vcbankv3_repro_opt_
-    WHERE probabilidad IS NOT NULL AND CAST(cod_tip_doc AS varchar) = '1'
-      AND CAST(codmes AS varchar) IN ('202401', '202606')
+    WHERE prob_model IS NOT NULL AND CAST(cod_tip_doc AS varchar) = '1'
+      AND CAST(cod_mes AS varchar) IN ('202401', '202606')
   ) WHERE rn = 1
 ) o
 LEFT JOIN (
