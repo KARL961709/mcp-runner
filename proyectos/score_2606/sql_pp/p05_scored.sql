@@ -86,16 +86,16 @@ scored AS (
   FROM anch a
 )
 SELECT
-    cod_tip_doc, key_value, pd_raw, tipo_ingreso, nodo_ppfacil, nodo_ppcd, flg_dirty_pp,
+    cod_tip_doc, key_value, pd_raw AS prob_modelo, tipo_ingreso, nodo_ppfacil, nodo_ppcd, flg_dirty_pp,
     CASE WHEN flg_dirty_pp = 1 THEN 0 ELSE 1 END AS flg_clean,
     prob_ppfacil AS prob_modelo_cal_ppfacil,
     prob_ppcd    AS prob_modelo_cal_ppcd,
-    prob_ppfacil_ttc AS prob_modelo_ttc_cal_ppfacil,
-    prob_ppcd_ttc    AS prob_modelo_ttc_cal_ppcd,
+    prob_ppfacil_ttc AS prob_modelo_ttc_ppfacil,
+    prob_ppcd_ttc    AS prob_modelo_ttc_ppcd,
     CAST(round(1000.0 * (1 - prob_ppfacil)) AS integer) AS puntuacion_modelo_cal_ppfacil,
     CAST(round(1000.0 * (1 - prob_ppcd))    AS integer) AS puntuacion_modelo_cal_ppcd,
-    CAST(round(1000.0 * (1 - prob_ppfacil_ttc)) AS integer) AS puntuacion_modelo_ttc_cal_ppfacil,
-    CAST(round(1000.0 * (1 - prob_ppcd_ttc))    AS integer) AS puntuacion_modelo_ttc_cal_ppcd,
+    CAST(round(1000.0 * (1 - prob_ppfacil_ttc)) AS integer) AS puntuacion_modelo_ttc_ppfacil,
+    CAST(round(1000.0 * (1 - prob_ppcd_ttc))    AS integer) AS puntuacion_modelo_ttc_ppcd,
     ftv_pp AS ft_macro_pp,
     codmes
 FROM scored
