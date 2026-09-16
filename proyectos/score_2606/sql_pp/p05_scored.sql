@@ -1,4 +1,4 @@
--- p05 scored PILOTO 202401 PP-only (Facil+CD) desde nodos_pil. beta/iso + celda/overlay + Vasicek(lambda1, sqrt0.98326) con ft_pp REAL 202401=0.0500972213.
+-- p05 scored RANGO 202401-202606 PP-only (Facil+CD) desde nodos_pil. beta/iso + celda/overlay + Vasicek(lambda1, sqrt0.98326) con ft_pp REAL desplegada por mes (30 meses 202401-202606, = a01/coef_ft_mes.csv).
 --   flg_clean = 1 - flg_dirty_pp (clasif-only, idem 2609). puntuacion = round(1000*(1-prob)). PIT y TTC. Sin EC ni TC.
 CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
@@ -48,7 +48,36 @@ coef_celda_pp(ak, delta) AS (VALUES
     ('t|PP_FACIL|NO_DEP|NODO 3', 0.1148414333)
 ),
 coef_ft_pp(codmes, ft) AS (VALUES
-    (CAST('202401' AS varchar), CAST(0.0500972213 AS double))
+    (CAST('202401' AS varchar), CAST(0.0500972213 AS double)),
+    ('202402', 0.0440745632),
+    ('202403', 0.0406915311),
+    ('202404', 0.0301055976),
+    ('202405', 0.0074309607),
+    ('202406', -0.0059308542),
+    ('202407', -0.0111093089),
+    ('202408', -0.0105964341),
+    ('202409', -0.0195734232),
+    ('202410', -0.0216574414),
+    ('202411', -0.0174731004),
+    ('202412', -0.0141084397),
+    ('202501', -0.0168804423),
+    ('202502', -0.0308578411),
+    ('202503', -0.0380481625),
+    ('202504', -0.0380481625),
+    ('202505', -0.0380481625),
+    ('202506', -0.0354839315),
+    ('202507', -0.0348337153),
+    ('202508', -0.0380481625),
+    ('202509', -0.0380481625),
+    ('202510', -0.0380481625),
+    ('202511', -0.0380481625),
+    ('202512', -0.0380481625),
+    ('202601', -0.0380481625),
+    ('202602', -0.0285946781),
+    ('202603', 0.0117854736),
+    ('202604', 0.0524730939),
+    ('202605', 0.0822142922),
+    ('202606', 0.0858088723)
 ),
 base AS (
   SELECT n.cod_tip_doc, n.key_value, n.tipo_ingreso, n.nodo_ppfacil, n.nodo_ppcd, n.flg_dirty_pp, n.codmes,
