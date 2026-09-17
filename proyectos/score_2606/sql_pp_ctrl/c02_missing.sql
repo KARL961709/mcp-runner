@@ -1,4 +1,4 @@
--- c02 control de ejecucion + MISSING por mes: pd_raw/cal deben ser 0 missing; nodos y tipo_ingreso muestran cuanto cae a fallback. dirty/clean.
+-- c02 control de ejecucion + MISSING por mes. pd_raw/cal deben ser 0 missing. nodos y tipo_ingreso muestran cuanto cae a fallback. dirty/clean.
 SELECT codmes,
        COUNT(*) AS n,
        SUM(CASE WHEN prob_modelo IS NULL THEN 1 ELSE 0 END) AS miss_pdraw,
