@@ -1,9 +1,9 @@
 -- ============================================================================
--- p03 nodos RANGO 202401-202606 opt: enriquecimiento (02_Logica_nodos VERBATIM) + insumo(scr v3 opt LEFT SBS)
+-- p03 nodos RANGO 202401-202608 opt: enriquecimiento (02_Logica_nodos VERBATIM) + insumo(scr v3 opt LEFT SBS)
 --   + tipo_ingreso + flg_dirty_pp (JOIN dirty_pil) + 4 nodos. PP-only.
---   Driver disc_riesgos.scr_vcbankv3_repro_opt_ (cod_mes/prob_model). RANGO 202401-202606. Lookbacks uso_tc 202306-202604, plin 202307-202605, tipoing 202401-202606.
+--   Driver disc_riesgos.scr_vcbankv3_repro_opt_ (cod_mes/prob_model). RANGO 202401-202608. Lookbacks uso_tc 202306-202606, plin 202307-202607, tipoing 202401-202608.
 -- ============================================================================
-CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606_nodos
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202608_nodos
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH insumo AS (
   SELECT
@@ -20,7 +20,7 @@ WITH insumo AS (
            ROW_NUMBER() OVER (PARTITION BY cod_mes, key_value, cod_tip_doc ORDER BY prob_model DESC) AS rn
     FROM disc_riesgos.scr_vcbankv3_repro_opt_
     WHERE prob_model IS NOT NULL AND CAST(cod_tip_doc AS varchar) = '1'
-      AND CAST(cod_mes AS varchar) BETWEEN '202401' AND '202606'
+      AND CAST(cod_mes AS varchar) BETWEEN '202401' AND '202608'
       AND CAST(p_codmes AS varchar) = CAST(cod_mes AS varchar)
   ) a
   LEFT JOIN (
@@ -88,7 +88,7 @@ rcc_tc AS (
         SUM(CASE WHEN i.codmes = date_format(date_add('month',7,date_parse(CAST(b.codmes AS varchar)||'01','%Y%m%d')),'%Y%m') THEN b.deuda_vig ELSE 0 END) AS deuda_tc_tot_m6
     FROM insumo i
     LEFT JOIN e_perm_aws.t_rsk_rcc_stock b -- 201601-202607
-      ON b.linea_tc > 0 AND b.cartera = 1 AND trim(i.codsbs) = trim(b.codsbs) AND CAST(b.p_codmes AS varchar) BETWEEN '202306' AND '202604'
+      ON b.linea_tc > 0 AND b.cartera = 1 AND trim(i.codsbs) = trim(b.codsbs) AND CAST(b.p_codmes AS varchar) BETWEEN '202306' AND '202606'
     GROUP BY i.codmes, i.key_value, i.tipdoc
 ),
 
@@ -109,7 +109,7 @@ plin AS (
         SELECT codmes, tipo_transf, banco, cif_key,
                CAST(CAST(trim(numero_trx) AS decimal(10,2)) AS int) AS numero_trx
         FROM e_perm_aws.t_agg_retail_user_trx_plin
-        WHERE CAST(p_codmes AS varchar) BETWEEN '202307' AND '202605'
+        WHERE CAST(p_codmes AS varchar) BETWEEN '202307' AND '202607'
     )
     GROUP BY codmes, cif_key
 ),
@@ -314,7 +314,7 @@ tipoing AS (
              a.fuente, a.sit_lab, a.p_fecinformacion
       FROM e_perm_aws.ds_rtd_rskvol_cas_ingr_ir a
       WHERE CAST(a.numcarga AS INT) = 1
-        AND CAST(a.periodo AS varchar) BETWEEN '202401' AND '202606'
+        AND CAST(a.periodo AS varchar) BETWEEN '202401' AND '202608'
     )
   )
   WHERE rn = 1
@@ -418,4 +418,4 @@ SELECT
     b.codmes
 FROM bins b
 LEFT JOIN tipoing ti ON ti.codmes = b.codmes AND ti.key_value = b.key_value AND ti.tipdoc = b.tipdoc
-LEFT JOIN disc_model_owner.scr_admvc_pp_cal_202401_202606_dirty dd ON dd.codmes = b.codmes AND dd.key_value = b.key_value AND dd.cod_tip_doc = b.tipdoc
+LEFT JOIN disc_model_owner.scr_admvc_pp_cal_202401_202608_dirty dd ON dd.codmes = b.codmes AND dd.key_value = b.key_value AND dd.cod_tip_doc = b.tipdoc

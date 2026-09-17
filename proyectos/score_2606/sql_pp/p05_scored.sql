@@ -1,6 +1,6 @@
--- p05 scored RANGO 202401-202606 PP-only (Facil+CD) desde nodos_pil. beta/iso + celda/overlay + Vasicek(lambda1, sqrt0.98326) con ft_pp REAL desplegada por mes (30 meses 202401-202606, = a01/coef_ft_mes.csv).
+-- p05 scored RANGO 202401-202608 PP-only (Facil+CD) desde nodos_pil. beta/iso + celda/overlay + Vasicek(lambda1, sqrt0.98326) con ft_pp REAL desplegada por mes (32 meses 202401-202608, = a01/coef_ft_mes.csv).
 --   flg_clean = 1 - flg_dirty_pp (clasif-only, idem 2609). puntuacion = round(1000*(1-prob)). PIT y TTC. Sin EC ni TC.
-CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202606
+CREATE TABLE disc_model_owner.scr_admvc_pp_cal_202401_202608
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
 WITH
 coef_iso_pc(x_lo, x_hi, y_lo, y_hi) AS (VALUES
@@ -77,13 +77,15 @@ coef_ft_pp(codmes, ft) AS (VALUES
     ('202603', 0.0117854736),
     ('202604', 0.0524730939),
     ('202605', 0.0822142922),
-    ('202606', 0.0858088723)
+    ('202606', 0.0858088723),
+    ('202607', 0.0867060744),
+    ('202608', 0.0952213996)
 ),
 base AS (
   SELECT n.cod_tip_doc, n.key_value, n.tipo_ingreso, n.nodo_ppfacil, n.nodo_ppcd, n.flg_dirty_pp, n.codmes,
          CAST(n.pd_raw AS double) AS pd_raw,
          greatest(least(CAST(n.pd_raw AS double), 1 - 1e-06), 1e-06) AS p
-  FROM disc_model_owner.scr_admvc_pp_cal_202401_202606_nodos n
+  FROM disc_model_owner.scr_admvc_pp_cal_202401_202608_nodos n
 ),
 cal AS (
   SELECT b.*,
