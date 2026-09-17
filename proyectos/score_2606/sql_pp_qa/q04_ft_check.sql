@@ -29,11 +29,13 @@ WITH esp(codmes, ft_esp) AS (VALUES
     ('202603', 0.0117854736),
     ('202604', 0.0524730939),
     ('202605', 0.0822142922),
-    ('202606', 0.0858088723)
+    ('202606', 0.0858088723),
+    ('202607', 0.0867060744),
+    ('202608', 0.0952213996)
 ),
 tab AS (
   SELECT CAST(codmes AS varchar) AS codmes, MAX(ft_macro_pp) AS ft_tab, COUNT(DISTINCT ft_macro_pp) AS n_ft_dist, COUNT(*) AS n
-  FROM disc_model_owner.scr_admvc_pp_cal_202401_202606
+  FROM disc_model_owner.scr_admvc_pp_cal_202401_202608
   GROUP BY CAST(codmes AS varchar)
 )
 SELECT COALESCE(t.codmes, e.codmes) AS codmes, t.n, t.n_ft_dist, e.ft_esp, t.ft_tab, round(COALESCE(t.ft_tab,0) - e.ft_esp, 12) AS d_ft
