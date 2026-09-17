@@ -207,6 +207,7 @@ scr AS (
 ),
 base AS (
   SELECT d.cod_mes, d.cod_tip_doc, d.key_value, d.desc_producto, d.desc_cliente, d.pd_raw,
+         d.mto_desembolso, d.n_desemb, d.meses_madurez, d.target_01m, d.target_02m, d.target_03m, d.target_04m, d.target_05m, d.target_06m, d.target_07m, d.target_08m, d.target_09m, d.target_10m, d.target_11m, d.target_12m,
          ((d.cod_mes/100)*10 + ((d.cod_mes % 100 - 1)/3 + 1)) AS yq,
          (CASE WHEN d.cod_tip_doc='1' THEN 'PN' ELSE 'PJ' END || '_' || d.desc_cliente) AS seg,
          s.prob_modelo_cal
@@ -222,7 +223,8 @@ SELECT
         greatest(1e-4, least(1-1e-4, ii.y0 + (ii.y1-ii.y0) * CASE WHEN ii.x1=ii.x0 THEN 0 ELSE (b.pd_raw-ii.x0)/(ii.x1-ii.x0) END)))
      + 0.0779 * fq.ftv + dl.d) AS pd_cal_pit,
   GREATEST(1e-6, LEAST(1-1e-6, b.prob_modelo_cal * CASE WHEN b.cod_tip_doc='2' THEN 0.68140 ELSE 0.96970 END)) AS pd_opt_v2,
-  CASE WHEN b.prob_modelo_cal IS NULL THEN 0 ELSE 1 END AS flg_match_v2
+  CASE WHEN b.prob_modelo_cal IS NULL THEN 0 ELSE 1 END AS flg_match_v2,
+  b.mto_desembolso, b.n_desemb, b.meses_madurez, b.target_01m, b.target_02m, b.target_03m, b.target_04m, b.target_05m, b.target_06m, b.target_07m, b.target_08m, b.target_09m, b.target_10m, b.target_11m, b.target_12m
 FROM base b
 JOIN iso ii ON ii.seg = b.seg AND b.pd_raw >= ii.x0 AND b.pd_raw < ii.x1
 JOIN del dl ON dl.seg = b.seg
