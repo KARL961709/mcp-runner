@@ -1,0 +1,2 @@
+-- diag_scr_202608_count | cuantas filas tiene la particion 202608 a calibrar (mide el tamano del universo). Si este COUNT es rapido, la poda funciona y el costo es el N; si es lento, la poda no aplica.
+SELECT COUNT(*) AS n_202608, COUNT(DISTINCT key_value) AS n_keys, COUNT(DISTINCT codmes) AS n_codmes_distintos FROM e_perm_aws.scr_admbankbpe_rsk WHERE p_codmes='202608' AND modelo='ADMBANKBPE' AND probabilidad IS NOT NULL
