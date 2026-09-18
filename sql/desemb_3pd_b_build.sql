@@ -3,7 +3,8 @@
 --     pd_raw     = score crudo del modelo (as-of del desembolso)
 --     pd_cal_pit = calibracion PIT del artefacto (isotonica x segmento + Vasicek probit macro=inflacion nucleo lag0 lambda=0.5 + re-ancla 202505-207). Validado 0.000000 vs el artefacto local.
 --     pd_opt_v2  = escenario optimo V2 = prob_modelo_cal (bankbn) x factor anti-conservador personeria (PJJ 0.68140 / PNN 0.96970). flg_match_v2=0 si el cliente no tiene score bankbn ese mes.
---   Correr:  .\Go.ps1 -Only desemb_3pd
+--   Correr TODO en orden:  .\Go.ps1 -Only desemb_3pd_a_drop,desemb_3pd_b_build,desemb_3pd_c_qa
+--   LEFT JOIN (no bota filas) + ftq extendido a todo trimestre (edge-fill) -> ningun mes queda sin calculo.
 CREATE TABLE disc_model_owner.b46029_desemb_3pd_202609
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
 WITH iso(seg, x0, x1, y0, y1) AS (VALUES
@@ -178,21 +179,38 @@ WITH iso(seg, x0, x1, y0, y1) AS (VALUES
   ('PN_NUEVO', 0.683171, 2.0, 1.0, 1.0)
 ),
 ftq(yq, ftv) AS (VALUES
-  (20231, 2.1133553333333333),
-  (20232, 1.4546656666666669),
+  (20211, 2.11335533),
+  (20212, 2.11335533),
+  (20213, 2.11335533),
+  (20214, 2.11335533),
+  (20221, 2.11335533),
+  (20222, 2.11335533),
+  (20223, 2.11335533),
+  (20224, 2.11335533),
+  (20231, 2.11335533),
+  (20232, 1.45466567),
   (20233, 0.442729),
-  (20234, -0.08806699999999999),
-  (20241, -0.15361966666666668),
-  (20242, -0.11131200000000001),
-  (20243, -0.3203493333333333),
+  (20234, -0.088067),
+  (20241, -0.15361967),
+  (20242, -0.111312),
+  (20243, -0.32034933),
   (20244, -0.525076),
-  (20251, -0.8564983333333333),
+  (20251, -0.85649833),
   (20252, -1.133888),
   (20253, -1.168593),
-  (20254, -1.1359793333333332),
-  (20261, -0.4689476666666667),
-  (20262, 0.9757906666666667),
-  (20263, 0.9757906666666667)
+  (20254, -1.13597933),
+  (20261, -0.46894767),
+  (20262, 0.97579067),
+  (20263, 0.97579067),
+  (20264, 0.97579067),
+  (20271, 0.97579067),
+  (20272, 0.97579067),
+  (20273, 0.97579067),
+  (20274, 0.97579067),
+  (20281, 0.97579067),
+  (20282, 0.97579067),
+  (20283, 0.97579067),
+  (20284, 0.97579067)
 ),
 del(seg, d) AS (VALUES
   ('PJ_RECURRENTE', -0.166036332751212),
@@ -226,6 +244,6 @@ SELECT
   CASE WHEN b.prob_modelo_cal IS NULL THEN 0 ELSE 1 END AS flg_match_v2,
   b.mto_desembolso, b.n_desemb, b.meses_madurez, b.target_01m, b.target_02m, b.target_03m, b.target_04m, b.target_05m, b.target_06m, b.target_07m, b.target_08m, b.target_09m, b.target_10m, b.target_11m, b.target_12m
 FROM base b
-JOIN iso ii ON ii.seg = b.seg AND b.pd_raw >= ii.x0 AND b.pd_raw < ii.x1
-JOIN del dl ON dl.seg = b.seg
-JOIN ftq fq ON fq.yq = b.yq
+LEFT JOIN iso ii ON ii.seg = b.seg AND b.pd_raw >= ii.x0 AND b.pd_raw < ii.x1
+LEFT JOIN del dl ON dl.seg = b.seg
+LEFT JOIN ftq fq ON fq.yq = b.yq
