@@ -1,15 +1,17 @@
--- desemb_maestra_b_build.sql | TABLA MAESTRA DSM disc_model_owner.b46029_desemb_maestra_202609
---   Parte de b46029_desemb_cal_202609 (= user_desembolso 1:1 en cod_mes x tip_doc x key_value x desc_producto; trae targets + pd_raw).
---   Agrega flg_cruce (pd_raw not null), flg_universo_calib (0=IMPULSO/GARANTIAS/BONO/CRECER, exclusion SOLO del fit; aplicacion extrapola),
---   y 3 PDs construidas con sus coeficientes (todas via normal_cdf/inverse_normal_cdf):
---     pd_ttc  = isotonica(seg) -> Vasicek nivel (lambda=0) + re-ancla 202505-207
---     pd_pit  = isotonica(seg) -> Vasicek con MACRO=Desempleo Lima (PN38063GM nivel lag1 std2023+, b2>0) lambda=0.5 + re-ancla
---     pd_v2_esc_opt = cadena V2 lineage-A (nivel personeria beta/logit-cal + rho-Basel + Vasicek lambda=0.35 fhat + re-ancla) x factor esc_opt (PJJ 0.6814/PNN 0.9697)
---   Validado localmente vs Python: pd_ttc 6e-15, pd_pit 1e-10, pd_v2 1e-10.
---   Correr en orden: .\Go.ps1 -Only desemb_maestra_a_drop,desemb_maestra_b_build,desemb_maestra_c_qa
+-- desemb_maestra_b_build.sql | TABLA MAESTRA DSM disc_model_owner.b46029_desemb_maestra_202609  (VERSION FINAL)
+--   Parte de b46029_desemb_cal_202609 (= user_desembolso 1:1 en cod_mes x tip_doc x key_value x desc_producto, trae targets + pd_raw).
+--   flg_cruce (pd_raw not null), flg_universo_calib (0=IMPULSO/GARANTIAS/BONO/CRECER, exclusion SOLO del fit, aplicacion extrapola).
+--   PDs construidas con sus coeficientes (via normal_cdf/inverse_normal_cdf):
+--     pd_ttc       = isotonica(seg) -> Vasicek nivel (lambda=0) + re-ancla ANCLA B (<=2025Q1)
+--     pd_pit       = isotonica(seg) -> Vasicek con MACRO=PBI NACIONAL (Apoyo var% real, yq-trimestral, std 2023+, b2=-0.089126<0 inverso) lambda=0.5 + re-ancla ANCLA B
+--     pd_pit_final = pd_pit * overlay PJ (x0.85 forward: cod_tip_doc<>'1' AND cod_mes>=202504), PN sin ajuste. Es la PD OPERATIVA.
+--     grupo_cal    = G1-G6 por puntuacion=round((1-pd_pit_final)*1000), cortes apetito [971, 945, 921, 908, 893] (G6=resto)
+--     pd_v2_esc_opt= cadena V2 lineage-A (nivel personeria + rho-Basel + Vasicek 0.35 fhat + re-ancla) x factor esc_opt (PJJ 0.6814/PNN 0.9697)
+--   Validado localmente vs Python: pd_ttc 7e-15, pd_pit 7e-11, pd_pit_final 7e-11, pd_v2 1e-10, grupo_cal 100%.
+--   Correr: .\Go.ps1 -Only desemb_maestra_a_drop,desemb_maestra_b_build,desemb_maestra_c_qa
 CREATE TABLE disc_model_owner.b46029_desemb_maestra_202609
-WITH (format = 'PARQUET', parquet_compression = 'SNAPPY') AS
-WITH iso(seg, x0, x1, y0, y1) AS (VALUES
+WITH (format='PARQUET', parquet_compression='SNAPPY') AS
+WITH iso(seg,x0,x1,y0,y1) AS (VALUES
   ('PJ_RECURRENTE', -1.0, 0.00565, 0.0, 0.0),
   ('PJ_RECURRENTE', 0.00565, 0.018907, 0.0, 0.0),
   ('PJ_RECURRENTE', 0.018907, 0.018918, 0.0, 0.01675977653631285),
@@ -180,129 +182,53 @@ WITH iso(seg, x0, x1, y0, y1) AS (VALUES
   ('PN_NUEVO', 0.635396, 0.683171, 1.0, 1.0),
   ('PN_NUEVO', 0.683171, 2.0, 1.0, 1.0)
 ),
-ftd(cm, ftv) AS (VALUES
-  (202101, 11.48676176),
-  (202102, 10.19731655),
-  (202103, 12.49825417),
-  (202104, 13.72559828),
-  (202105, 13.46678222),
-  (202106, 8.66742684),
-  (202107, 6.01402322),
-  (202108, 4.56361537),
-  (202109, 4.79084861),
-  (202110, 5.46713107),
-  (202111, 4.88319056),
-  (202112, 4.09856125),
-  (202201, 2.13867354),
-  (202202, 3.36041737),
-  (202203, 3.79840383),
-  (202204, 4.5948129),
-  (202205, 2.80862246),
-  (202206, 1.17086831),
-  (202207, 0.49744021),
-  (202208, 0.57880145),
-  (202209, 1.3436746),
-  (202210, 1.88973556),
-  (202211, 1.09956816),
-  (202212, 1.80622866),
-  (202301, 1.0170343),
-  (202302, 2.41449071),
-  (202303, 1.35453592),
-  (202304, 1.59531148),
-  (202305, 0.95455532),
-  (202306, 0.49765715),
-  (202307, 0.14401722),
-  (202308, -0.30287594),
-  (202309, 0.2780905),
-  (202310, 0.42385565),
-  (202311, 0.14805337),
-  (202312, 0.16183001),
-  (202401, -0.11326757),
-  (202402, 1.15312723),
-  (202403, 1.29996878),
-  (202404, 1.94037776),
-  (202405, 1.91199765),
-  (202406, 1.17673228),
-  (202407, 0.27431607),
-  (202408, -0.77670898),
-  (202409, -0.61176189),
-  (202410, -0.81686063),
-  (202411, -1.10721928),
-  (202412, -1.23098831),
-  (202501, -1.4499102),
-  (202502, -0.47457943),
-  (202503, -0.25255618),
-  (202504, 0.14967593),
-  (202505, -0.85272207),
-  (202506, -1.35470955),
-  (202507, -0.13494624),
-  (202508, -0.62307292),
-  (202509, -0.73397468),
-  (202510, -1.10390802),
-  (202511, -0.81235312),
-  (202512, -0.82986902),
-  (202601, -2.28901556),
-  (202602, -0.19308132),
-  (202603, -0.13854107),
-  (202604, -0.13854107),
-  (202605, -0.13854107),
-  (202606, -0.13854107),
-  (202607, -0.13854107),
-  (202608, -0.13854107),
-  (202609, -0.13854107),
-  (202610, -0.13854107),
-  (202611, -0.13854107),
-  (202612, -0.13854107),
-  (202701, -0.13854107),
-  (202702, -0.13854107),
-  (202703, -0.13854107),
-  (202704, -0.13854107),
-  (202705, -0.13854107),
-  (202706, -0.13854107),
-  (202707, -0.13854107),
-  (202708, -0.13854107),
-  (202709, -0.13854107),
-  (202710, -0.13854107),
-  (202711, -0.13854107),
-  (202712, -0.13854107),
-  (202801, -0.13854107),
-  (202802, -0.13854107),
-  (202803, -0.13854107),
-  (202804, -0.13854107),
-  (202805, -0.13854107),
-  (202806, -0.13854107),
-  (202807, -0.13854107),
-  (202808, -0.13854107),
-  (202809, -0.13854107),
-  (202810, -0.13854107),
-  (202811, -0.13854107),
-  (202812, -0.13854107)
+ftd(cm,ftv) AS (VALUES
+  (202301, -1.28346548),
+  (202302, -1.28346548),
+  (202303, -1.28346548),
+  (202304, -1.49897784),
+  (202305, -1.49897784),
+  (202306, -1.49897784),
+  (202307, -1.61154018),
+  (202308, -1.61154018),
+  (202309, -1.61154018),
+  (202310, -1.45244552),
+  (202311, -1.45244552),
+  (202312, -1.45244552),
+  (202401, -0.45866375),
+  (202402, -0.45866375),
+  (202403, -0.45866375),
+  (202404, 0.83359117),
+  (202405, 0.83359117),
+  (202406, 0.83359117),
+  (202407, 0.96723505),
+  (202408, 0.96723505),
+  (202409, 0.96723505),
+  (202410, 1.15396509),
+  (202411, 1.15396509),
+  (202412, 1.15396509),
+  (202501, 0.9408012),
+  (202502, 0.9408012),
+  (202503, 0.9408012),
+  (202504, 0.28044643),
+  (202505, 0.28044643),
+  (202506, 0.28044643),
+  (202507, 0.78536578),
+  (202508, 0.78536578),
+  (202509, 0.78536578),
+  (202510, 0.46007647),
+  (202511, 0.46007647),
+  (202512, 0.46007647),
+  (202601, 0.63091343),
+  (202602, 0.63091343),
+  (202603, 0.63091343),
+  (202604, 0.17372794),
+  (202605, 0.17372794),
+  (202606, 0.17372794),
+  (202607, 0.07897022),
+  (202608, 0.07897022)
 ),
-fh(cm, fhv) AS (VALUES
-  (202101, 0.46731628),
-  (202102, 0.46731628),
-  (202103, 0.46731628),
-  (202104, 0.46731628),
-  (202105, 0.46731628),
-  (202106, 0.46731628),
-  (202107, 0.46731628),
-  (202108, 0.46731628),
-  (202109, 0.46731628),
-  (202110, 0.46731628),
-  (202111, 0.46731628),
-  (202112, 0.46731628),
-  (202201, 0.46731628),
-  (202202, 0.46731628),
-  (202203, 0.46731628),
-  (202204, 0.46731628),
-  (202205, 0.46731628),
-  (202206, 0.46731628),
-  (202207, 0.46731628),
-  (202208, 0.0567287),
-  (202209, -0.38935743),
-  (202210, -0.70072994),
-  (202211, -0.85205452),
-  (202212, -0.92891552),
+fh(cm,fhv) AS (VALUES
   (202301, -1.01591844),
   (202302, -1.03795359),
   (202303, -1.06092314),
@@ -346,47 +272,19 @@ fh(cm, fhv) AS (VALUES
   (202605, 1.47155858),
   (202606, 0.81754407),
   (202607, 0.20088867),
-  (202608, -0.02138405),
-  (202609, -0.03459445),
-  (202610, -0.03459445),
-  (202611, -0.03459445),
-  (202612, -0.03459445),
-  (202701, -0.03459445),
-  (202702, -0.03459445),
-  (202703, -0.03459445),
-  (202704, -0.03459445),
-  (202705, -0.03459445),
-  (202706, -0.03459445),
-  (202707, -0.03459445),
-  (202708, -0.03459445),
-  (202709, -0.03459445),
-  (202710, -0.03459445),
-  (202711, -0.03459445),
-  (202712, -0.03459445),
-  (202801, -0.03459445),
-  (202802, -0.03459445),
-  (202803, -0.03459445),
-  (202804, -0.03459445),
-  (202805, -0.03459445),
-  (202806, -0.03459445),
-  (202807, -0.03459445),
-  (202808, -0.03459445),
-  (202809, -0.03459445),
-  (202810, -0.03459445),
-  (202811, -0.03459445),
-  (202812, -0.03459445)
+  (202608, -0.02138405)
 ),
-dttc(seg, d) AS (VALUES
-  ('PJ_RECURRENTE', -0.23122916142054348),
-  ('PJ_NUEVO', -0.3097452430851851),
-  ('PN_RECURRENTE', -0.3005530773818045),
-  ('PN_NUEVO', -0.015435928712602133)
+dttc(seg,d) AS (VALUES
+  ('PJ_RECURRENTE', -0.04907159355581451),
+  ('PJ_NUEVO', -0.05210506464925647),
+  ('PN_RECURRENTE', -0.04457797465440526),
+  ('PN_NUEVO', -0.04121536940219228)
 ),
-dpit(seg, d) AS (VALUES
-  ('PJ_RECURRENTE', -0.19247354936522218),
-  ('PJ_NUEVO', -0.27053591911704233),
-  ('PN_RECURRENTE', -0.26312137687538606),
-  ('PN_NUEVO', 0.02572809290576469)
+dpit(seg,d) AS (VALUES
+  ('PJ_RECURRENTE', -0.08502825788776598),
+  ('PJ_NUEVO', -0.09055972106325395),
+  ('PN_RECURRENTE', -0.10138352260241833),
+  ('PN_NUEVO', -0.09321655604356532)
 ),
 base AS (
   SELECT m.*,
@@ -397,68 +295,84 @@ base AS (
 ),
 sc AS (
   SELECT b.*,
-    greatest(1e-4, least(1-1e-4, ii.y0 + (ii.y1-ii.y0) * CASE WHEN ii.x1=ii.x0 THEN 0 ELSE (b.pd_raw-ii.x0)/(ii.x1-ii.x0) END)) AS pd_iso,
-    ftd.ftv AS ft_des, fh.fhv AS fhat, dt.d AS dttc, dp.d AS dpit,
+    greatest(1e-4, least(1-1e-4, ii.y0+(ii.y1-ii.y0)*CASE WHEN ii.x1=ii.x0 THEN 0 ELSE (b.pd_raw-ii.x0)/(ii.x1-ii.x0) END)) AS pd_iso,
+    ftd.ftv AS ft_pbi, fh.fhv AS fhat, dt.d AS dttc, dp.d AS dpit,
     greatest(1e-6, least(1-1e-6, b.pd_raw)) AS pc
   FROM base b
-  LEFT JOIN iso ii ON ii.seg = b.seg AND b.pd_raw >= ii.x0 AND b.pd_raw < ii.x1
-  LEFT JOIN ftd ON ftd.cm = b.cod_mes
-  LEFT JOIN fh  ON fh.cm  = b.cod_mes
-  LEFT JOIN dttc dt ON dt.seg = b.seg
-  LEFT JOIN dpit dp ON dp.seg = b.seg
+  LEFT JOIN iso ii ON ii.seg=b.seg AND b.pd_raw>=ii.x0 AND b.pd_raw<ii.x1
+  LEFT JOIN ftd ON ftd.cm=b.cod_mes
+  LEFT JOIN fh  ON fh.cm=b.cod_mes
+  LEFT JOIN dttc dt ON dt.seg=b.seg
+  LEFT JOIN dpit dp ON dp.seg=b.seg
 ),
 v2b AS (
   SELECT sc.*,
     greatest(1e-6, least(1-1e-6, CASE WHEN cod_tip_doc='2'
-      THEN 1.0/(1.0+exp(-(-0.15993259962662906 + 0.9675398918720501*(ln(pc)-ln(1-pc)))))
-      ELSE 1.0/(1.0+exp(-(-0.6601884802657757 + 0.5938923689532265*ln(pc) + 0.10766439295961687*ln(1-pc)))) END)) AS pd_cal_v2
+      THEN 1.0/(1.0+exp(-(-0.15993259962662906+0.9675398918720501*(ln(pc)-ln(1-pc)))))
+      ELSE 1.0/(1.0+exp(-(-0.6601884802657757+0.5938923689532265*ln(pc)+0.10766439295961687*ln(1-pc)))) END)) AS pd_cal_v2
   FROM sc
 ),
 v2d AS (
   SELECT v2b.*,
     greatest(0.001, least(0.999,
-      0.035978817268325414 * (0.03*((1-exp(-35*pd_cal_v2))/(1-exp(-35.0))) + 0.16*(1-((1-exp(-35*pd_cal_v2))/(1-exp(-35.0)))))
-      / (CASE WHEN cod_tip_doc='1' THEN 0.03424207361820211 ELSE 0.03868433725325406 END))) AS rho_i
+      0.035978817268325414*(0.03*((1-exp(-35*pd_cal_v2))/(1-exp(-35.0)))+0.16*(1-((1-exp(-35*pd_cal_v2))/(1-exp(-35.0)))))
+      /(CASE WHEN cod_tip_doc='1' THEN 0.03424207361820211 ELSE 0.03868433725325406 END))) AS rho_i
   FROM v2b
 ),
 v2e AS (
   SELECT v2d.*,
-    normal_cdf(0.0,1.0, (inverse_normal_cdf(0.0,1.0, pd_cal_v2) - sqrt(rho_i)*0.34999999999999998*fhat)/sqrt(1-rho_i)) AS pit_v2
+    normal_cdf(0.0,1.0,(inverse_normal_cdf(0.0,1.0,pd_cal_v2)-sqrt(rho_i)*0.34999999999999998*fhat)/sqrt(1-rho_i)) AS pit_v2
   FROM v2d
+),
+calc AS (
+  SELECT
+    m.cod_mes,
+    m.cod_tip_doc,
+    m.key_value,
+    m.desc_producto,
+    m.desc_cliente,
+    m.desc_campania,
+    m.n_desemb,
+    m.mto_desembolso,
+    m.flg_desembolso,
+    m.pd_codmes,
+    m.lag_meses,
+    m.sin_pd,
+    m.flg_impulsa,
+    m.meses_madurez,
+    m.rcc_frontera,
+    m.target_01m,
+    m.target_02m,
+    m.target_03m,
+    m.target_04m,
+    m.target_05m,
+    m.target_06m,
+    m.target_07m,
+    m.target_08m,
+    m.target_09m,
+    m.target_10m,
+    m.target_11m,
+    m.target_12m,
+    m.pd_raw, m.seg, m.flg_cruce, m.flg_universo_calib,
+    CASE WHEN m.flg_cruce=1 THEN normal_cdf(0.0,1.0, 0.9585891011833967*inverse_normal_cdf(0.0,1.0,m.pd_iso)+m.dttc) END AS pd_ttc,
+    CASE WHEN m.flg_cruce=1 THEN normal_cdf(0.0,1.0, 0.9585891011833967*inverse_normal_cdf(0.0,1.0,m.pd_iso)+-0.04456282926789813*m.ft_pbi+m.dpit) END AS pd_pit,
+    CASE WHEN m.flg_cruce=1 THEN greatest(1e-6, least(1-1e-6,
+      greatest(1e-6, least(1-1e-6, m.pit_v2*(CASE WHEN m.cod_tip_doc='1' THEN 1.16299104583772395 ELSE 1.13685059874822714 END)))
+      *(CASE WHEN m.cod_tip_doc='2' THEN 0.68140 ELSE 0.96970 END))) END AS pd_v2_esc_opt
+  FROM v2e m
+),
+fin AS (
+  SELECT c.*,
+    CASE WHEN c.flg_cruce=1 THEN c.pd_pit*(CASE WHEN c.cod_tip_doc<>'1' AND c.cod_mes>=202504 THEN 0.85 ELSE 1.0 END) END AS pd_pit_final
+  FROM calc c
 )
-SELECT
-  m.cod_mes,
-  m.cod_tip_doc,
-  m.key_value,
-  m.desc_producto,
-  m.desc_cliente,
-  m.desc_campania,
-  m.n_desemb,
-  m.mto_desembolso,
-  m.flg_desembolso,
-  m.pd_codmes,
-  m.lag_meses,
-  m.sin_pd,
-  m.flg_impulsa,
-  m.meses_madurez,
-  m.rcc_frontera,
-  m.target_01m,
-  m.target_02m,
-  m.target_03m,
-  m.target_04m,
-  m.target_05m,
-  m.target_06m,
-  m.target_07m,
-  m.target_08m,
-  m.target_09m,
-  m.target_10m,
-  m.target_11m,
-  m.target_12m,
-  m.pd_raw, m.seg,
-  m.flg_cruce, m.flg_universo_calib,
-  CASE WHEN m.flg_cruce=1 THEN normal_cdf(0.0,1.0, 0.9374286245990948*inverse_normal_cdf(0.0,1.0, m.pd_iso) + m.dttc) END AS pd_ttc,
-  CASE WHEN m.flg_cruce=1 THEN normal_cdf(0.0,1.0, 0.9374286245990948*inverse_normal_cdf(0.0,1.0, m.pd_iso) + 0.04982625905753205*m.ft_des + m.dpit) END AS pd_pit,
-  CASE WHEN m.flg_cruce=1 THEN greatest(1e-6, least(1-1e-6,
-     greatest(1e-6, least(1-1e-6, m.pit_v2 * (CASE WHEN m.cod_tip_doc='1' THEN 1.16299104583772395 ELSE 1.13685059874822714 END)))
-     * (CASE WHEN m.cod_tip_doc='2' THEN 0.68140 ELSE 0.96970 END))) END AS pd_v2_esc_opt
-FROM v2e m
+SELECT f.*,
+  CASE WHEN f.flg_cruce=1 THEN
+    CASE WHEN round((1-f.pd_pit_final)*1000) >= 971 THEN 'G1'
+         WHEN round((1-f.pd_pit_final)*1000) >= 945 THEN 'G2'
+         WHEN round((1-f.pd_pit_final)*1000) >= 921 THEN 'G3'
+         WHEN round((1-f.pd_pit_final)*1000) >= 908 THEN 'G4'
+         WHEN round((1-f.pd_pit_final)*1000) >= 893 THEN 'G5'
+         ELSE 'G6' END
+  END AS grupo_cal
+FROM fin f
