@@ -19,7 +19,7 @@ b AS (
     greatest(1e-4, least(1-1e-4, CAST(s.probabilidad AS DOUBLE))) AS _pdraw,
     greatest(1e-6, least(1-1e-6, CAST(s.probabilidad AS DOUBLE))) AS _pc
   FROM e_perm_aws.scr_admbankbpe_rsk s
-  LEFT JOIN stk st ON st.tip_doc=s.tip_doc AND st.codmes=CAST(s.codmes AS INT)
+  LEFT JOIN stk st ON st.tip_doc=s.tip_doc AND st.key_value=s.key_value AND st.codmes=CAST(s.codmes AS INT)
   LEFT JOIN disc_model_owner.caidas_202608_admbank cd ON cd.key_value=s.key_value
   WHERE s.p_codmes='202608' AND s.probabilidad IS NOT NULL AND s.modelo='ADMBANKBPE'
 ),

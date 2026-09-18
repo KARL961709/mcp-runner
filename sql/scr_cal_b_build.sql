@@ -17,7 +17,7 @@ b AS (
     CASE WHEN st.key_value IS NOT NULL THEN 'RECURRENTE' ELSE 'NUEVO' END AS desc_cliente_cal,
     greatest(1e-4, least(1-1e-4, CAST(s.probabilidad AS DOUBLE))) AS _pdraw
   FROM e_perm_aws.scr_admbankbpe_rsk s
-  LEFT JOIN stk st ON st.tip_doc=s.tip_doc AND st.codmes=CAST(s.codmes AS INT)
+  LEFT JOIN stk st ON st.tip_doc=s.tip_doc AND st.key_value=s.key_value AND st.codmes=CAST(s.codmes AS INT)
   WHERE s.probabilidad IS NOT NULL AND s.modelo='ADMBANKBPE' AND s.p_codmes BETWEEN '202401' AND '202608'
 ),
 c AS (
