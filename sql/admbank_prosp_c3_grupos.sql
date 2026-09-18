@@ -1,3 +1,3 @@
--- QA[3] distribucion por grupo + personeria + PD (monotona)
-SELECT grupos_cal, CASE WHEN tip_doc='1' THEN 'PN' ELSE 'PJ' END AS per, COUNT(*) AS n, ROUND(100*AVG(prob_modelo_cal),2) AS pd_prom
-FROM disc_model_owner.admbank_prosp_202608 GROUP BY grupos_cal, CASE WHEN tip_doc='1' THEN 'PN' ELSE 'PJ' END ORDER BY 1,2
+-- QA[3] cruce grupos_cal (nuevo) vs grupos_ant (V2 banco), con PD promedio de cada uno
+SELECT grupos_cal, grupos_ant, COUNT(*) AS n, ROUND(100*AVG(prob_modelo_cal),2) AS pd_cal, ROUND(100*AVG(pd_v2_esc_opt),2) AS pd_v2
+FROM disc_model_owner.admbank_prosp_202608 GROUP BY grupos_cal, grupos_ant ORDER BY grupos_cal, grupos_ant
