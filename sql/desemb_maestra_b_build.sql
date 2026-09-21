@@ -1,4 +1,4 @@
--- desemb_maestra_b_build.sql | TABLA MAESTRA DSM disc_model_owner.b46029_desemb_maestra_202609  (VERSION FINAL)
+-- desemb_maestra_b_build.sql | TABLA MAESTRA DSM disc_model_owner.b46029_desemb_maestra_rec_202609  (VERSION FINAL)
 --   Parte de b46029_desemb_cal_202609 (= user_desembolso 1:1 en cod_mes x tip_doc x key_value x desc_producto, trae targets + pd_raw).
 --   flg_cruce (pd_raw not null), flg_universo_calib (0=IMPULSO/GARANTIAS/BONO/CRECER, exclusion SOLO del fit, aplicacion extrapola).
 --   PDs construidas con sus coeficientes (via normal_cdf/inverse_normal_cdf):
@@ -10,7 +10,7 @@
 --     pd_v2_esc_opt= cadena V2 lineage-A (nivel personeria + rho-Basel + Vasicek 0.35 fhat + re-ancla) x factor esc_opt (PJJ 0.6814/PNN 0.9697)
 --   Validado localmente vs Python: pd_ttc 7e-15, pd_pit 7e-11, pd_pit_final 7e-11, pd_v2 1e-10, grupo_cal 100%.
 --   Correr: .\Go.ps1 -Only desemb_maestra_a_drop,desemb_maestra_b_build,desemb_maestra_c_qa
-CREATE TABLE disc_model_owner.b46029_desemb_maestra_202609
+CREATE TABLE disc_model_owner.b46029_desemb_maestra_rec_202609
 WITH (format='PARQUET', parquet_compression='SNAPPY') AS
 WITH iso(seg,x0,x1,y0,y1) AS (VALUES
   ('PJ_RECURRENTE', -1.0, 0.00565, 0.0, 0.0),
