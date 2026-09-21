@@ -4,8 +4,9 @@
 --   PDs construidas con sus coeficientes (via normal_cdf/inverse_normal_cdf):
 --     pd_ttc       = isotonica(seg) -> Vasicek nivel (lambda=0) + re-ancla ANCLA B (<=2025Q1)
 --     pd_pit       = isotonica(seg) -> Vasicek con MACRO=PBI NACIONAL (Apoyo var% real, yq-trimestral, std 2023+, b2=-0.089126<0 inverso) lambda=0.5 + re-ancla ANCLA B
---     pd_pit_final = pd_pit * overlay PJ (x0.85 forward: cod_tip_doc<>'1' AND cod_mes>=202504), PN sin ajuste. Es la PD OPERATIVA.
---     grupo_cal    = G1-G6 por puntuacion=round((1-pd_pit_final)*1000), cortes apetito [971, 945, 921, 908, 893] (G6=resto)
+--     pd_pit_final = pd_pit * overlay REC por sub-segmento (PJ_RECURRENTE x0.72, PN_RECURRENTE x0.82, desde cod_mes>=202501), NUEVO sin ajuste. Es la PD OPERATIVA (ULTIMA version, mismo overlay REC que el artifact/score; macro=Junio como el artifact de calibracion).
+--     puntuacion   = round((1-pd_pit_final)*1000) (columna materializada)
+--     grupo_cal    = G1-G6 por puntuacion, cortes apetito [971, 945, 921, 908, 893] (G6=resto)
 --     pd_v2_esc_opt= cadena V2 lineage-A (nivel personeria + rho-Basel + Vasicek 0.35 fhat + re-ancla) x factor esc_opt (PJJ 0.6814/PNN 0.9697)
 --   Validado localmente vs Python: pd_ttc 7e-15, pd_pit 7e-11, pd_pit_final 7e-11, pd_v2 1e-10, grupo_cal 100%.
 --   Correr: .\Go.ps1 -Only desemb_maestra_a_drop,desemb_maestra_b_build,desemb_maestra_c_qa
@@ -363,10 +364,11 @@ calc AS (
 ),
 fin AS (
   SELECT c.*,
-    CASE WHEN c.flg_cruce=1 THEN c.pd_pit*(CASE WHEN c.cod_tip_doc<>'1' AND c.cod_mes>=202504 THEN 0.85 ELSE 1.0 END) END AS pd_pit_final
+    CASE WHEN c.flg_cruce=1 THEN greatest(1e-6, least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 ELSE 1.0 END))) END AS pd_pit_final
   FROM calc c
 )
 SELECT f.*,
+  CASE WHEN f.flg_cruce=1 THEN CAST(round((1-f.pd_pit_final)*1000) AS INTEGER) END AS puntuacion,
   CASE WHEN f.flg_cruce=1 THEN
     CASE WHEN round((1-f.pd_pit_final)*1000) >= 971 THEN 'G1'
          WHEN round((1-f.pd_pit_final)*1000) >= 945 THEN 'G2'
