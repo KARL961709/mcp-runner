@@ -1,4 +1,4 @@
--- scr_cal_b2_202505.sql | SCORE CALIBRADO chunk 202505-202508 (INSERT INTO). prob_modelo_cal=PBI+AnclaB+overlay REC(PJ_REC 0.72/PN_REC 0.82). pd_opt_v2 del bankbn. desc_cliente_der del stock (RECURRENTE si min codmes<p_codmes). CHUNK 1 = test de tiempo.
+-- scr_cal_b2_202505.sql | SCORE CALIBRADO chunk 202505-202508 (INSERT INTO). pd_opt_v2 = COALESCE(join bankbn oficial, cadena V2 rebuilt lineage-A). flg_match_v2 1=bankbn 2=rebuilt 0=sin. rebuilt rellena SOLO donde no hay bankbn (202608). fhat por mes = ft_mensual. prob_modelo_cal = PBI+AnclaB+overlay REC(PJ 0.72/PN 0.82).
 INSERT INTO disc_model_owner.b46029_scr_admbankbpe_cal_202608
 WITH iso(seg,x0,x1,y0,y1) AS (VALUES
   ('PJ_RECURRENTE', -1.0, 0.00565, 0.0, 0.0),
@@ -199,6 +199,28 @@ dpit(seg,d) AS (VALUES
   ('PN_RECURRENTE', -0.10138352260241833),
   ('PN_NUEVO', -0.09321655604356532)
 ),
+fh2(cm,fhv) AS (VALUES
+  (202501, 1.5193331146887308),
+  (202502, 1.5295598659038827),
+  (202503, 1.5467370500137263),
+  (202504, 1.6703824334712063),
+  (202505, 1.8720398724011265),
+  (202506, 2.0194314436566057),
+  (202507, 2.0194314436566057),
+  (202508, 2.0194314436566057),
+  (202509, 2.0194314436566057),
+  (202510, 2.0194314436566057),
+  (202511, 2.0194314436566057),
+  (202512, 2.0194314436566057),
+  (202601, 2.0194314436566057),
+  (202602, 2.0194314436566057),
+  (202603, 2.0194314436566057),
+  (202604, 1.9724204666385832),
+  (202605, 1.471558584190937),
+  (202606, 0.8175440736248093),
+  (202607, 0.20088867265642565),
+  (202608, -0.0213840458600021)
+),
 stk AS (
   SELECT tip_doc, key_value, MIN(CAST(codmes AS INT)) AS min_cm
   FROM e_perm_aws.scr_cmpbpeibk2_rsk GROUP BY tip_doc, key_value
@@ -214,6 +236,7 @@ b AS (
     CASE WHEN s.tip_doc='1' THEN 'PN' ELSE 'PJ' END AS per_x,
     CASE WHEN stk.min_cm IS NOT NULL AND stk.min_cm < CAST(s.p_codmes AS INT) THEN 'RECURRENTE' ELSE 'NUEVO' END AS desc_cliente_der,
     GREATEST(1e-4, LEAST(1-1e-4, TRY_CAST(s.probabilidad AS DOUBLE))) AS pdr,
+    GREATEST(1e-6, LEAST(1-1e-6, TRY_CAST(s.probabilidad AS DOUBLE))) AS pcv2,
     v2.prob_modelo_cal AS v2cal
   FROM e_perm_aws.scr_admbankbpe_rsk s
   LEFT JOIN stk ON stk.tip_doc = s.tip_doc AND stk.key_value = s.key_value
@@ -224,72 +247,97 @@ c AS ( SELECT b.*, (b.per_x || '_' || b.desc_cliente_der) AS seg_x FROM b ),
 d AS (
   SELECT c.*,
     GREATEST(1e-4, LEAST(1-1e-4, ii.y0 + (ii.y1-ii.y0) * CASE WHEN ii.x1=ii.x0 THEN 0 ELSE (c.pdr-ii.x0)/(ii.x1-ii.x0) END)) AS pd_iso,
-    ft.ftv AS ftv, dp.d AS dpit
+    ft.ftv AS ftv, dp.d AS dpit, fh2.fhv AS fhat_v2
   FROM c
   LEFT JOIN iso ii ON ii.seg = c.seg_x AND c.pdr >= ii.x0 AND c.pdr < ii.x1
   LEFT JOIN ftd ft ON ft.cm = CAST(c.p_codmes AS INT)
   LEFT JOIN dpit dp ON dp.seg = c.seg_x
+  LEFT JOIN fh2 ON fh2.cm = CAST(c.p_codmes AS INT)
 ),
 e AS ( SELECT d.*, normal_cdf(0.0,1.0, 0.9585891011833967*inverse_normal_cdf(0.0,1.0, pd_iso) + -0.04456282926789813*ftv + dpit) AS pd_pit FROM d ),
-f AS ( SELECT e.*, GREATEST(1e-6, LEAST(1-1e-6, pd_pit * CASE WHEN seg_x='PJ_RECURRENTE' THEN 0.72 WHEN seg_x='PN_RECURRENTE' THEN 0.82 ELSE 1.0 END)) AS prob_modelo_cal FROM e )
+f AS ( SELECT e.*, GREATEST(1e-6, LEAST(1-1e-6, pd_pit * CASE WHEN seg_x='PJ_RECURRENTE' THEN 0.72 WHEN seg_x='PN_RECURRENTE' THEN 0.82 ELSE 1.0 END)) AS prob_modelo_cal FROM e ),
+g AS (
+  SELECT f.*,
+    CASE WHEN f.v2cal IS NULL AND f.fhat_v2 IS NOT NULL THEN
+      GREATEST(1e-6, LEAST(1-1e-6, CASE WHEN f.tip_doc='2'
+        THEN 1.0/(1.0+exp(-(-0.15993259962662906+0.9675398918720501*(ln(pcv2)-ln(1-pcv2)))))
+        ELSE 1.0/(1.0+exp(-(-0.6601884802657757+0.5938923689532265*ln(pcv2)+0.10766439295961687*ln(1-pcv2)))) END)) END AS pd_cal_v2
+  FROM f
+),
+h AS (
+  SELECT g.*,
+    CASE WHEN pd_cal_v2 IS NULL THEN NULL ELSE
+      GREATEST(0.001, LEAST(0.999,
+        0.035978817268325414*(0.03*((1-exp(-35*pd_cal_v2))/(1-exp(-35.0)))+0.16*(1-((1-exp(-35*pd_cal_v2))/(1-exp(-35.0)))))
+        /(CASE WHEN tip_doc='1' THEN 0.03424207361820211 ELSE 0.03868433725325406 END))) END AS rho_i2
+  FROM g
+),
+x AS (
+  SELECT h.*,
+    CASE WHEN rho_i2 IS NULL THEN NULL ELSE
+      normal_cdf(0.0,1.0,(inverse_normal_cdf(0.0,1.0,pd_cal_v2)-sqrt(rho_i2)*0.34999999999999998*fhat_v2)/sqrt(1-rho_i2)) END AS pit_v2
+  FROM h
+)
 SELECT
-  f.codmes,
-  f.tip_doc,
-  f.key_value,
-  f.puntuacion,
-  f.probabilidad,
-  f.modelo,
-  f.fec_replica,
-  f.segmento,
-  f.var1,
-  f.var2,
-  f.var3,
-  f.var4,
-  f.var5,
-  f.woe_beta_sldoppcomer,
-  f.woe_prm_decresldo12m,
-  f.woe_nro_decresldo12m,
-  f.woe_beta_nroenti,
-  f.woe_max_nrocredsldo06m,
-  f.woe_prm_porcsldoimpa12m,
-  f.woe_peor_clasicony09m,
-  f.woe_prm_decresldopp12m,
-  f.woe_prm_usotcfueraibk12m,
-  f.woe_prm_decresldotc12m,
-  f.woe_beta_sldopp12m,
-  f.woe_max_dismsldonoprinc12m,
-  f.woe_max_nroentinegocny06m,
-  f.woe_nro_mesesatrasmay8dias09m,
-  f.woe_max_dismsldoretail03m,
-  f.woe_beta_sldotc12m,
-  f.woe_rat_sldo09msobre12mrl,
-  f.woe_max_diasatras09mrl,
-  f.woe_nro_dismsaldonormal12mcny,
-  f.woe_max_dismsldo12rl,
-  f.woe_nro_mesesdismsldoretail12m,
-  f.woe_rat_sldonormal3msobre12mrl,
-  f.woe_porc_messldogiro06m,
-  f.woe_prm_ratdispefect03m,
-  f.woe_nro_mesesdicmsldoprinc12m,
-  f.woe_prm_valorexpimp12m,
-  f.woe_min_sldopasi06m,
-  f.woe_cant_entireportsisnoreg,
-  f.woe_prm_deudatelco12m,
-  f.woe_cant_vehi,
-  f.woe_anti_negmeses,
-  f.woe_prm_nrotrxcashout06m,
-  f.woe_nro_mesescastin06m,
-  f.woe_edad,
-  f.woe_dpt_grupo_v2,
-  f.woe_ciiu_grupo_v2,
-  f.rat_promsldnegdecreprin3y6m,
-  f.rat_promsldnegdecre03y06m,
-  f.woe_avg_porcsald_otrasent12m,
-  f.desc_cliente_der,
-  f.prob_modelo_cal,
-  CAST(round((1.0 - f.prob_modelo_cal) * 1000) AS INTEGER) AS puntuacion_cal,
-  CASE WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 971 THEN 'G1' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 945 THEN 'G2' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 921 THEN 'G3' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 908 THEN 'G4' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 893 THEN 'G5' ELSE 'G6' END AS grupos_cal,
-  CASE WHEN f.v2cal IS NULL THEN NULL ELSE GREATEST(1e-6, LEAST(1-1e-6, f.v2cal * CASE WHEN f.tip_doc='2' THEN 0.68140 ELSE 0.96970 END)) END AS pd_opt_v2,
-  CASE WHEN f.v2cal IS NULL THEN 0 ELSE 1 END AS flg_match_v2,
-  f.p_codmes
-FROM f
+  x.codmes,
+  x.tip_doc,
+  x.key_value,
+  x.puntuacion,
+  x.probabilidad,
+  x.modelo,
+  x.fec_replica,
+  x.segmento,
+  x.var1,
+  x.var2,
+  x.var3,
+  x.var4,
+  x.var5,
+  x.woe_beta_sldoppcomer,
+  x.woe_prm_decresldo12m,
+  x.woe_nro_decresldo12m,
+  x.woe_beta_nroenti,
+  x.woe_max_nrocredsldo06m,
+  x.woe_prm_porcsldoimpa12m,
+  x.woe_peor_clasicony09m,
+  x.woe_prm_decresldopp12m,
+  x.woe_prm_usotcfueraibk12m,
+  x.woe_prm_decresldotc12m,
+  x.woe_beta_sldopp12m,
+  x.woe_max_dismsldonoprinc12m,
+  x.woe_max_nroentinegocny06m,
+  x.woe_nro_mesesatrasmay8dias09m,
+  x.woe_max_dismsldoretail03m,
+  x.woe_beta_sldotc12m,
+  x.woe_rat_sldo09msobre12mrl,
+  x.woe_max_diasatras09mrl,
+  x.woe_nro_dismsaldonormal12mcny,
+  x.woe_max_dismsldo12rl,
+  x.woe_nro_mesesdismsldoretail12m,
+  x.woe_rat_sldonormal3msobre12mrl,
+  x.woe_porc_messldogiro06m,
+  x.woe_prm_ratdispefect03m,
+  x.woe_nro_mesesdicmsldoprinc12m,
+  x.woe_prm_valorexpimp12m,
+  x.woe_min_sldopasi06m,
+  x.woe_cant_entireportsisnoreg,
+  x.woe_prm_deudatelco12m,
+  x.woe_cant_vehi,
+  x.woe_anti_negmeses,
+  x.woe_prm_nrotrxcashout06m,
+  x.woe_nro_mesescastin06m,
+  x.woe_edad,
+  x.woe_dpt_grupo_v2,
+  x.woe_ciiu_grupo_v2,
+  x.rat_promsldnegdecreprin3y6m,
+  x.rat_promsldnegdecre03y06m,
+  x.woe_avg_porcsald_otrasent12m,
+  x.desc_cliente_der,
+  x.prob_modelo_cal,
+  CAST(round((1.0 - x.prob_modelo_cal) * 1000) AS INTEGER) AS puntuacion_cal,
+  CASE WHEN round((1.0 - x.prob_modelo_cal) * 1000) >= 971 THEN 'G1' WHEN round((1.0 - x.prob_modelo_cal) * 1000) >= 945 THEN 'G2' WHEN round((1.0 - x.prob_modelo_cal) * 1000) >= 921 THEN 'G3' WHEN round((1.0 - x.prob_modelo_cal) * 1000) >= 908 THEN 'G4' WHEN round((1.0 - x.prob_modelo_cal) * 1000) >= 893 THEN 'G5' ELSE 'G6' END AS grupos_cal,
+  CASE WHEN x.v2cal IS NOT NULL THEN greatest(1e-6, least(1-1e-6, x.v2cal * CASE WHEN x.tip_doc='2' THEN 0.68140 ELSE 0.96970 END))
+       WHEN x.fhat_v2 IS NOT NULL THEN greatest(1e-6, least(1-1e-6, greatest(1e-6, least(1-1e-6, x.pit_v2*(CASE WHEN x.tip_doc='1' THEN 1.16299104583772395 ELSE 1.13685059874822714 END)))*(CASE WHEN x.tip_doc='2' THEN 0.68140 ELSE 0.96970 END)))
+       ELSE NULL END AS pd_opt_v2,
+  CASE WHEN x.v2cal IS NOT NULL THEN 1 WHEN x.fhat_v2 IS NOT NULL THEN 2 ELSE 0 END AS flg_match_v2,
+  x.p_codmes
+FROM x
