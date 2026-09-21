@@ -1,7 +1,6 @@
 -- ============================================================================
 -- a01. CREATE altas_adm_pp_cdpp_cal = espejo ds_adm + PD calibrada (ambos modelos).
 --      pd_cal solo si pd_raw no null. cap -0.0380/0.2363 dirty 0.07226. PRE-MoC.
---      TTC = misma cadena sin el termino macro (ft = 0). PIT y TTC ambos modelos.
 -- ============================================================================
 CREATE TABLE disc_model_owner.altas_adm_pp_cdpp_cal
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes'],
@@ -215,11 +214,7 @@ scored AS (
     CASE WHEN a.pd_raw IS NULL THEN NULL ELSE
       normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_facil, 1 - 1e-06), 1e-06)) + a.delta_facil + 1.000000 * a.ftv) / 0.9832598843) END AS prob_f,
     CASE WHEN a.pd_raw IS NULL THEN NULL ELSE
-      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_cd, 1 - 1e-06), 1e-06)) + a.delta_cd + 1.000000 * a.ftv) / 0.9832598843) END AS prob_c,
-    CASE WHEN a.pd_raw IS NULL THEN NULL ELSE
-      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_facil, 1 - 1e-06), 1e-06)) + a.delta_facil) / 0.9832598843) END AS prob_f_ttc,
-    CASE WHEN a.pd_raw IS NULL THEN NULL ELSE
-      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_cd, 1 - 1e-06), 1e-06)) + a.delta_cd) / 0.9832598843) END AS prob_c_ttc
+      normal_cdf(0, 1, (inverse_normal_cdf(0, 1, greatest(least(a.pcal_cd, 1 - 1e-06), 1e-06)) + a.delta_cd + 1.000000 * a.ftv) / 0.9832598843) END AS prob_c
   FROM anch a
 )
 SELECT
@@ -248,11 +243,7 @@ SELECT
     a.tipo_ingreso,
     a.prob_f AS prob_modelo_cal_ppfacil,
     a.prob_c AS prob_modelo_cal_ppcd,
-    a.prob_f_ttc AS prob_modelo_ttc_ppfacil,
-    a.prob_c_ttc AS prob_modelo_ttc_ppcd,
     CASE WHEN a.prob_f IS NULL THEN NULL ELSE CAST(round(1000.0 * (1 - a.prob_f)) AS integer) END AS puntuacion_modelo_cal_ppfacil,
     CASE WHEN a.prob_c IS NULL THEN NULL ELSE CAST(round(1000.0 * (1 - a.prob_c)) AS integer) END AS puntuacion_modelo_cal_ppcd,
-    CASE WHEN a.prob_f_ttc IS NULL THEN NULL ELSE CAST(round(1000.0 * (1 - a.prob_f_ttc)) AS integer) END AS puntuacion_modelo_ttc_ppfacil,
-    CASE WHEN a.prob_c_ttc IS NULL THEN NULL ELSE CAST(round(1000.0 * (1 - a.prob_c_ttc)) AS integer) END AS puntuacion_modelo_ttc_ppcd,
     a.codmes
 FROM scored a
