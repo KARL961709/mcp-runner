@@ -1,12 +1,5 @@
--- scr_cal_b_build.sql | SCORE CALIBRADO (todo el universo): disc_model_owner.b46029_scr_admbankbpe_cal_202608
---   Parte de e_perm_aws.scr_admbankbpe_rsk (ADMBANKBPE, probabilidad not null, p_codmes>=202501) REPLICA COMPLETA + columnas de calibracion NUEVA VERSION.
---   desc_cliente_der = derivado del STOCK e_perm_aws.scr_cmpbpeibk2_rsk: RECURRENTE si estuvo en stock antes (min codmes < p_codmes), si no NUEVO (regla validada 97%).
---   prob_modelo_cal = pd_raw -> isotonica(seg) -> Vasicek(b1*z1 + -0.044563*ft_PBI(p_codmes) + delta_seg, Ancla B) -> overlay RECURRENTE (PJ_REC x0.72, PN_REC x0.82, resto x1).
---   puntuacion_cal = round((1-prob_modelo_cal)*1000). grupos_cal = G1-G6 cortes apetito [971, 945, 921, 908, 893].
---   pd_opt_v2 = esc V2 = prob_modelo_cal(bankbn scr_admbankbpe_calibrado_202607) x factor (PJJ 0.68140/PNN 0.96970). flg_match_v2=0 en 202608 (bankbn corta en 202607).
---   Validado local (SQL-logic vs Python) en la maestra: pd_pit 7e-11, grupo 100%. Universo grande (~90M) -> si el CTAS excede el timeout, se parte por anio.
-CREATE TABLE disc_model_owner.b46029_scr_admbankbpe_cal_202608
-WITH (format='PARQUET', parquet_compression='SNAPPY', partitioned_by=ARRAY['p_codmes']) AS
+-- scr_cal_b2_202505.sql | SCORE CALIBRADO chunk 202505-202508 (INSERT INTO). prob_modelo_cal=PBI+AnclaB+overlay REC(PJ_REC 0.72/PN_REC 0.82). pd_opt_v2 del bankbn. desc_cliente_der del stock (RECURRENTE si min codmes<p_codmes). CHUNK 1 = test de tiempo.
+INSERT INTO disc_model_owner.b46029_scr_admbankbpe_cal_202608
 WITH iso(seg,x0,x1,y0,y1) AS (VALUES
   ('PJ_RECURRENTE', -1.0, 0.00565, 0.0, 0.0),
   ('PJ_RECURRENTE', 0.00565, 0.018907, 0.0, 0.0),
@@ -214,7 +207,7 @@ v2 AS (
   SELECT CAST(p_codmes AS INT) AS p_codmes, tip_doc, key_value, prob_modelo_cal,
          ROW_NUMBER() OVER (PARTITION BY p_codmes, tip_doc, key_value ORDER BY fec_replica DESC) AS rn
   FROM disc_model_owner.scr_admbankbpe_calibrado_202607
-  WHERE p_codmes >= '202501'
+  WHERE p_codmes BETWEEN '202505' AND '202508'
 ),
 b AS (
   SELECT s.*,
@@ -225,11 +218,9 @@ b AS (
   FROM e_perm_aws.scr_admbankbpe_rsk s
   LEFT JOIN stk ON stk.tip_doc = s.tip_doc AND stk.key_value = s.key_value
   LEFT JOIN v2  ON v2.tip_doc = s.tip_doc AND v2.key_value = s.key_value AND v2.p_codmes = CAST(s.p_codmes AS INT) AND v2.rn = 1
-  WHERE s.modelo = 'ADMBANKBPE' AND s.probabilidad IS NOT NULL AND s.p_codmes >= '202501'
+  WHERE s.modelo = 'ADMBANKBPE' AND s.probabilidad IS NOT NULL AND s.p_codmes BETWEEN '202505' AND '202508'
 ),
-c AS (
-  SELECT b.*, (b.per_x || '_' || b.desc_cliente_der) AS seg_x FROM b
-),
+c AS ( SELECT b.*, (b.per_x || '_' || b.desc_cliente_der) AS seg_x FROM b ),
 d AS (
   SELECT c.*,
     GREATEST(1e-4, LEAST(1-1e-4, ii.y0 + (ii.y1-ii.y0) * CASE WHEN ii.x1=ii.x0 THEN 0 ELSE (c.pdr-ii.x0)/(ii.x1-ii.x0) END)) AS pd_iso,
@@ -239,16 +230,8 @@ d AS (
   LEFT JOIN ftd ft ON ft.cm = CAST(c.p_codmes AS INT)
   LEFT JOIN dpit dp ON dp.seg = c.seg_x
 ),
-e AS (
-  SELECT d.*,
-    normal_cdf(0.0,1.0, 0.9585891011833967*inverse_normal_cdf(0.0,1.0, pd_iso) + -0.04456282926789813*ftv + dpit) AS pd_pit
-  FROM d
-),
-f AS (
-  SELECT e.*,
-    GREATEST(1e-6, LEAST(1-1e-6, pd_pit * CASE WHEN seg_x='PJ_RECURRENTE' THEN 0.72 WHEN seg_x='PN_RECURRENTE' THEN 0.82 ELSE 1.0 END)) AS prob_modelo_cal
-  FROM e
-)
+e AS ( SELECT d.*, normal_cdf(0.0,1.0, 0.9585891011833967*inverse_normal_cdf(0.0,1.0, pd_iso) + -0.04456282926789813*ftv + dpit) AS pd_pit FROM d ),
+f AS ( SELECT e.*, GREATEST(1e-6, LEAST(1-1e-6, pd_pit * CASE WHEN seg_x='PJ_RECURRENTE' THEN 0.72 WHEN seg_x='PN_RECURRENTE' THEN 0.82 ELSE 1.0 END)) AS prob_modelo_cal FROM e )
 SELECT
   f.codmes,
   f.tip_doc,
@@ -305,12 +288,7 @@ SELECT
   f.desc_cliente_der,
   f.prob_modelo_cal,
   CAST(round((1.0 - f.prob_modelo_cal) * 1000) AS INTEGER) AS puntuacion_cal,
-  CASE WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 971 THEN 'G1'
-       WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 945 THEN 'G2'
-       WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 921 THEN 'G3'
-       WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 908 THEN 'G4'
-       WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 893 THEN 'G5'
-       ELSE 'G6' END AS grupos_cal,
+  CASE WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 971 THEN 'G1' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 945 THEN 'G2' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 921 THEN 'G3' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 908 THEN 'G4' WHEN round((1.0 - f.prob_modelo_cal) * 1000) >= 893 THEN 'G5' ELSE 'G6' END AS grupos_cal,
   CASE WHEN f.v2cal IS NULL THEN NULL ELSE GREATEST(1e-6, LEAST(1-1e-6, f.v2cal * CASE WHEN f.tip_doc='2' THEN 0.68140 ELSE 0.96970 END)) END AS pd_opt_v2,
   CASE WHEN f.v2cal IS NULL THEN 0 ELSE 1 END AS flg_match_v2,
   f.p_codmes
