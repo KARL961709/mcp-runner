@@ -4,7 +4,7 @@
 --   PDs construidas con sus coeficientes (via normal_cdf/inverse_normal_cdf):
 --     pd_ttc       = isotonica(seg) -> Vasicek nivel (lambda=0) + re-ancla ANCLA B (<=2025Q1)
 --     pd_pit       = isotonica(seg) -> Vasicek con MACRO=PBI NACIONAL (Apoyo var% real, yq-trimestral, std 2023+, b2=-0.089126<0 inverso) lambda=0.5 + re-ancla ANCLA B
---     pd_pit_final = pd_pit * overlay REC por sub-segmento (PJ_RECURRENTE x0.72, PN_RECURRENTE x0.82, desde cod_mes>=202501), NUEVO sin ajuste. Es la PD OPERATIVA (ULTIMA version, mismo overlay REC que el artifact/score; macro=Junio como el artifact de calibracion).
+--     pd_pit_final = pd_pit * overlay REC por sub-segmento (PJ_RECURRENTE x0.72, PN_RECURRENTE x0.82, desde cod_mes>=202501), NUEVO sin ajuste. Es la PD OPERATIVA (ULTIMA version, mismo overlay REC que el artifact/score, macro=Junio como el artifact de calibracion).
 --     puntuacion   = round((1-pd_pit_final)*1000) (columna materializada)
 --     grupo_cal    = G1-G6 por puntuacion, cortes apetito [971, 945, 921, 908, 893] (G6=resto)
 --     pd_v2_esc_opt= cadena V2 lineage-A (nivel personeria + rho-Basel + Vasicek 0.35 fhat + re-ancla) x factor esc_opt (PJJ 0.6814/PNN 0.9697)
