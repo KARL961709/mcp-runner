@@ -12,6 +12,6 @@ SELECT
     avg(prob_modelo_ttc_ppfacil) AS pd_ttc,
     avg(prob_modelo_cal_ppfacil) / avg(CAST(target_12m AS double)) AS calce
 FROM disc_model_owner.altas_adm_pp_cdpp_cal_ttc
-WHERE flg_ibk = 0 AND sub_producto = 'PP_FACIL' AND flg_clean = 1 AND target_12m IS NOT NULL
+WHERE flg_ibk = 0 AND sub_producto = 'PP_FACIL' AND flg_clean = 1 AND target_12m IS NOT NULL AND codmes >= '202311'
 GROUP BY ROLLUP (cod_instit_financiera)
 ORDER BY cod_instit_financiera
