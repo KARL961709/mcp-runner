@@ -1,3 +1,2 @@
--- QA[1] CONTEO: filas calibradas == fuente (ADMBANKBPE, prob not null, p_codmes 202401-202608)
-SELECT (SELECT COUNT(*) FROM disc_model_owner.b46029_scr_admbankbpe_cal_202608) AS n_cal,
-  (SELECT COUNT(*) FROM e_perm_aws.scr_admbankbpe_rsk WHERE probabilidad IS NOT NULL AND modelo='ADMBANKBPE' AND p_codmes BETWEEN '202401' AND '202608') AS n_fuente
+-- QA[1] conteo total y por match V2 (debe ~= scr_admbankbpe_rsk 202501+)
+SELECT COUNT(*) AS n_total, SUM(flg_match_v2) AS n_v2, SUM(CASE WHEN grupos_cal IS NULL THEN 1 ELSE 0 END) AS grupo_null, SUM(CASE WHEN prob_modelo_cal IS NULL THEN 1 ELSE 0 END) AS pcal_null FROM disc_model_owner.b46029_scr_admbankbpe_cal_202608
