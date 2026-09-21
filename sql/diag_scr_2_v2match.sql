@@ -3,6 +3,7 @@ WITH v2 AS (
   SELECT CAST(p_codmes AS INT) AS p_codmes, tip_doc, key_value,
          ROW_NUMBER() OVER (PARTITION BY p_codmes, tip_doc, key_value ORDER BY fec_replica DESC) AS rn
   FROM disc_model_owner.scr_admbankbpe_calibrado_202607
+  WHERE p_codmes >= '202501'
 ),
 s AS (
   SELECT CAST(p_codmes AS INT) AS p_codmes, tip_doc, key_value
