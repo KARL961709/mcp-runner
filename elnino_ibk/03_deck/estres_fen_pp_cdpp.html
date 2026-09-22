@@ -244,24 +244,22 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
 
   var S_HI=0.65, S_LO=0.25;  // proxy de actividad (fallback si la celda no trae s real de s04): NO_DEP vs DEP
   var IBK_K=0.02;  // sensibilidad de la recuperación al IBK+ centrado (depto-nac); SOLO ATENÚA max(ibk_c,0); PROVISIONAL (inerte hasta s04)
-  var P={gamma:3.0,wF:0.5,wA:0.5,recup:0.3,rho:0.0332,kappa:0.25};  // rho=0,0332 = la de la calibración PP VC (30_scr_cal.sql, √(1−ρ)=0,98326), NO la hipotecaria 0,15
+  var P={gamma:3.0,wF:0.5,wA:0.5,rho:0.0332,kappa:0.25};
+  var RELIEF=0.50;  // rho=0,0332 = la de la calibración PP VC (30_scr_cal.sql, √(1−ρ)=0,98326), NO la hipotecaria 0,15
   function lam(){return Math.sqrt(P.rho/(1-P.rho));}
   var activeScen='ESC2';
   var useReest=true;
   function CELLS(){return (!useReest && DATA.cellsDir)?DATA.cellsDir:DATA.cells;}
   var SCEN=[
-    {id:'ESC1', lab:'Extraordinario', sub:'sin recuperación', g:4.2,f:.5,a:.5,r:0},
-    {id:'ESC2', lab:'Fuerte', sub:'balanceado', g:3,f:.5,a:.5,r:.3},
-    {id:'ESC21',lab:'Fuerte', sub:'sesgo físico', g:3,f:.6,a:.4,r:.3},
-    {id:'ESC22',lab:'Fuerte', sub:'con recuperación', g:3,f:.5,a:.5,r:.5},
-    {id:'ESC31',lab:'Moderado', sub:'sesgo físico', g:2,f:.6,a:.4,r:.3},
-    {id:'ESC32',lab:'Moderado', sub:'con recuperación', g:2,f:.5,a:.5,r:.5}
+    {id:'ESC1', lab:'Extraordinario', sub:'γ 4,2', g:4.2,f:.5,a:.5,r:0},
+    {id:'ESC2', lab:'Fuerte', sub:'balanceado', g:3,f:.5,a:.5,r:0},
+    {id:'ESC21',lab:'Fuerte', sub:'sesgo físico', g:3,f:.6,a:.4,r:0},
+    {id:'ESC31',lab:'Moderado', sub:'balanceado', g:2,f:.5,a:.5,r:0}
   ];
   var SL_SCEN=[
     {k:'gamma',lab:'☔ Lluvia FEN · intensidad (γ)',min:0,max:7,step:.1,fmt:f1,hint:'2 moderado · 3 fuerte · 4,2 extraordinario · >5 hipotético',rain:true,scen:true,q:'<b>¿Qué tan fuerte es el FEN?</b> Sube la intensidad de lluvia (ICEN): 2≈moderado, 3≈fuerte, 4,2≈extraordinario. Es el maestro que fija el escenario.'},
     {k:'wF',lab:'Físico · peso canal directo',min:0,max:1,step:.05,fmt:f2,hint:'inundación (requiere R por cliente)',twin:'wA',scen:true,q:'<b>¿Cuánto del daño viene por INUNDACIÓN directa?</b> Sube el peso del canal físico (el R del cliente). Atado a Actividad: los dos suman 1.'},
     {k:'wA',lab:'Actividad · peso canal indirecto',min:0,max:1,step:.05,fmt:f2,hint:'dependencia del agua · proxy NO_DEP',twin:'wF',scen:true,q:'<b>¿Cuánto del daño viene porque el distrito VIVE del agua</b> (agro/pesca)? Sube el peso del canal de actividad. Atado a Físico: suman 1.'},
-    {k:'recup',lab:'Recuperación · atenúa el estrés',min:0,max:1,step:.05,fmt:pctf,hint:'0 sin recuperación · 100% anula el estrés (e′=0)',scen:true,q:'<b>¿Cuánto rebota el cliente en el horizonte?</b> 0% = sin recuperación (peor); 100% = anula el estrés. Solo <b>atenúa</b>, nunca agrava.'},
     {k:'kappa',lab:'Interacción κ · físico × actividad',min:0,max:.5,step:.05,fmt:f2,hint:'refuerzo cuando coinciden inundación y dependencia del agua',scen:false,q:'<b>¿Se REFUERZAN físico y actividad cuando coinciden?</b> (distrito inundable Y que vive del agua). 0 = sin refuerzo; sube el término cruzado κ·d·s. Estructural: no cambia con el escenario.'}
   ];
   // ρ (correlación del producto · consumo) y κ (interacción) = CONSTANTES del modelo, fijas — no son perillas
@@ -269,7 +267,7 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
 
   function grade(pd){var c=DATA.cutoffs;for(var i=0;i<c.length;i++)if(pd<=c[i])return i;return c.length;}
   function rnum(rl){return +String(rl).replace('R','');}
-  function stressCell(c){var d=rnum(c.r)/5, s=(c.s!=null)?Math.max(c.s,0):((c.tipo==='NO_DEP')?S_HI:S_LO), e=P.wF*d+P.wA*s+P.kappa*d*s, rec=cl(P.recup+IBK_K*Math.max(c.ibk_c||0,0),0,1), ep=e*(1-rec), shift=lam()*P.gamma*(c.pac?1:0)*ep;
+  function stressCell(c){var d=rnum(c.r)/5, s=(c.s!=null)?Math.max(c.s,0):((c.tipo==='NO_DEP')?S_HI:S_LO), e=P.wF*d+P.wA*s+P.kappa*d*s, ep=Math.max(e,0)*(1-RELIEF), shift=lam()*P.gamma*(c.pac?1:0)*ep;
     return cl(nCDF(nInv(cl(c.pd,1e-4,0.985))+shift),1e-4,0.999);}
 
   function compute(){
@@ -378,7 +376,7 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
   var mapLayer='impact';
   function heat2(t){t=cl(t,0,1);var c1=[38,51,42],c2=[46,139,158],c3=[102,214,232],r,g,b,u;if(t<0.5){u=t/0.5;r=Math.round(c1[0]+(c2[0]-c1[0])*u);g=Math.round(c1[1]+(c2[1]-c1[1])*u);b=Math.round(c1[2]+(c2[2]-c1[2])*u);}else{u=(t-0.5)/0.5;r=Math.round(c2[0]+(c3[0]-c2[0])*u);g=Math.round(c2[1]+(c3[1]-c2[1])*u);b=Math.round(c2[2]+(c3[2]-c2[2])*u);}return 'rgb('+r+','+g+','+b+')';}
   function heatWarm(t){t=cl(t,0,1);var c1=[35,48,40],c2=[224,164,74],c3=[178,58,58],r,g,b,u;if(t<0.5){u=t/0.5;r=Math.round(c1[0]+(c2[0]-c1[0])*u);g=Math.round(c1[1]+(c2[1]-c1[1])*u);b=Math.round(c1[2]+(c2[2]-c1[2])*u);}else{u=(t-0.5)/0.5;r=Math.round(c2[0]+(c3[0]-c2[0])*u);g=Math.round(c2[1]+(c3[1]-c2[1])*u);b=Math.round(c2[2]+(c3[2]-c2[2])*u);}return 'rgb('+r+','+g+','+b+')';}
-  function distShift(f){var d=f.r/5,e=P.wF*d+P.wA*f.s+P.kappa*d*f.s;return lam()*P.gamma*(f.pac?1:0)*(e*(1-cl(P.recup,0,1)));}
+  function distShift(f){var d=f.r/5,e=P.wF*d+P.wA*f.s+P.kappa*d*f.s;return lam()*P.gamma*(f.pac?1:0)*(Math.max(e,0)*(1-RELIEF));}
   function distDPD(f){return nCDF(nInv(DATA.total.pd)+distShift(f))-DATA.total.pd;}
   function mapColor(f){
     if(mapLayer==='impact'){var dpd=distDPD(f);return dpd<=0.0005?'#233026':heatWarm(cl(dpd/0.18,0,1));}
@@ -442,9 +440,9 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
     document.getElementById('mig_flow').innerHTML=migSankey(R);
     var modeB=0,modeA=0;for(var mi=1;mi<R.baseN.length;mi++){if(R.baseN[mi]>R.baseN[modeB])modeB=mi;if(R.strN[mi]>R.strN[modeA])modeA=mi;}
     document.getElementById('mig_hl').innerHTML='<b class="warn">'+pct(R.mig/R.totN)+'</b> de la cartera baja de grado ('+nf(R.mig)+' clientes) · la concentración se corre de <b>'+DATA.grados[modeB]+'</b> a <b class="warn">'+DATA.grados[modeA]+'</b> · <b class="warn">+'+nf(R.toRej)+'</b> entran a <b>GR</b> (rechazo) bajo <b>'+(activeScen||'el escenario')+'</b>.';
-    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('recuperación',pctf(P.recup))+parChip('ρ correlación',f4(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f3(lam()))+parChip('score R',useReest?'Ajuste Geo':'Directo')+parChip('escenario',activeScen||'personalizado');
+    document.getElementById('mig_par').innerHTML=parChip('☔ γ lluvia',f1(P.gamma))+parChip('físico w<sub>F</sub>',f2(P.wF))+parChip('actividad w<sub>A</sub>',f2(P.wA))+parChip('alivio recup.','50%')+parChip('ρ correlación',f4(P.rho))+parChip('κ interacción',f2(P.kappa))+parChip('λ',f3(lam()))+parChip('score R',useReest?'Ajuste Geo':'Directo')+parChip('escenario',activeScen||'personalizado');
     document.getElementById('gkey').innerHTML=DATA.grados.map(function(g,i){return '<span><i style="background:'+cvar(GCOL[i])+'"></i>'+g+'</span>';}).join('');
-    document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ))=0,185 (el loading sistémico de la propia calibración) y <b>ρ = 0,0332 estimada de la oscilación de la RD del producto</b> (ρ = Var(Φ⁻¹(RD))/(1+Var), excl. COVID — la misma que la calibración PP VC usa en su TTC→PIT, √(1−ρ)=0,983; no un benchmark ni la hipotecaria 0,15), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25 por defecto, ajustable), e′ = e·(1−recup) con <b>recup 0–100%</b> (100% anula el estrés). <b>PD₀ = pd_calib real</b> por celda grado×R×tipo (17 809 altas PP CD/CDPP clean, 202605–202607 (libro reciente a estresar), PD media 9,38%; calibración validada en libro maduro (81 728, 202607): PD 7,31% ≈ RD 7,24% ✓). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
+    document.getElementById('foot').innerHTML='<b>Metodología.</b> PD estresada = Φ( Φ⁻¹(PD₀) + λ·γ·costa·e′ ), con λ=√(ρ/(1−ρ))=0,185 (el loading sistémico de la propia calibración) y <b>ρ = 0,0332 estimada de la oscilación de la RD del producto</b> (ρ = Var(Φ⁻¹(RD))/(1+Var), excl. COVID — la misma que la calibración PP VC usa en su TTC→PIT, √(1−ρ)=0,983; no un benchmark ni la hipotecaria 0,15), e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s (κ=0,25 por defecto, ajustable), e′ = max(e,0)·(1−alivio), alivio=50% con <b>recup 0–100%</b> (100% anula el estrés). <b>PD₀ = pd_calib real</b> por celda grado×R×tipo (17 809 altas PP CD/CDPP clean, 202605–202607 (libro reciente a estresar), PD media 9,38%; calibración validada en libro maduro (81 728, 202607): PD 7,31% ≈ RD 7,24% ✓). Monótona (PD*≥PD₀) y anclada a la PIT (FOSD). <b>d = R/5</b> es el físico por cliente (R directo reestructurado, R0–R5), <b>s</b> la actividad por tipo de ingreso (NO_DEP 0,65 > DEP 0,25) y <b>costa</b> el gate Pacífico (0/1). <b>γ</b> (lluvia) se ancla al <b>ICEN</b> (ENFEN): moderado≈2 · fuerte≈3 · extraordinario≥3,5 — 2026 en curso ICEN 1,98. <b>Política de originación:</b> R4/R5 = <b>recorte duro</b> (siempre fuera); R0–R3 = se estresa con el escenario. Overlay de gobierno calibrado por juicio + apetito (los 6 escenarios reemplazan el recorte X%), no backtest. Interbank · Riesgo de Crédito.';
     paintMap();if(mapLayer==='impact')mapLegend();
   }
 
@@ -454,8 +452,8 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
     Array.prototype.forEach.call(document.querySelectorAll('#scen .chip'),function(b){b.addEventListener('click',function(){applyScen(b.getAttribute('data-sc'));});});
   }
   function applyScen(id){var sc=null;for(var i=0;i<SCEN.length;i++)if(SCEN[i].id===id)sc=SCEN[i];if(!sc)return;
-    P.gamma=sc.g;P.wF=sc.f;P.wA=sc.a;P.recup=sc.r;activeScen=id;
-    [['gamma',f1],['wF',f2],['wA',f2],['recup',pctf]].forEach(function(x){var el=document.getElementById('s_'+x[0]);if(el)el.value=P[x[0]];var v=document.getElementById('v_'+x[0]);if(v)v.textContent=x[1](P[x[0]]);});
+    P.gamma=sc.g;P.wF=sc.f;P.wA=sc.a;activeScen=id;
+    [['gamma',f1],['wF',f2],['wA',f2]].forEach(function(x){var el=document.getElementById('s_'+x[0]);if(el)el.value=P[x[0]];var v=document.getElementById('v_'+x[0]);if(v)v.textContent=x[1](P[x[0]]);});
     paintScen();sched();
   }
   function mkSliders(box,arr){
@@ -500,7 +498,7 @@ var DEPMAP={"W":360,"H":513.0,"feats":[{"d":"M104.9,196.0L102.5,196.3L101.6,195.
   function renderRtog(){
     var dirOn=!!DATA.cellsDir, box=document.getElementById('rtog'), tt=document.getElementById('rtt'); if(!box)return;
     var TXT={
-      reest:'<b>Ajuste Geo</b> (R0–R5) — el score físico FEN R con <b>ajuste geográfico</b> (el R <i>reestructurado</i> de reniec, tabla mca_bd_reniec_xy_r_reest). Es el <b>default</b> del overlay.<br><b>Proceso:</b> entra como <b>d = R/5</b> en el canal físico → e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s → e′ = e·(1−recup) → <b>PD* = Φ(Φ⁻¹(PD₀) + λ·γ·costa·e′)</b>.',
+      reest:'<b>Ajuste Geo</b> (R0–R5) — el score físico FEN R con <b>ajuste geográfico</b> (el R <i>reestructurado</i> de reniec, tabla mca_bd_reniec_xy_r_reest). Es el <b>default</b> del overlay.<br><b>Proceso:</b> entra como <b>d = R/5</b> en el canal físico → e = w<sub>F</sub>·d + w<sub>A</sub>·s + κ·d·s → e′ = max(e,0)·(1−alivio), alivio=50% → <b>PD* = Φ(Φ⁻¹(PD₀) + λ·γ·costa·e′)</b>.',
       dir:'<b>Directo</b> (R0–R5) — el score físico FEN R <b>sin el ajuste geográfico</b> (R directo de reniec). '+(dirOn?'Entra igual como <b>d = R/5</b>: mismo proceso, cambia solo el R.':'<br><b style="color:var(--warn)">¿Por qué pendiente?</b> El artifact hoy trae la cartera agregada por el R con <b>Ajuste Geo</b>; esta vista necesita la MISMA cartera por R <b>directo</b> (query <b>j04</b>: ambos R del mismo universo). Al correr j04 y embeber los datos, el botón se activa y podrás comparar el estrés con uno u otro R.')
     };
     box.innerHTML='<button class="rbtn'+(useReest?' on':'')+'" data-r="reest">Ajuste Geo</button>'+

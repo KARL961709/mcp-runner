@@ -1,4 +1,4 @@
--- 5_po_v1v2v3_escopt.sql | tabla NUEVA b46029_po_scoring_v1v2v3_202607: v1/v2 de la PO de altas + v3 = prob_modelo_cal de la scr (dedup fec_replica) + prob_modelo_esc_opt (escenario optimista = v3 x factor anti-conservador por personeria, PJJ 0.6814 / PNN 0.9697) y su puntuacion. No reemplaza nada
+-- 5_po_v1v2v3_escopt.sql | tabla b46029_po_scoring_v1v2v3_202607: v1/v2 de la PO de altas + v3 = prob_modelo_cal de la scr (dedup fec_replica) + prob_modelo_esc_opt (escenario optimista = v3 x factor anti-conservador por personeria) y su puntuacion. FACTORES v202608: PJJ 0.65 (medido en IBK, count-weighted) / PNN 0.79 (adoptado del benchmark RESTO_TOP4 top-4 >=50k por muestra chica del PNN propio de IBK; CAVEAT: sub-predice ~1.7pp la mora observada de IBK, decision de metodologia documentada). El factor se aplica sobre v3 (base sobre la que se midio el 0.79). Si la tabla existe, correr antes el DROP (0_drop_v1v2v3_escopt.sql)
 CREATE TABLE disc_model_owner.b46029_po_scoring_v1v2v3_202607
 WITH (format = 'PARQUET', parquet_compression = 'SNAPPY', partitioned_by = ARRAY['p_codmes']) AS
 WITH v3_dedup AS (
@@ -28,9 +28,9 @@ SELECT
   v3.puntuacion_modelo AS puntuacion_cal_v3,
   v3.flg_clean AS flg_clean_v3,
   greatest(1e-6, least(1 - 1e-6,
-    v3.prob_modelo_cal * CASE WHEN a.personeria = 'PJJ' THEN 0.68140 ELSE 0.96970 END)) AS prob_modelo_esc_opt,
+    v3.prob_modelo_cal * CASE WHEN a.personeria = 'PJJ' THEN 0.65000 ELSE 0.79000 END)) AS prob_modelo_esc_opt,
   cast(round((1.0 - greatest(1e-6, least(1 - 1e-6,
-    v3.prob_modelo_cal * CASE WHEN a.personeria = 'PJJ' THEN 0.68140 ELSE 0.96970 END))) * 1000) AS integer) AS puntuacion_esc_opt,
+    v3.prob_modelo_cal * CASE WHEN a.personeria = 'PJJ' THEN 0.65000 ELSE 0.79000 END))) * 1000) AS integer) AS puntuacion_esc_opt,
   a.p_codmes
 FROM disc_model_owner.b46029_po_scoring_v1v2_202607 a
 LEFT JOIN v3_dedup v3
