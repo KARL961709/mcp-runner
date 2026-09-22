@@ -1,24 +1,27 @@
--- e10_sim_celdas_202609.sql | CTAS de la tabla agregada para el simulador FEN de la campana PP 202609.
--- Crea disc_model_owner.fen_pp_sim_celdas_202609 (PARQUET, descargable). Grano: dep_inei x r_reest x grado_PIT.
--- COHERENTE POR GRUPO: es el grano mas fino; cada celda suma exacto a cualquier vista agregada
---   (por grado G1..GR, por R, por departamento, por grupo FEN golpeado/costa/interior).
+-- e10_sim_celdas_202609.sql | CTAS agregado para el simulador FEN de la campana PP 202609.
+-- Crea disc_model_owner.fen_pp_sim_celdas_202609 (PARQUET SNAPPY, descargable de <S3_DATOS>/fen_pp_sim_celdas_202609/).
+-- GRANO = ubigeo (distrito INEI domicilio) x r_nivel_reest (0..5) x grado_PIT (cortes 2609). Grano FINO correcto:
+--   * s (score indirecto) es DISTRITAL -> agrupar por ubigeo lo deja EXACTO (no licuado como a nivel depto).
+--   * r_nivel_reest (score directo REESTRUCTURADO) varia por persona -> eje propio; pac = r_nivel_reest>=1.
+--   * rec_d (recuperacion inflacion) es DEPARTAMENTAL -> se aplica en el artifact via substr(ubigeo,1,2).
+-- COHERENTE POR GRUPO: cada celda suma exacto a cualquier vista (grado, R, departamento, grupo FEN).
+-- CRUCE identico al canonico s03 (fen_overlay): u.key_value=r.key_value ; r.ubigeo_inei_nodo=s.ubigeo.
 -- Solo agregados (n y promedios por celda); ningun registro de cliente sale de la base.
 --
 -- Puente confirmado (e08): substr(subject_id,3) = key_value. Campana deduplicada por llave
 --   (subject_id trae ~10k duplicados: 2,512,001 filas / 2,501,992 distintos).
--- Mapeo de columnas (verificado en scr_vcadmbnk_final_rsk_cal_2609, 31 cols):
+-- Mapeo de columnas (verificado, scr_vcadmbnk_final_rsk_cal_2609, 31 cols):
 --   pd_raw = pd_raw | pd_ttc = prob_modelo_ttc_cal_ppfacil | pd_pit = prob_modelo_cal_ppfacil
 --   grado  = puntuacion_modelo_cal_ppfacil vs 985/955/947/912/892/864
--- Recuperacion = SOLO INFLACION; el rec_d por departamento se aplica en el artifact (no en SQL).
 --
 -- Correr de a uno:  .\Go.ps1 -SqlDir proyectos/fen_pp_sim/sql_prod -Only e10_sim_celdas_202609
--- Si la tabla ya existe (rebuild), correr antes:  -Only e10b_drop_sim_celdas
+-- RE-crear (rebuild): correr antes -Only e10b_drop_sim_celdas Y vaciar <S3_DATOS>/fen_pp_sim_celdas_202609/
 CREATE TABLE disc_model_owner.fen_pp_sim_celdas_202609
-WITH (format = 'PARQUET') AS
+WITH (format = 'PARQUET', write_compression = 'SNAPPY', external_location = '<S3_DATOS>/fen_pp_sim_celdas_202609/') AS
 SELECT
+  COALESCE(r.ubigeo_inei_nodo, 'SIN_GEO')          AS ubigeo,
   COALESCE(substr(r.ubigeo_inei_nodo, 1, 2), '00') AS dep_inei,
-  COALESCE(r.r_label_reest, 'SIN_R')               AS r_reest,
-  COALESCE(CAST(r.r_nivel_reest AS varchar), '')   AS r_nivel,
+  COALESCE(CAST(r.r_nivel_reest AS varchar), 'SIN_R') AS r_reest,
   CASE
     WHEN u.puntuacion_modelo_cal_ppfacil >= 985 THEN 'G1'
     WHEN u.puntuacion_modelo_cal_ppfacil >= 955 THEN 'G2'
