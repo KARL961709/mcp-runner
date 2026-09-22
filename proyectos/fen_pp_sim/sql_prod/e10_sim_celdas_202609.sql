@@ -20,9 +20,14 @@
 CREATE TABLE disc_model_owner.fen_pp_sim_celdas_202609
 WITH (format = 'PARQUET') AS
 WITH camp AS (
+  -- campaña activa PP 2609 (2.1 Rec)
   SELECT DISTINCT substr(subject_id, 3) AS kv
   FROM d_perm_aws.t_edc_ar_camp_vars_sep2qrec_temp
   WHERE p_codmes = '202609' AND producto = 'PP' AND sub_producto = 'PP' AND num_carga = '2.1 Rec'
+  UNION  -- + caida UNICA por FEN (tot_caidas=1, guardado como '1.00000'); UNION deduplica el solape
+  SELECT DISTINCT substr(subject_id, 3)
+  FROM d_perm_aws.t_edc_mo_caida_fen_2609_tmp
+  WHERE camp = '2609-2REC' AND producto = 'PP' AND CAST(tot_caidas AS double) = 1
 ),
 g AS (
   SELECT upper(regexp_replace(normalize(trim(departamento), NFD), '\p{M}', '')) AS dep_n,
