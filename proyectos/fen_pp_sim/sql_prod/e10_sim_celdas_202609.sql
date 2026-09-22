@@ -1,5 +1,5 @@
 -- e10_sim_celdas_202609.sql | CTAS agregado para el simulador FEN de la campana PP 202609.
--- Crea disc_model_owner.fen_pp_sim_celdas_202609 (PARQUET SNAPPY, descargable de <S3_DATOS>/fen_pp_sim_celdas_202609/).
+-- Crea disc_model_owner.fen_pp_sim_celdas_202609 (PARQUET, tabla gestionada, sin ruta S3 externa; el export lo aplica el usuario).
 -- GRANO = ubigeo x geo_src x r_reest x grado_PIT. Coherente por grupo (suma exacto a grado, R, depto, grupo FEN).
 --
 -- TODO CLIENTE QUEDA GATEADO (3 tiers de R, columna geo_src marca por donde entro cada quien):
@@ -17,9 +17,9 @@
 --   pd_pit=prob_modelo_cal_ppfacil, grado=puntuacion_modelo_cal_ppfacil vs 985/955/947/912/892/864.
 --
 -- Correr de a uno:  .\Go.ps1 -SqlDir proyectos/fen_pp_sim/sql_prod -Only e10_sim_celdas_202609
--- RE-crear: -Only e10b_drop_sim_celdas  Y vaciar <S3_DATOS>/fen_pp_sim_celdas_202609/
+-- RE-crear: -Only e10b_drop_sim_celdas  (tabla gestionada: el DROP limpia datos y metadata, sin paso manual en S3)
 CREATE TABLE disc_model_owner.fen_pp_sim_celdas_202609
-WITH (format = 'PARQUET', write_compression = 'SNAPPY', external_location = '<S3_DATOS>/fen_pp_sim_celdas_202609/') AS
+WITH (format = 'PARQUET') AS
 WITH camp AS (
   SELECT substr(subject_id, 3) AS kv,
          upper(regexp_replace(normalize(trim(MAX(ubigeo_dep)),  NFD), '\p{M}', '')) AS dep_n,
