@@ -7,6 +7,7 @@
 --     pd_pit_final = pd_pit * overlay REC por sub-segmento (PJ_RECURRENTE x0.72, PN_RECURRENTE x0.82, desde cod_mes>=202501), NUEVO sin ajuste. Es la PD OPERATIVA (ULTIMA version, mismo overlay REC que el artifact/score, macro=Junio como el artifact de calibracion).
 --     puntuacion   = round((1-pd_pit_final)*1000) (columna materializada)
 --     grupo_cal    = G1-G6 por puntuacion, cortes apetito [971, 945, 921, 908, 893] (G6=resto)
+--     puntuacion_sin_ov + grupo_sin_overlay = MISMOS cortes pero sobre pd_pit (SIN overlay REC): grupos como quedaban ANTES del overlay (comparacion del impacto)
 --     pd_v2_esc_opt= cadena V2 lineage-A (nivel personeria + rho-Basel + Vasicek 0.35 fhat + re-ancla) x factor esc_opt (PJJ 0.6814/PNN 0.9697)
 --   Validado localmente vs Python: pd_ttc 7e-15, pd_pit 7e-11, pd_pit_final 7e-11, pd_v2 1e-10, grupo_cal 100%.
 --   Correr: .\Go.ps1 -Only desemb_maestra_a_drop,desemb_maestra_b_build,desemb_maestra_c_qa
@@ -376,5 +377,14 @@ SELECT f.*,
          WHEN round((1-f.pd_pit_final)*1000) >= 908 THEN 'G4'
          WHEN round((1-f.pd_pit_final)*1000) >= 893 THEN 'G5'
          ELSE 'G6' END
-  END AS grupo_cal
+  END AS grupo_cal,
+  CASE WHEN f.flg_cruce=1 THEN CAST(round((1-f.pd_pit)*1000) AS INTEGER) END AS puntuacion_sin_ov,
+  CASE WHEN f.flg_cruce=1 THEN
+    CASE WHEN round((1-f.pd_pit)*1000) >= 971 THEN 'G1'
+         WHEN round((1-f.pd_pit)*1000) >= 945 THEN 'G2'
+         WHEN round((1-f.pd_pit)*1000) >= 921 THEN 'G3'
+         WHEN round((1-f.pd_pit)*1000) >= 908 THEN 'G4'
+         WHEN round((1-f.pd_pit)*1000) >= 893 THEN 'G5'
+         ELSE 'G6' END
+  END AS grupo_sin_overlay
 FROM fin f
