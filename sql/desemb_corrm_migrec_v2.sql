@@ -1,4 +1,4 @@
--- desemb_corrm_migrec_v2.sql | MATRIZ migracion V2 en 202501-207 (cortes VIEJOS) vs anterior REC. ~36 filas. Read-only, agregado.
+-- desemb_corrm_migrec_v2.sql | MATRIZ migracion V2 en 202501-207 (cortes ventana anterior <=2025Q1 [958, 943, 920, 906, 882]) vs anterior REC. ~36 filas. Read-only.
 WITH iso(seg,x0,x1,y0,y1) AS (VALUES
   ('PJ_RECURRENTE', -1.0, 0.00565, 0.0, 0.0),
   ('PJ_RECURRENTE', 0.00565, 0.018907, 0.0, 0.0),
@@ -228,11 +228,11 @@ c AS (SELECT sc.*, CASE WHEN flg_cruce=1 THEN normal_cdf(0.0,1.0, 0.960655463782
 nuevo AS (
   SELECT c.cod_mes, c.cod_tip_doc, c.key_value, c.flg_cruce,
     CASE WHEN c.flg_cruce=1 THEN (
-      CASE WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 971 THEN 'G1'
-           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 945 THEN 'G2'
-           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 921 THEN 'G3'
-           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 908 THEN 'G4'
-           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 893 THEN 'G5'
+      CASE WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 958 THEN 'G1'
+           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 943 THEN 'G2'
+           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 920 THEN 'G3'
+           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 906 THEN 'G4'
+           WHEN round((1-greatest(1e-6,least(1-1e-6, c.pd_pit*(CASE WHEN c.seg='PJ_RECURRENTE' AND c.cod_mes>=202501 THEN 0.72 WHEN c.seg='PN_RECURRENTE' AND c.cod_mes>=202501 THEN 0.82 WHEN c.seg='PJ_NUEVO' AND c.cod_mes>=202501 THEN 0.85 ELSE 1.0 END))))*1000) >= 882 THEN 'G5'
            ELSE 'G6' END) END AS grupo_new
   FROM c
 )
