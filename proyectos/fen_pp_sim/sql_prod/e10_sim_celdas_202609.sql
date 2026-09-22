@@ -29,7 +29,7 @@ g AS (
          upper(regexp_replace(normalize(trim(provincia),    NFD), '\p{M}', '')) AS prov_n,
          upper(regexp_replace(normalize(trim(distrito),     NFD), '\p{M}', '')) AS dist_n,
          cod_ubigeo, r_nivel, pacifico, pct_expuesto
-  FROM disc_model_owner.grado_elnino_ubigeo_v3
+  FROM d_perm_aws.grado_elnino_ubigeo_v3  -- OJO: la copia en disc_model_owner esta VACIA (0 filas). Los datos estan en d_perm_aws.
 ),
 dist_g AS (
   SELECT dep_n, prov_n, dist_n, MAX(cod_ubigeo) AS cod_ubigeo,
