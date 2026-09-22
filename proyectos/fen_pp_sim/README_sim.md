@@ -13,7 +13,13 @@ y la migracion de grados (G1..G6, GR) bajo los puntos de corte 2609.
     - prob_modelo_cal_ppfacil = PD PIT (sub_producto PP -> PP Facil)
     - puntuacion_modelo_cal_ppfacil = score PIT (para el grado)
 - PD raw: `disc_riesgos.scr_vcbankv3_repro_opt_` (prob_model, llave key_value + cod_tip_doc)  [por confirmar]
-- R (score directo FEN por persona): `mca_bd_reniec_xy_r_reest` (R_LABEL_REEST, ubigeo)
+- R (score directo FEN por persona): `disc_model_owner.mca_bd_reniec_xy_r_reest` (r_label, r_label_reest/r_nivel_reest, ubigeo_inei_nodo, exp25/50)
+
+## Patron de cruce (del pipeline fen_overlay/sql_prod/s03)
+El pipeline vigente une scores x R POR key_value: `u.key_value = r.key_value`.
+La campana usa subject_id -> HAY QUE CONFIRMAR si subject_id = key_value (e06). Si si, cruce 3-vias por esa llave.
+Reusar s03: grado por cortes, r_reest, pac=CASE r_nivel_reest>=1, depto=substr(ubigeo_inei_nodo,1,2), exp25/50.
+CAMBIO clave del simulador nuevo: reemplazar `fen_ibk_plus` (resiliencia IBK+) por el rec_d de la metodologia INFLACION.
 
 ## Puntos de corte 2609 (score PIT -> grado)
 G1 >=985 (PD 1.05%) | G2 >=955 (3.08%) | G3 >=947 (4.95%) | G4 >=912 (7.00%) | G5 >=892 (9.80%) | G6 >=864 (12.47%) | GR <864 rechazo
