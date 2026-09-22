@@ -14,6 +14,7 @@ y la migracion de grados (G1..G6, GR) bajo los puntos de corte 2609.
     - puntuacion_modelo_cal_ppfacil = score PIT (para el grado)
 - PD raw: `disc_riesgos.scr_vcbankv3_repro_opt_` (prob_model, llave key_value + cod_tip_doc)  [por confirmar]
 - R (score directo FEN por persona): `disc_model_owner.mca_bd_reniec_xy_r_reest` (r_label, r_label_reest/r_nivel_reest, ubigeo_inei_nodo, exp25/50)
+- s (score INDIRECTO, actividad-agua): `disc_model_owner.fen_s_indirecto` (ubigeo distrito, s_total, nivel S0..S4) -> join por r.ubigeo_inei_nodo = s.ubigeo -> termino wA*s
 
 ## Patron de cruce (del pipeline fen_overlay/sql_prod/s03)
 El pipeline vigente une scores x R POR key_value: `u.key_value = r.key_value`.
