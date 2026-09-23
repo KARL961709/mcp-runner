@@ -1,4 +1,4 @@
--- escf_04_cmp.sql | confirma CERO diferencia del entregable vs la ENVIADA (d_perm_aws) en el traslape 202501-202608 (esc opt + base). mae/maxdif en ppm; deben ser 0 (copiado tal cual). Agregado.
+-- escf_04_cmp.sql | confirma CERO diferencia del entregable vs la ENVIADA (d_perm_aws) en el traslape 202501-202608 (esc opt + base). mae/maxdif en ppm, deben ser 0 (copiado tal cual). Agregado.
 SELECT o.p_codmes, COUNT(*) AS n,
   ROUND(1e6*AVG(ABS(o.prob_modelo_cal_v2_opt - s.prob_modelo_cal_v2_opt)),3) AS mae_opt_ppm,
   ROUND(1e6*MAX(ABS(o.prob_modelo_cal_v2_opt - s.prob_modelo_cal_v2_opt)),3) AS maxdif_opt_ppm,
