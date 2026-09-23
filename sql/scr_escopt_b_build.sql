@@ -1,16 +1,16 @@
--- scr_escopt_b_build.sql | V2 ESCENARIO OPTIMISTA (pd_v2_esc_opt) ultimos 3 meses p_codmes 202606-202608. Cadena lineage-A: COALESCE(bankbn oficial scr_admbankbpe_calibrado_202607 x factor esc_opt, rebuilt logit/beta + rho Basel + Vasicek fhat + re-ancla x factor). flg_match_v2 1=bankbn 2=rebuilt. NO usa la correccion del cruce ni el DSM (V2 es oficial del banco, personeria-level por tip_doc). Espeja scr_cal_b5.
-CREATE TABLE disc_model_owner.b46029_escopt_3m_202608
+-- scr_escopt_b_build.sql | V2 ESCENARIO OPTIMISTA (pd_v2_esc_opt) ultimos 3 meses p_codmes 202607-202609 (actualizado desde fuentes madre; 202609 ya cargo en scr_admbankbpe_rsk). Cadena lineage-A: COALESCE(bankbn oficial scr_admbankbpe_calibrado_202607 x factor esc_opt, rebuilt logit/beta + rho Basel + Vasicek fhat + re-ancla x factor). 202607 bankbn (flg=1), 202608/202609 rebuilt (flg=2, bankbn _202607 no llega ahi). fhat_v2 de ft_mensual.csv (contrato V2). NO usa la correccion del cruce ni el DSM (V2 oficial, personeria por tip_doc). Espeja scr_cal_b5.
+CREATE TABLE disc_model_owner.b46029_escopt_3m_202609
 WITH (format='PARQUET', parquet_compression='SNAPPY', partitioned_by=ARRAY['p_codmes']) AS
 WITH fh2(cm,fhv) AS (VALUES
-  (202606, 0.8175440736248093),
   (202607, 0.20088867265642565),
-  (202608, -0.0213840458600021)
+  (202608, -0.0213840458600021),
+  (202609, -0.03459445072099439)
 ),
 v2 AS (
   SELECT CAST(p_codmes AS INT) AS p_codmes, tip_doc, key_value, prob_modelo_cal,
          ROW_NUMBER() OVER (PARTITION BY p_codmes, tip_doc, key_value ORDER BY fec_replica DESC) AS rn
   FROM disc_model_owner.scr_admbankbpe_calibrado_202607
-  WHERE p_codmes BETWEEN '202606' AND '202608'
+  WHERE p_codmes BETWEEN '202607' AND '202609'
 ),
 b AS (
   SELECT CAST(s.p_codmes AS INT) AS p_codmes_i, s.p_codmes, s.tip_doc, s.key_value,
@@ -19,7 +19,7 @@ b AS (
     v2.prob_modelo_cal AS v2cal
   FROM e_perm_aws.scr_admbankbpe_rsk s
   LEFT JOIN v2 ON v2.tip_doc = s.tip_doc AND v2.key_value = s.key_value AND v2.p_codmes = CAST(s.p_codmes AS INT) AND v2.rn = 1
-  WHERE s.modelo = 'ADMBANKBPE' AND s.probabilidad IS NOT NULL AND s.p_codmes BETWEEN '202606' AND '202608'
+  WHERE s.modelo = 'ADMBANKBPE' AND s.probabilidad IS NOT NULL AND s.p_codmes BETWEEN '202607' AND '202609'
 ),
 d AS (SELECT b.*, fh2.fhv AS fhat_v2 FROM b LEFT JOIN fh2 ON fh2.cm = b.p_codmes_i),
 g AS (

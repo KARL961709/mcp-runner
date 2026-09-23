@@ -4,5 +4,5 @@ SELECT p_codmes, flg_match_v2, COUNT(*) AS n,
   SUM(CASE WHEN pd_v2_esc_opt IS NULL THEN 1 ELSE 0 END) AS pd_null,
   SUM(CASE WHEN grupos_ant='Bajo' THEN 1 ELSE 0 END) AS g_bajo,
   SUM(CASE WHEN grupos_ant='Alto' THEN 1 ELSE 0 END) AS g_alto
-FROM disc_model_owner.b46029_escopt_3m_202608
+FROM disc_model_owner.b46029_escopt_3m_202609
 GROUP BY p_codmes, flg_match_v2 ORDER BY p_codmes, flg_match_v2
