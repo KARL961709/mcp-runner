@@ -8,5 +8,5 @@ SELECT sc.p_codmes, sc.flg_clean,
   ROUND(1000*MAX(ABS(sc.prob_modelo_cal_v2 - s.prob_modelo_cal_v2)),2) AS maxdif_x10
 FROM disc_model_owner.b46029_v2n_scoring_202609 sc
 JOIN d_perm_aws.scr_admbankbpe_rsk_cal_202501_202608 s ON s.tip_doc=sc.tip_doc AND s.key_value=sc.key_value AND s.p_codmes=CAST(sc.p_codmes AS INT)
-WHERE sc.p_codmes IN ('202607','202608')
+WHERE sc.p_codmes IN (202607,202608)
 GROUP BY sc.p_codmes, sc.flg_clean ORDER BY sc.p_codmes, sc.flg_clean
