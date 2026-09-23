@@ -1,4 +1,4 @@
--- v2n_12_diagdiff.sql | por que difiere 202608: distribucion de |diff v2| por mes x flg_clean. fhat uniforme -> todos chico (d_casi0 alto, d_grande~0); flg flip -> pocos con d_grande. 202607 baseline. Agregado.
+-- v2n_12_diagdiff.sql | por que difiere 202608: distribucion de |diff v2| por mes x flg_clean. fhat uniforme -> todos chico (d_casi0 alto, d_grande~0), flg flip -> pocos con d_grande. 202607 baseline. Agregado.
 SELECT sc.p_codmes, sc.flg_clean,
   COUNT(*) AS n,
   SUM(CASE WHEN ABS(sc.prob_modelo_cal_v2 - s.prob_modelo_cal_v2) < 1e-4 THEN 1 ELSE 0 END) AS d_casi0,
