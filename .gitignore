@@ -161,6 +161,15 @@ elnino_ibk/03_deck/_check/
 !entregables/*.xlsx
 !entregables/*.xlsm
 
+# --- Modelos tabulares (2026-09-24): propuesta a gerencia + 2 papers de referencia.
+# Modelos_Tabulares_Propuesta_Gerencia_v2.pptx: 19 slides, 4 charts nativos. Verificado
+# descomprimiendo: 0 key_value/tip_doc/id_value/id_hash/hash64; los 4 xlsx embebidos son
+# tablas de BENCHMARK de modelos (AUC de TabPFN/XGBoost/LightGBM sobre datasets PUBLICOS
+# Home Credit / Lending Club), 7-10 filas, cero dato de cliente. Cubierto por !entregables/*.pptx.
+# Los 2 pdf son papers publicos (ruta explicita, no glob, para no colar pdfs por accidente).
+!entregables/paper_tabular.pdf
+!entregables/2605.18635v1.pdf
+
 # GRAFICOS DE ENTREGABLES (2026-08-13). Ruta explicita, no glob: la whitelist se
 # mantiene angosta a proposito. Un png nuevo necesita su propia linea.
 !entregables/charts/
