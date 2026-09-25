@@ -1,6 +1,6 @@
 -- e23_qa1_agregados.sql | QA integridad + PD promedio por escenario (esperado esc1~7.6, esc2~esc3~8.4, esc4~9.7, nulls 0)
 SELECT COUNT(*) AS n,
-  SUM(CASE WHEN pit IS NULL THEN 1 ELSE 0 END) AS null_pit,
+  SUM(CASE WHEN pd_esc1_base IS NULL THEN 1 ELSE 0 END) AS null_pit,
   SUM(CASE WHEN pd_esc4_macropes_fen50 IS NULL THEN 1 ELSE 0 END) AS null_esc4,
   SUM(CASE WHEN pd_esc2_fen70 NOT BETWEEN 0 AND 1 THEN 1 ELSE 0 END) AS pd_fuera_01,
   ROUND(100*AVG(pd_raw),3)                 AS pd_raw,
