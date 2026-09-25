@@ -1,4 +1,4 @@
--- e23_qa3_gradiente_R.sql | QA gradiente por R (FEN): esc2/esc4 deben subir con R; esc3 (macro, sin FEN) casi plano en R
+-- e23_qa3_gradiente_R.sql | QA gradiente por R (FEN). esc2/esc4 deben subir con R. esc3 (macro, sin FEN) casi plano en R
 SELECT r_reest,
   COUNT(*) AS n,
   ROUND(100*AVG(pd_esc1_base),2)           AS esc1,
