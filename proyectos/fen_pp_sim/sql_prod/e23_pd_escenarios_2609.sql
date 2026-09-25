@@ -10,8 +10,8 @@
 -- FEN:  shift_probit = LG*ep*(1-wrec*rec_d),  ep=0.5*max(R/5,0.10)+0.5*max(s_norm,0),  LG=0.185*4.2=0.77831.
 -- MACRO pesimista: shift_probit = (ft_pes - ft_macro_ppfacil)/sqrt(1-rho),  ft_pes=clip(0.0528*(5.34-2.35),caps)=0.15778, sqrt(1-rho)=0.98326.
 --   (ft_macro_ppfacil = ft macro desplegada por cliente, ya en la tabla -> shift exacto per-cliente.)
--- Puntuaciones: pit y ttc son columnas reales (puntuacion_modelo_cal/ttc_cal_ppfacil). punt de cada escenario = punt_pit + (-119.15)*shift.
---   punt_raw se deriva (no hay columna de score raw).
+-- Puntuacion = (1 - PD) * 1000 (conversion EXACTA del modelo, verificada corr 1.0). Base/ttc usan la columna desplegada.
+--   Asi el grado por cortes de score (985/955/947/912/892/864) = umbrales de PD directos (985<->1.5%, 864<->13.6%): migracion consistente.
 -- Cruce ubigeo INEI = igual e10. Correr: .\Go.ps1 -SqlDir proyectos/fen_pp_sim/sql_prod -Only e23_pd_escenarios_2609
 CREATE TABLE disc_model_owner.fen_pd_escenarios_2609
 WITH (format = 'PARQUET') AS
@@ -95,19 +95,24 @@ sh AS (
   FROM enr e
 ),
 sh2 AS (
-  SELECT s.*, 0.77831*ep*(1-0.70*rec_d) AS fen70, 0.77831*ep*(1-0.50*rec_d) AS fen50 FROM sh s
+  SELECT s.*,
+    normal_cdf(0,1, z_pit + 0.77831*ep*(1-0.70*rec_d))         AS pd_esc2,
+    normal_cdf(0,1, z_pit + macro)                          AS pd_esc3,
+    normal_cdf(0,1, z_pit + macro + 0.77831*ep*(1-0.50*rec_d)) AS pd_esc4
+  FROM sh s
 )
 SELECT
   key_value, r_reest, ubigeo, dep_inei, round(s_norm,4) AS s_norm, rec_d, round(macro,5) AS macro_shift,
   pd_raw, pd_ttc,
-  pit                                        AS pd_esc1_base,
-  normal_cdf(0,1, z_pit + fen70)             AS pd_esc2_fen70,
-  normal_cdf(0,1, z_pit + macro)             AS pd_esc3_macropes,
-  normal_cdf(0,1, z_pit + macro + fen50)     AS pd_esc4_macropes_fen50,
-  CAST(round(punt_pit) AS integer)           AS punt_esc1_base,
-  CAST(round(punt_ttc) AS integer)           AS punt_ttc,
-  CAST(round(punt_pit + (-119.15)*(inverse_normal_cdf(0,1,least(greatest(pd_raw,1e-4),0.999)) - z_pit)) AS integer) AS punt_raw,
-  CAST(round(punt_pit + (-119.15)*(fen70)) AS integer)          AS punt_esc2_fen70,
-  CAST(round(punt_pit + (-119.15)*(macro)) AS integer)          AS punt_esc3_macropes,
-  CAST(round(punt_pit + (-119.15)*(macro + fen50)) AS integer)  AS punt_esc4_macropes_fen50
+  pit      AS pd_esc1_base,
+  pd_esc2  AS pd_esc2_fen70,
+  pd_esc3  AS pd_esc3_macropes,
+  pd_esc4  AS pd_esc4_macropes_fen50,
+  -- puntuacion = (1 - PD) * 1000 (exacta); base/ttc = columnas desplegadas
+  CAST(punt_pit AS integer)                          AS punt_esc1_base,
+  CAST(punt_ttc AS integer)                          AS punt_ttc,
+  CAST(round((1 - pd_raw ) * 1000) AS integer)       AS punt_raw,
+  CAST(round((1 - pd_esc2) * 1000) AS integer)       AS punt_esc2_fen70,
+  CAST(round((1 - pd_esc3) * 1000) AS integer)       AS punt_esc3_macropes,
+  CAST(round((1 - pd_esc4) * 1000) AS integer)       AS punt_esc4_macropes_fen50
 FROM sh2
