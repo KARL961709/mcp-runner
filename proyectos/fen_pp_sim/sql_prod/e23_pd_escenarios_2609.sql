@@ -108,7 +108,7 @@ SELECT
   pd_esc2  AS pd_esc2_fen70,
   pd_esc3  AS pd_esc3_macropes,
   pd_esc4  AS pd_esc4_macropes_fen50,
-  -- puntuacion = (1 - PD) * 1000 (exacta); base/ttc = columnas desplegadas
+  -- puntuacion = (1 - PD) * 1000 (exacta). base/ttc = columnas desplegadas
   CAST(punt_pit AS integer)                          AS punt_esc1_base,
   CAST(punt_ttc AS integer)                          AS punt_ttc,
   CAST(round((1 - pd_raw ) * 1000) AS integer)       AS punt_raw,
