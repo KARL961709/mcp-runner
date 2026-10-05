@@ -2,7 +2,7 @@
 -- u01 nodos 202610: enriquecimiento (02_Logica_nodos VERBATIM) + insumo(scr v3 LEFT SBS)
 --   + tipo_ingreso + flg_dirty_tc/pp (JOIN ..._2610_dirty) + 4 nodos.
 --   Driver disc_riesgos.scr_vcbankv3_repro_opt_ (prob_model, poda p_codmes=202610). pd_raw de prob_model.
---   casc (ingreso EC) = numcarga=2 @202610 (fiel al deployed) - requiere que la carga2@202610 ya este cargada (cadencia dia 7-10 del mes).
+--   casc (ingreso EC) = numcarga=1 @202610 (ultimo dato, lo que se ejecuto) vs deployed numcarga=2 - forward-only, solo afecta nodo_ec.
 -- ============================================================================
 CREATE TABLE disc_model_owner.scr_vcadmbnk_final_rsk_cal_2610_nodos
 WITH (format = 'PARQUET', write_compression = 'SNAPPY', partitioned_by = ARRAY['codmes']) AS
@@ -216,7 +216,7 @@ vars_raw AS (
            OR (periodo = '202511' AND p_fecinformacion IN ('20251107'))
            OR periodo >= '202512'
     ) casc
-           ON casc.key_value = i.key_value AND casc.tipdoc = '1' AND casc.numcarga = 2 AND casc.periodo = i.codmes
+           ON casc.key_value = i.key_value AND casc.tipdoc = '1' AND casc.numcarga = 1 AND casc.periodo = i.codmes
 ),
 
 -- ================================================================================================
