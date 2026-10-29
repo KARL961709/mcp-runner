@@ -1,4 +1,15 @@
 -- ============================================================================
+-- AVISO (v30): ESTE ARCHIVO USA LA CONVENCION +1, QUE YA NO ES LA DEL BANCO.
+--   Sus coeficientes se ajustaron sobre un parquet cuya pd estaba anclada en
+--   codmes_scr. ds_stk_ree_pp_cal hoy ancla en codmes_mrm (v30: 49,430 de
+--   49,430 identicas contra scr_stk_ree_pp_cal_2023_202610 por codmes_mrm).
+--   El SQL es internamente consistente -- codmes_drv = codmes - 1 es la
+--   convencion de sus propios coeficientes -- pero NO DESPLEGAR: la calibracion
+--   corresponde a un insumo que ya no existe.
+--   Antes de usarlo: 96_export_master_2609, re-correr la cadena, regenerar con
+--   codmes_drv = codmes.
+-- ============================================================================
+-- ============================================================================
 -- 10. PD calibrada del stock PP -- DOS OPCIONES en paralelo  (spec V0)
 --
 -- Formato calcado de 02_score_stock_pp.sql. TODO PARTE DE FUENTES MADRE:

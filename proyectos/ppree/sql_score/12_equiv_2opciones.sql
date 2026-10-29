@@ -1,41 +1,31 @@
 -- ============================================================================
--- 12. EQUIVALENCIA contra el pipeline de calibracion, las dos opciones.
---   Recorta el scoreo del stock a la MISMA poblacion del fit y contrasta.
---   El recorte son TRES condiciones: flg_scope_ree es eje aparte y no entra al
---   gate de flg_clean (70_cal.sql, A36), asi que se pide explicito.
---   El join va c.codmes_scr = s.codmes: es el ancla +1 con la que 50_pd cruzo.
+-- 12. SUPERADO por v30. No valida nada hasta que se recalibre.
 --
---   ESPERADO en la fila TOTAL, calculado en 16_genera_sql_scoring.py sobre
---   master_ree_20261028 (ventana 202212-202509):
---     n            51,181
---     pd_raw        25.6005 pct
---     cal_v2         5.0566 pct
---     pit_v1         5.0566 pct      pit_v2    5.0566 pct
---     final_v1       5.3756 pct      final_v2  5.7593 pct
---     pct_dep       30.28 pct        RD real   5.0566 pct
---   Si la fila TOTAL no reproduce esos seis niveles, el SQL no replica la
---   cadena y la tabla no se usa.
+--   Corrio y dio n_pd_raw_identica = 0 en los 34 meses, con
+--   n_segmento_distinto = 0. Eso NO era un bug: v30 probo que
+--     ds_stk_ree_pp_cal HOY  ancla pd_raw en codmes_mrm  (49,430 de 49,430 identicas)
+--     el parquet del fit     anclaba en codmes_scr       (cohorte M = fuente en M+1)
+--   La tabla del banco se reconstruyo despues de exportarse el parquet, asi que
+--   ya no existe en el banco una poblacion que represente la calibracion.
+--
+--   Por eso este archivo no se puede arreglar cambiando el join: lo que falta es
+--   recalibrar sobre el ancla nueva. Secuencia: correr 96_export_master_2609,
+--   re-correr la cadena, y regenerar 10 con codmes_drv = codmes.
+--
+--   Queda esta consulta, que mide la poblacion VIVA y sirve de linea base para
+--   el proximo round: cuantas cohortes y cuantos malos hay con el ancla nueva.
 -- ============================================================================
-SELECT COALESCE(c.codmes_mrm, 'TOTAL')                                         AS codmes_mrm,
-       COUNT(*)                                                                AS n,
-       SUM(CASE WHEN abs(s.probabilidad - c.pd_raw) < 1e-12 THEN 1 ELSE 0 END) AS n_pd_raw_identica,
-       ROUND(100.0 * AVG(s.probabilidad), 4)                                   AS pd_raw_pct,
-       ROUND(100.0 * AVG(CAST(c.target_12m_60 AS DOUBLE)), 4)                  AS rd12_pct,
-       ROUND(100.0 * AVG(s.prob_modelo_cal_v2), 4)                             AS cal_v2_pct,
-       ROUND(100.0 * AVG(s.prob_modelo_pit_v1), 4)                             AS pit_v1_pct,
-       ROUND(100.0 * AVG(s.prob_modelo_pit_v2), 4)                             AS pit_v2_pct,
-       ROUND(100.0 * AVG(s.prob_modelo_final_v1), 4)                           AS final_v1_pct,
-       ROUND(100.0 * AVG(s.prob_modelo_final_v2), 4)                           AS final_v2_pct,
-       ROUND(100.0 * AVG(CASE WHEN s.trf_tipo_ingreso_dep = 'DEP' THEN 1.0 ELSE 0.0 END), 2) AS pct_dep,
-       SUM(CASE WHEN s.trf_tipo_ingreso_dep <> c.tipo_ingreso_dep THEN 1 ELSE 0 END) AS n_segmento_distinto
-FROM disc_model_owner.scr_stk_ree_pp_cal_2opc_v0 s
-JOIN disc_model_owner.ds_stk_ree_pp_cal c
-  ON c.codmes_scr = s.codmes
- AND c.tip_doc    = s.tip_doc
- AND c.id_value   = s.key_value
-WHERE c.flg_calib     = 1
-  AND c.flg_clean     = 1
-  AND c.flg_scope_ree = 1
-  AND c.codmes_mrm BETWEEN '202212' AND '202509'
-GROUP BY GROUPING SETS ((c.codmes_mrm), ())
+SELECT COALESCE(codmes_mrm, 'TOTAL')                          AS codmes_mrm,
+       COUNT(*)                                               AS n,
+       SUM(CAST(target_12m_60 AS BIGINT))                      AS malos,
+       ROUND(100.0 * AVG(CAST(target_12m_60 AS DOUBLE)), 4)    AS rd12_pct,
+       ROUND(100.0 * AVG(pd_raw), 4)                           AS pd_raw_pct,
+       ROUND(100.0 * AVG(CASE WHEN tipo_ingreso_dep = 'DEP' THEN 1.0 ELSE 0.0 END), 2) AS pct_dep,
+       SUM(CASE WHEN falla_madurez_12 = 1 THEN 1 ELSE 0 END)   AS n_inmaduro_12m
+FROM disc_model_owner.ds_stk_ree_pp_cal
+WHERE flg_clean = 1
+  AND flg_scope_ree = 1
+  AND pd_raw IS NOT NULL
+  AND codmes_mrm >= '202301'
+GROUP BY GROUPING SETS ((codmes_mrm), ())
 ORDER BY 1
