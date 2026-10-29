@@ -46,6 +46,7 @@ g AS (
   FROM disc_model_owner.ds_stk_ree_pp_cal
   WHERE flg_calib = 1
     AND flg_clean = 1
+    AND (flg_scope_ree = 1 OR flg_ree_v4 = 1)
     AND codmes_mrm BETWEEN '202301' AND '202509'
 ),
 j AS (
