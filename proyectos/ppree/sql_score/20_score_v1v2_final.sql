@@ -80,6 +80,12 @@ yy AS (
   WHERE m.porc_ipc IS NOT NULL
   GROUP BY c.codmes_drv, t.k
   HAVING COUNT(m.porc_ipc) = 12
+  UNION ALL
+  SELECT s.codmes_drv, o.k, o.yy
+  FROM spine s
+  JOIN (VALUES
+    ('202610', 0, 4.7055593558)
+  ) AS o(mes, k, yy) ON o.mes = s.codmes_drv
 ),
 ft2 AS (
   SELECT codmes_drv,
@@ -347,6 +353,7 @@ SELECT codmes,
        flg_cs_estado           AS trf_flg_cs_estado,
        falla_sin_tipo_ingreso  AS trf_falla_sin_tipo_ingreso,
        falla_sin_cta_sueldo    AS trf_falla_sin_cta_sueldo,
+       CASE WHEN codmes_drv IN ('202610') THEN 'APOYO_PROY' ELSE 'BCRP' END             AS trf_macro_fuente,
        f_t_v1                  AS trf_f_t_v1,
        f_t_v2                  AS trf_f_t_v2,
        pcal_v1                 AS trf_betacal_v1,
