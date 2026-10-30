@@ -153,6 +153,20 @@ elnino_ibk/03_deck/_check/
 # IMAGENES png de series agregadas por codmes x poblacion x personeria (rd12/pd_pit/pd_optimista,
 # 202206-202606), mismo criterio que rd_vs_pd_driver.xlsx. Cero dato de cliente. Repo PRIVADO.
 
+# --- update_calibracion_ppree.pptx (2026-10-30): lamina 1 de 3 para Gerencia, el
+# CONTEXTO del cruce de la PD en Comportamental PP Reenganche (modelo de stock,
+# reporte con un mes de desfase, y por que campana necesita la PD previa al
+# desembolso). Cubierta por el !entregables/*.pptx de arriba -> sin linea propia.
+# Verificado ANTES del push descomprimiendo el paquete: 0 hashes de 64 chars y 0
+# menciones de key_value / id_value / tip_doc / cif_key / id_hash. Los 41 numeros
+# de 8+ digitos viven en ang, cx, id y val -- EMU, angulos e ids internos de OOXML
+# -- y NINGUNO aparece como texto visible en la lamina. El unico libro embebido
+# tiene 13 filas: 12 codmes (202410-202509) con mora real y PD del modelo, mas los
+# nombres de las dos series. Agregados mensuales, mismo criterio que
+# rd_vs_pd_driver.xlsx (2026-08-10). El generador viaja aparte, en
+# proyectos/ppree/slide_contexto_calibracion.py (cubierto por !proyectos/**/*.py).
+# Repo PRIVADO. Un push no se deshace.
+
 # --- rd_vs_pd_driver.xlsx (2026-08-10). Tres hojas de AGREGADOS por codmes x poblacion x
 # personeria: n, pd_raw, pd_pit, RD 12m y las tres proyecciones. Maximo 294 filas por hoja.
 # Cero key_value, cero tip_doc, cero identificadores. El insumo es el RCC, que es registro
