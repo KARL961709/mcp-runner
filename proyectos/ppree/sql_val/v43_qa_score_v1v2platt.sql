@@ -17,13 +17,21 @@
 --   HIST_PROXY es reenganche no verificado con RD 7.98 pct contra 3.13 pct, y la
 --   spec cerrada lo excluye a proposito.
 --
---   Esta QA corre sobre la ventana de V2. Las anclas que debe cerrar son las de V2:
---     global   3.1250 pct
---     DEP      2.8157 pct
---     NO DEP   3.3085 pct
---   El ancla de V2 es exacta por construccion, asi que una desviacion en ec_v2_pct
---   es defecto del SQL, no del modelo. ec_v1_pct NO cierra aqui y no debe cerrar:
---   V1 esta anclado sobre 4.9808 pct, que es la LRA de su ventana mas ancha.
+--   CONTRA QUE SE COMPARA. El ancla del metodo es la MEDIA DE LAS RD MENSUALES
+--   -- cada mes pesa igual, sin importar su n -- y NO la RD pooled de la ventana.
+--   Las dos difieren y confundirlas manda a buscar un defecto que no existe:
+--     DEP     pooled 2.8157 pct   media mensual 2.8157 pct
+--     NO DEP  pooled 3.3085 pct   media mensual 3.3085 pct
+--   Por eso la salida trae rd_ancla (la media mensual) junto a rd_pooled, y el
+--   veredicto es ec_v2_vs_ancla: ESE es el que debe dar ~0. ec_v2_vs_pooled se
+--   reporta al lado para que la brecha quede a la vista, no para juzgar.
+--
+--   ec_v1_vs_pooled NO cierra y no debe cerrar: V1 esta anclado sobre
+--   202301-202509, que incluye HIST_PROXY.
+--
+--   OJO CON ft_v2_max: esta QA solo mira 202401-202509, asi que su maximo es
+--   el de 202401. NO dice nada sobre la cobertura de los meses de aplicacion
+--   posteriores: eso lo responde v45.
 --
 --   EXCEPCION declarada a R12: la QA lee ds_stk_ree_pp_cal, que este build no
 --   escribe. Es la tabla gobernada de Fase 1, usada como referencia y no como
@@ -57,25 +65,43 @@ g AS (
     AND codmes_mrm BETWEEN '202401' AND '202509'
 ),
 j AS (
-  SELECT g.celda_master, g.y, s.pd_v1, s.pd_v2, s.ft_v1, s.ft_v2,
+  SELECT g.celda_master, g.codmes, g.y, s.pd_v1, s.pd_v2, s.ft_v1, s.ft_v2,
          CASE WHEN s.celda = g.celda_master THEN 1 ELSE 0 END AS celda_ok,
          CASE WHEN s.id_value IS NULL THEN 1 ELSE 0 END       AS no_cruza
   FROM g
   LEFT JOIN s ON s.codmes = g.codmes AND s.tip_doc = g.tip_doc AND s.id_value = g.id_value
-)
+),
+mm AS (
+  SELECT celda_master, codmes, AVG(y) AS rd_m
+  FROM j
+  GROUP BY GROUPING SETS ((celda_master, codmes), (codmes))
+),
+anc AS (
+  SELECT COALESCE(celda_master, 'GLOBAL') AS celda, AVG(rd_m) AS rd_ancla, COUNT(*) AS n_meses
+  FROM mm GROUP BY celda_master
+),
+agg AS (
 SELECT COALESCE(celda_master, 'GLOBAL')                                  AS celda,
        COUNT(*)                                                          AS n,
        SUM(no_cruza)                                                     AS n_sin_cruce,
        SUM(CASE WHEN no_cruza = 0 THEN celda_ok ELSE 0 END)              AS n_celda_ok,
-       ROUND(100.0 * AVG(y), 4)                                          AS rd_observada,
+       ROUND(100.0 * AVG(y), 4)                                          AS rd_pooled,
        ROUND(100.0 * AVG(pd_v1), 4)                                      AS pd_v1,
        ROUND(100.0 * AVG(pd_v2), 4)                                      AS pd_v2,
-       ROUND(100.0 * (AVG(pd_v1) / NULLIF(AVG(y), 0) - 1.0), 4)          AS ec_v1_pct,
-       ROUND(100.0 * (AVG(pd_v2) / NULLIF(AVG(y), 0) - 1.0), 4)          AS ec_v2_pct,
        ROUND(MIN(ft_v1), 6)                                              AS ft_v1_min,
        ROUND(MAX(ft_v1), 6)                                              AS ft_v1_max,
        ROUND(MIN(ft_v2), 6)                                              AS ft_v2_min,
        ROUND(MAX(ft_v2), 6)                                              AS ft_v2_max
 FROM j
 GROUP BY GROUPING SETS ((celda_master), ())
+)
+SELECT a.celda, a.n, a.n_sin_cruce, a.n_celda_ok, c.n_meses,
+       ROUND(100.0 * c.rd_ancla, 4)                                      AS rd_ancla,
+       a.rd_pooled,
+       a.pd_v1, a.pd_v2,
+       ROUND(100.0 * (a.pd_v2 / 100.0 / NULLIF(c.rd_ancla, 0) - 1.0), 4) AS ec_v2_vs_ancla,
+       ROUND(100.0 * (a.pd_v2 / NULLIF(a.rd_pooled, 0) - 1.0), 4)        AS ec_v2_vs_pooled,
+       ROUND(100.0 * (a.pd_v1 / NULLIF(a.rd_pooled, 0) - 1.0), 4)        AS ec_v1_vs_pooled,
+       a.ft_v1_min, a.ft_v1_max, a.ft_v2_min, a.ft_v2_max
+FROM agg a JOIN anc c ON c.celda = a.celda
 ORDER BY 1
