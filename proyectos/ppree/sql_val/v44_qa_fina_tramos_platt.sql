@@ -55,7 +55,7 @@ s AS (
          CAST(key_value AS VARCHAR)            AS id_value,
          CAST(trf_tipo_ingreso_dep AS VARCHAR) AS celda,
          CAST(probabilidad AS DOUBLE)          AS p,
-         CAST(trf_isotonica_v2 AS DOUBLE)      AS cal,
+         CAST(trf_platt_v2 AS DOUBLE)          AS cal,
          CAST(prob_modelo_cal_v1 AS DOUBLE)    AS v1,
          CAST(prob_modelo_cal_v2 AS DOUBLE)    AS v2
   FROM disc_model_owner.scr_stk_ree_pp_cal_v1v2
