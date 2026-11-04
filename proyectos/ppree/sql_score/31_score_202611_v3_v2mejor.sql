@@ -41,19 +41,25 @@
 --   grupos       grupo_calibracion venia vacio    ->  se llena con los cortes ajustados
 --
 -- TRES COLUMNAS DE PD, QUE NO SON ALTERNATIVAS SINO USOS DISTINTOS
---   prob_modelo_cal          f_t VIVO del mes puntuado. Es la que puede faltar.
+--   prob_modelo_cal          f_t VIVO del mes puntuado. Puede estar parada sobre la
+--                            SENDA proyectada, ver abajo. NO es reproducible.
 --   prob_modelo_cal_smacro   sin overlay (f_t = 0). Es el nivel del ancla, para diagnostico.
 --   prob_modelo_cal_freeze   f_t congelado en 202609, el ancla de la calibracion. Es la
---                            APTA PARA CAMPANA y la unica inmune al calendario del IPC.
+--                            APTA PARA CAMPANA y la unica reproducible.
 --
--- EL CALENDARIO, QUE AQUI MUERDE DE VERDAD. El f_t vivo de 202611 necesita el
---   porc_ipc de 202611, que el INEI publica el dia 1 de diciembre. Al 2026-11-04 la
---   serie del BCRP llegaba a 202609. Lo esperable es que ftv salga SIN FILA y que
---   prob_modelo_cal salga NULL para toda la tabla. Eso NO es un error del build: es
---   el estado real del insumo, y por eso va con guard explicito y bandera en extra_02
---   en vez de dejar que el nulo se propague en silencio hasta el piso de 5 bp.
---   El f_t congelado va por CROSS JOIN a proposito: si falta la macro de 202609 la
---   tabla sale VACIA, que es la falla ruidosa.
+-- EL CALENDARIO, Y POR QUE LA COLUMNA VIVA NO ES REPRODUCIBLE. La cadena usa MA3
+--   lag 0, asi que para el mes M necesita el porc_ipc DE M, que el INEI publica el
+--   dia 1 de M+1. Pero t_mst_bcrp_rsk no se queda en lo observado: carga tambien la
+--   SENDA mensualizada del vintage vigente, de modo que el f_t vivo SALE aunque el mes
+--   no exista todavia como dato. Medido el 2026-11-04: la tabla llega a 202612, el MA3
+--   vivo de 202611 da 4.6882802298 y su f_t +0.1392710585.
+--   CONSECUENCIA: cuando el mes se publique, el realizado reemplaza la proyeccion y
+--   prob_modelo_cal CAMBIA para el mismo mes sin que nadie toque nada. Por eso
+--   extra_02 marca MACRO_VIVA_SENDA cuando el mes puntuado es posterior a 202609, que es
+--   el ultimo mes OBSERVADO verificado en la fuente primaria. La bandera viaja CON el
+--   dato, que es donde sirve.
+--   El f_t congelado no tiene ese problema y entra por CROSS JOIN a proposito: si
+--   falta la macro de 202609 la tabla sale VACIA, que es la falla ruidosa.
 --
 -- CORTES DE GRUPO sobre puntuacion_cal_freeze: 997|987|975|944|940|850
 --   G5 sube de 924 a 940. Es el unico corte que se mueve y el unico grupo que excedia
@@ -179,8 +185,10 @@ SELECT f.cod_mes,
        f.scs AS puntuacion_cal_smacro,
        f.pdz AS prob_modelo_cal_freeze,
        f.scz AS puntuacion_cal_freeze,
-       'V2-MEJOR r9 platt comun' AS extra_01,
-       CONCAT(CASE WHEN f.ft_viv IS NULL THEN 'SIN_MACRO_VIVO' ELSE 'MACRO_VIVA_OK' END,
+       'V2-MEJOR platt comun 2026-11-04' AS extra_01,
+       CONCAT(CASE WHEN f.ft_viv IS NULL THEN 'SIN_MACRO_VIVO'
+                   WHEN CAST(f.cod_mes AS VARCHAR) > '202609' THEN 'MACRO_VIVA_SENDA'
+                   ELSE 'MACRO_VIVA_OBS' END,
               CASE WHEN f.prob_modelo IS NULL THEN '|SIN_PROB' ELSE '' END) AS extra_02,
        CASE WHEN f.scv IS NULL THEN ''
             WHEN f.scv >= 997 THEN 'G1'
@@ -190,7 +198,7 @@ SELECT f.cod_mes,
             WHEN f.scv >= 940 THEN 'G5'
             WHEN f.scv >= 850 THEN 'G6'
             ELSE 'R' END AS extra_03,
-       'freeze_202609' AS extra_04,
+       'freeze_202609|ult_obs_202609' AS extra_04,
        'cortes_997|987|975|944|940|850' AS extra_05,
        f.ft_viv  AS trf_macro01,
        f.ma3_viv AS trf_macro02,
