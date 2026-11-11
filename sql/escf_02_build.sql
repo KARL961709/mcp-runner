@@ -5,7 +5,7 @@ SELECT codmes, tip_doc, key_value, personeria,
        prob_modelo_cal_v2, puntuacion_cal_v2,
        prob_modelo_cal_v2_opt, puntuacion_cal_v2_opt,
        p_codmes
-FROM disc_model_owner.scr_admbankbpe_rsk_cal_202501_202608
+FROM d_perm_aws.scr_admbankbpe_rsk_cal_202501_202608
 UNION ALL
 SELECT CAST(CASE WHEN n.p_codmes % 100 = 12 THEN n.p_codmes + 89 ELSE n.p_codmes + 1 END AS INTEGER) AS codmes,
        n.tip_doc, n.key_value, n.personeria,
