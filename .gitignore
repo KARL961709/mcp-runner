@@ -286,3 +286,13 @@ entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/*.pyc
 # libro embebido (chart) tiene 153 celdas: series RD/PD AGREGADAS por codmes
 # (202301-202601, 37 meses, rango 0-18.81%), mismo criterio que rd_vs_pd_driver.xlsx.
 # Cero dato de cliente. Repo PRIVADO. Un push no se deshace.
+
+# --- framework_R_flujo.html (2026-11-11): lamina unica para Data Office, mapa del
+# proceso de los R del score directo FEN (construccion, actualizacion, validacion
+# por prensa, ajuste geo) con puntos de registro y los 3 agentes. HTML autocontenido;
+# la unica referencia externa es Google Fonts (si no carga, cae a fuente del sistema).
+# Verificado ANTES del push: 18 KB de texto y SVG, solo nombres de fuentes publicas
+# (INDECI/COEN, SINPAD, SENAMHI, Censo, CENEPRED) y el conteo de 1,891 distritos.
+# Cero key_value / id_value / tip_doc / cif_key / id_hash, cero hashes de 64 chars,
+# cero numeros de 8+ digitos, cero dato de cliente. Repo PRIVADO. Un push no se deshace.
+!entregables/framework_R_flujo.html

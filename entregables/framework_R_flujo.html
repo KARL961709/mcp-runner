@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flujo de los R</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* === TEMA: colores Interbank === */
+:root{
+  --verde:#05BE50;--verde-t:#067A38;--verde-claro:#E3F7EB;
+  --tinta:#0F191E;--gris:#4A585E;--gris-2:#6B787D;--borde:#C9D3CF;
+  --azul:#0039A6;--azul-claro:#E5ECF8;--celeste:#64B4E6;--hueso:#F6F8F7;
+  --morado:#6B2FB3;--morado-claro:#F1EAFB;
+  --stage-bg:#DDE6E2;--slide-bg:#F6F8F7;
+  --font:'Poppins',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* === ESCENARIO FIJO 1920×1080 escalado a la ventana === */
+html,body{width:100%;height:100%;overflow:hidden;background:var(--stage-bg)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;background:var(--slide-bg)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;font-family:var(--font);color:var(--tinta)}
+.slide::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(0,57,166,.10) 1.6px,transparent 1.6px);background-size:40px 40px}
+@media print{html,body{overflow:visible;background:#fff}.deck-viewport{position:static}.deck-stage{transform:none!important}}
+
+/* === ENCABEZADO === */
+.chip{position:absolute;left:110px;top:34px;font-family:var(--mono);font-size:17px;color:var(--azul);background:#fff;border:1.5px solid var(--azul);padding:5px 13px;border-radius:6px}
+.meta{position:absolute;right:110px;top:40px;font-family:var(--mono);font-size:17px;color:var(--gris-2)}
+h1{position:absolute;left:110px;top:76px;font-size:44px;line-height:1.3;font-weight:700;letter-spacing:-.015em}
+h1 span{color:var(--verde)}
+.lead{position:absolute;left:110px;top:140px;width:1700px;font-size:20px;color:var(--gris)}
+.usr{background:#fff;border:1.5px solid var(--verde);color:var(--verde-t);font-weight:600;padding:2px 14px;border-radius:999px}
+
+/* === ZONAS DE RESPONSABILIDAD === */
+.zone{position:absolute;top:192px;bottom:62px;border-radius:20px;pointer-events:none}
+.zone.gob{left:328px;width:934px;background:rgba(100,180,230,.13);border:2.5px dashed var(--azul)}
+.zone.rsk{left:1270px;width:552px;border:2px dashed #AEB9BE}
+.zlabel{position:absolute;top:178px;font-size:17px;font-weight:600;padding:4px 15px;border-radius:999px;z-index:3}
+.zlabel.gob{left:350px;background:var(--azul);color:#fff}
+.zlabel.rsk{left:1292px;background:#fff;color:var(--gris);border:1.5px solid #AEB9BE}
+
+/* === CARRILES === */
+.lane{position:absolute;left:110px;right:110px;background:rgba(255,255,255,.5);border:1.5px solid #DCE4E0;border-radius:16px}
+.lane-lbl{position:absolute;left:130px;width:185px;font-size:22px;font-weight:700;line-height:1.2}
+.lane-lbl em{display:block;font-style:normal;font-family:var(--mono);font-size:14.5px;font-weight:400;color:var(--gris-2);margin-top:5px}
+.lane-lbl i{display:block;font-style:normal;font-family:var(--mono);font-size:26px;color:var(--verde);font-weight:500;margin-bottom:1px}
+.colh{position:absolute;top:224px;font-family:var(--mono);font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris-2)}
+
+/* === CAJAS === */
+.box{position:absolute;background:#fff;border:1.5px solid var(--borde);border-radius:12px;padding:10px 14px;font-size:16px;line-height:1.33;color:var(--gris)}
+.box b{display:block;font-size:18px;color:var(--tinta);margin-bottom:2px}
+.box b.in{display:inline;font-size:16px}
+.box.tab{border-color:var(--verde);background:var(--verde-claro)}
+.box.ctl{border-color:var(--azul);background:var(--azul-claro)}
+.box.prod{border-color:var(--tinta);background:var(--tinta);color:#C3CED2}
+.box.prod b{color:#fff}
+.box.agt{border:2px solid var(--morado);background:var(--morado-claro)}
+.box .f{font-family:var(--mono);font-size:14px;color:var(--azul)}
+.box.prod .f{color:#8FD9AE}
+.reg{position:absolute;top:-12px;right:12px;font-family:var(--mono);font-size:13px;font-weight:500;color:#fff;background:var(--verde-t);padding:1px 9px;border-radius:999px}
+.box.ctl .reg{background:var(--azul)}
+
+/* Marca de agente: solo donde hay que leer algo no estructurado */
+.ag{position:absolute;top:-12px;left:12px;display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:13px;font-weight:500;color:#fff;background:var(--morado);padding:1px 9px 1px 5px;border-radius:999px}
+.ag svg,.bi{width:17px;height:17px}
+.bi{display:inline-block;vertical-align:-3px;margin-right:3px;color:var(--morado)}
+.ag svg{color:#fff}
+
+/* Fuente: tarjeta con el problema a resolver al ingerirla */
+.src{position:absolute;left:340px;width:300px;background:#fff;border:2px solid var(--azul);border-radius:10px;padding:6px 12px;font-size:14px;line-height:1.3;color:var(--gris)}
+.src b{font-size:16px;color:var(--tinta);white-space:nowrap}
+.src .fm{font-family:var(--mono);font-size:12.5px;color:var(--gris-2);margin-left:6px;white-space:nowrap}
+.src .q{display:block;color:var(--azul);margin-top:1px}
+.src .q::before{content:"⚑ "}
+
+.formula{margin-top:5px;padding:5px 8px;background:#fff;border-radius:6px;font-size:15px;color:var(--tinta);border:1px solid #E1E7E4}
+.formula .fr{display:inline-block;text-align:center;vertical-align:middle}
+.formula .fr span{display:block}.formula .fr span+span{border-top:1.5px solid var(--tinta)}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:3px;vertical-align:-1px}
+
+svg.wires{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none;z-index:2}
+
+/* === LEYENDA === */
+.legend{position:absolute;left:110px;right:110px;bottom:20px;display:flex;gap:24px;align-items:center;font-size:15px;color:var(--gris)}
+.legend .sw{display:inline-block;width:20px;height:15px;border-radius:4px;margin-right:6px;vertical-align:-2px;border:1.5px solid}
+.legend .note{margin-left:auto;font-family:var(--mono);font-size:13.5px;color:var(--gris-2)}
+
+/* === ANIMACIÓN DE ENTRADA === */
+.rv{opacity:0;animation:in .7s cubic-bezier(.16,1,.3,1) forwards}
+.a1{animation-delay:.1s}.a2{animation-delay:.22s}.a3{animation-delay:.34s}.a4{animation-delay:.46s}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.rv{animation:none;opacity:1}}
+</style>
+</head>
+<body>
+<!-- Ícono de agente (se reutiliza con <use href="#bot">) -->
+<svg width="0" height="0" style="position:absolute"><symbol id="bot" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v3"/><rect x="4" y="5.5" width="16" height="13" rx="4"/><path d="M9 15h6"/></g><circle cx="9" cy="11" r="1.6" fill="currentColor"/><circle cx="15" cy="11" r="1.6" fill="currentColor"/></symbol></svg>
+
+<div class="deck-viewport"><main class="deck-stage" id="deckStage"><section class="slide">
+
+<div class="chip">score_directo_fen / framework_r</div>
+<div class="meta">Riesgos · Data Office · Noviembre 2026</div>
+<h1>Mapa del proceso de los R: <span>fuentes, agentes y registros</span></h1>
+<div class="lead" style="top:134px;line-height:1.45"><b style="color:var(--azul)">Objetivo de gobierno · Data Office:</b> garantizar la transparencia y el uso correcto de las fuentes en la toma de decisiones del banco.<div style="margin-top:7px;display:flex;gap:10px;align-items:center;font-size:17px"><span style="color:var(--gris-2);font-family:var(--mono);font-size:15px">USUARIOS</span><span class="usr">Estrategias · campañas y venta</span><span class="usr">Gestión de portafolio</span><span class="usr">Pricing</span><span class="usr">Provisiones</span></div></div>
+
+<!-- ===== CARRILES ===== -->
+<div class="lane" style="top:248px;height:144px"></div>
+<div class="lane" style="top:402px;height:300px"></div>
+<div class="lane" style="top:712px;height:144px"></div>
+<div class="lane" style="top:866px;height:144px"></div>
+
+<!-- ===== ZONAS ===== -->
+<div class="zone gob" style="left:118px;width:1144px;top:396px;bottom:auto;height:620px"></div>
+<div class="zlabel gob" style="top:396px;left:52px;width:46px;height:620px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:19px;letter-spacing:.04em">Data Office <span style="font-weight:400;font-size:15px;margin-top:10px">· ingesta y tablas gobernadas</span></div>
+
+<div class="colh" style="left:340px">Fuente</div>
+<div class="colh" style="left:670px">① Aterrizaje</div>
+<div class="colh" style="left:950px">② Tabla gobernada</div>
+<div class="colh" style="left:1284px">Cálculo</div>
+<div class="colh" style="left:1584px">④ Salida</div>
+
+<!-- ===== CARRIL 1: CONSTRUCCIÓN ===== -->
+<div class="lane-lbl rv" style="top:262px"><i>01</i>Construcción<em>por versión del R</em></div>
+<div class="box rv a1" style="left:340px;top:260px;width:300px;height:120px"><b>Fuentes históricas</b>DesInventar · INDECI 2003-23 · SINPAD · CENEPRED 2023 · ANA · IGP ICEN · INEI</div>
+<div class="box tab rv a1" style="left:670px;top:260px;width:250px;height:120px"><span class="reg">registro</span><b>Bitácora de descarga</b>Archivo tal cual con URL, fecha y hash</div>
+<div class="box tab rv a1" style="left:950px;top:260px;width:300px;height:120px"><span class="reg">registro</span><b>Insumos versionados</b>Eventos, daño y exposición por ubigeo; nombres corregidos con motivo</div>
+<div class="box rv a1" style="left:1284px;top:260px;width:270px;height:120px"><b>Score estructural</b><span class="f">sev + rec + fra + exp</span><br>Solo Pacífico; cortes fijos</div>
+<div class="box prod rv a1" style="left:1584px;top:260px;width:226px;height:120px"><span class="reg">registro</span><b>R estructural v3.1</b>1,891 distritos<br><span class="f">ubigeo · versión</span></div>
+
+<!-- ===== CARRIL 2: ACTUALIZACIÓN ===== -->
+<div class="lane-lbl rv a1" style="top:416px"><i>02</i>Actualización<em>diaria, mientras dura el evento</em></div>
+<div class="src rv a2" style="top:412px;height:64px"><span class="ag" style="left:auto;right:10px"><svg><use href="#bot"/></svg>agente 1</span><b>Reportes COEN</b><span class="fm">PDF · daños</span><span class="q">PDF sin estructura; varias versiones</span></div>
+<div class="src rv a2" style="top:484px;height:64px;border-width:3px;box-shadow:0 0 0 4px rgba(0,57,166,.15)"><b>SINPAD API</b><span class="fm">JSON · diaria</span><span class="q">Dpto/prov/dist → cód. ubigeo</span></div>
+<div class="src rv a2" style="top:556px;height:64px"><b>Censo 2025</b><span class="fm">INEI · viviendas</span><span class="q">Distritos publicados por dpto.</span></div>
+<div class="src rv a2" style="top:628px;height:64px"><b>Aviso SENAMHI</b><span class="fm">shp · diario</span><span class="q">Polígonos: cruzar con límites INEI</span></div>
+<div class="box tab rv a2" style="left:670px;top:412px;width:250px;height:280px"><span class="reg">registro</span><b>Aterrizaje crudo + bitácora</b>Cada descarga con URL, fecha y hora, hash, respuesta del servidor y n.º de registros.<br><br>No se modifica nada: es la evidencia de qué dijo la fuente ese día.</div>
+<div class="box tab rv a2" style="left:950px;top:412px;width:300px;height:280px"><span class="reg">registro</span><b>Tablas normalizadas</b>
+  <svg class="bi"><use href="#bot"/></svg>Daños COEN · reporte × versión<br>
+  <span style="color:var(--azul);font-weight:600">Emergencias SINPAD · foto diaria</span><br>
+  Viviendas Censo 2025 · distrito<br>
+  Aviso · distrito × día × nivel<br>
+  <svg class="bi"><use href="#bot"/></svg><b class="in" style="color:var(--azul)">Puente ubigeo</b> · dpto/prov/dist → INEI<br>
+  <span style="font-size:14px;color:var(--morado)">Agente 1 descarga los PDF, extrae los daños y propone el ubigeo; una regla verifica y una persona aprueba</span></div>
+<div class="box agt rv a2" style="left:1284px;top:412px;width:270px;height:280px"><span class="ag"><svg><use href="#bot"/></svg>agente 3 · metodológico</span><b>Dos drivers</b>
+  <div class="formula"><b class="in" style="font-size:15px">Daño</b> = <span class="fr"><span>afectadas + destruidas</span><span>viviendas ocupadas</span></span></div>
+  <div class="formula" style="margin-top:7px"><b class="in" style="font-size:15px">Peligro</b> = aviso<br><span class="dot" style="background:#C62828"></span>rojo <span class="dot" style="background:#EF7D00"></span>naranja<br><span class="dot" style="background:#F5C400"></span>amarillo <span class="dot" style="background:#C9D3CF"></span>sin aviso</div>
+  <div style="font-size:14px;color:var(--morado);margin-top:6px">Aplica la fórmula y documenta cada cambio de nivel</div></div>
+<div class="box prod rv a2" style="left:1584px;top:412px;width:226px;height:280px"><span class="reg">registro</span><b>R actualizado</b>R estructural + daño + aviso<br><span class="f">ubigeo × fecha</span><br>Con enlace a cada registro de origen<br><br><b style="font-size:16px;color:#8FD9AE">→ Overlay de PD</b></div>
+
+<!-- ===== CARRIL 3: VALIDACIÓN DIARIA ===== -->
+<div class="lane-lbl rv a2" style="top:726px"><i>03</i>Validación<em>prensa, diaria</em></div>
+<div class="src rv a3" style="top:724px;height:120px"><span class="ag" style="left:auto;right:10px"><svg><use href="#bot"/></svg>agente 2</span><b>Notas de prensa</b><span class="fm">web · 48 h</span><span class="q">Medios nacionales y regionales</span><span style="display:block;margin-top:3px">El agente 2 las descarga y las lee por distrito.</span></div>
+<div class="box tab rv a3" style="left:670px;top:724px;width:250px;height:120px"><span class="reg">registro</span><b>Aterrizaje prensa</b>Nota tal cual con medio, fecha, URL y hash</div>
+<div class="box tab rv a3" style="left:950px;top:724px;width:300px;height:120px"><span class="reg">registro</span><b>Prensa por ubigeo</b><span class="f">distrito × día</span><br>Ubigeos más reportados · n.º de notas y medios · hecho reportado</div>
+<div class="box agt rv a3" style="left:1284px;top:724px;width:270px;height:120px"><span class="ag"><svg><use href="#bot"/></svg>agente 3</span><b>Contraste</b>Prensa vs tablas ②: ubigeo en prensa sin reporte COEN o cifras distintas</div>
+<div class="box ctl rv a3" style="left:1584px;top:724px;width:226px;height:120px;font-size:14.5px;line-height:1.3"><span class="reg">registro</span><b>③ Excepciones</b>Cada discrepancia con motivo, autor y fecha</div>
+
+<!-- ===== CARRIL 4: AJUSTE GEO ===== -->
+<div class="lane-lbl rv a3" style="top:880px"><i>04</i>Ajuste geo<em>mensual, por cliente</em></div>
+<div class="src rv a4" style="top:876px;height:56px"><b>api_cli (banco)</b><span class="fm">mensual</span><span class="q">Dirección del cliente, sin X, Y</span></div>
+<div class="src rv a4" style="top:940px;height:56px"><b>CENEPRED</b><span class="fm">zonas de peligro</span><span class="q">Misma tabla de la construcción</span></div>
+<div class="box tab rv a4" style="left:670px;top:876px;width:250px;height:120px"><span class="reg">registro</span><b>Foto mensual + bitácora</b>Corte del mes de api_cli, n.º de clientes y hash</div>
+<div class="box tab rv a4" style="left:950px;top:876px;width:300px;height:120px"><span class="reg">registro</span><b>Clientes · cliente × mes</b>Dirección y ubigeo declarado<br>Zonas CENEPRED · polígono o centro poblado</div>
+<div class="box rv a4" style="left:1284px;top:876px;width:270px;height:120px"><b>X, Y y cruce</b>Dirección → X, Y<br>¿El punto cae en una zona afectada de CENEPRED?</div>
+<div class="box prod rv a4" style="left:1584px;top:876px;width:226px;height:120px"><span class="reg">registro</span><b>R ajuste geo</b><span class="f">cliente × mes</span><br><b style="font-size:16px;color:#8FD9AE">→ Overlay de PD</b></div>
+
+<!-- ===== FLECHAS ===== -->
+<svg class="wires" viewBox="0 0 1920 1080">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#4A585E"/></marker>
+  <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#0039A6"/></marker></defs>
+  <g stroke="#4A585E" stroke-width="2.5" fill="none" marker-end="url(#ah)">
+    <path d="M640 320H666"/><path d="M920 320H946"/><path d="M1250 320H1280"/><path d="M1554 320H1580"/>
+    <path d="M640 444H666"/><path d="M640 516H666"/><path d="M640 588H666"/><path d="M640 660H666"/>
+    <path d="M920 552H946"/><path d="M1250 552H1280"/><path d="M1554 552H1580"/>
+    <path d="M640 784H666"/><path d="M920 784H946"/><path d="M1250 784H1280"/><path d="M1554 784H1580"/>
+    <path d="M640 904H666"/><path d="M640 968H666"/><path d="M920 936H946"/><path d="M1250 936H1280"/><path d="M1554 936H1580"/>
+    <path d="M1697 380V408"/>
+  </g>
+  <g stroke="#0039A6" stroke-width="2.5" fill="none" stroke-dasharray="7 5" marker-end="url(#ab)">
+    <path d="M1230 692V706H1419V720"/><path d="M1697 724V696"/>
+  </g>
+  <text x="1256" y="740" font-family="JetBrains Mono" font-size="14" fill="#0039A6">lee</text>
+  <text x="1636" y="713" font-family="JetBrains Mono" font-size="14" fill="#0039A6">valida</text>
+</svg>
+
+<!-- ===== LEYENDA ===== -->
+<div class="legend">
+  <span><span class="sw" style="background:rgba(100,180,230,.13);border:2px dashed #0039A6"></span>Data Office</span>
+  <span><span class="sw" style="background:#E3F7EB;border-color:#05BE50"></span>Tabla gobernada</span>
+  <span><span class="sw" style="background:#E5ECF8;border-color:#0039A6"></span>Control</span>
+  <span><span class="sw" style="background:#0F191E;border-color:#0F191E"></span>Producto</span>
+  <span><span class="reg" style="position:static;margin-right:6px">registro</span>Punto de registro</span>
+  <span><svg class="bi"><use href="#bot"/></svg>Agentes: 1 COEN · 2 prensa · 3 metodológico</span>
+  <span class="note">Pendiente: inhabitables, vigente o acumulado, pesos</span>
+</div>
+
+</section></main></div>
+<script>
+/* === ESCALA DEL ESCENARIO === */
+const s=document.getElementById('deckStage');
+const f=()=>{const k=Math.min(innerWidth/1920,innerHeight/1080);s.style.transform=`translate(${(innerWidth-1920*k)/2}px,${(innerHeight-1080*k)/2}px) scale(${k})`};
+f();addEventListener('resize',f);
+</script>
+</body>
+</html>
