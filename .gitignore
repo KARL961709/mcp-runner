@@ -296,3 +296,15 @@ entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/*.pyc
 # Cero key_value / id_value / tip_doc / cif_key / id_hash, cero hashes de 64 chars,
 # cero numeros de 8+ digitos, cero dato de cliente. Repo PRIVADO. Un push no se deshace.
 !entregables/framework_R_flujo.html
+
+# --- propuesta_calibracion_der.html (2026-11-12): deck de 5 slides para MLOps, lineamiento
+# de la tabla de parametros de calibracion. AS-IS vs TO-BE, diagrama entidad-relacion de las
+# 3 tablas + pkl de parametros, la tabla t_cal_parametros_rsk y el freeze. Solo ESTRUCTURA:
+# nombres de tablas/campos, coeficientes del modelo y series macro agregadas (inflacion MA3,
+# f_t por mes). El Excel que genera el boton trae ejemplos inventados (DOC_EJEMPLO, CLI_EJEMPLO).
+# Dependencias externas: Google Fonts, mermaid (jsdelivr) y exceljs (cdnjs); sin internet el
+# diagrama de la slide 2 no se dibuja.
+# Verificado ANTES del push: 74 KB de texto. key_value / tip_doc solo como NOMBRE de columna,
+# cero valores. Cero hashes de 64 chars. Unico numero de 8+ digitos: 20261215 (fecha de
+# ejemplo de p_fecdia). Cero dato de cliente. Repo PRIVADO. Un push no se deshace.
+!entregables/propuesta_calibracion_der.html
