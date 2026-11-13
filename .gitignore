@@ -308,3 +308,55 @@ entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/*.pyc
 # cero valores. Cero hashes de 64 chars. Unico numero de 8+ digitos: 20261215 (fecha de
 # ejemplo de p_fecdia). Cero dato de cliente. Repo PRIVADO. Un push no se deshace.
 !entregables/propuesta_calibracion_der.html
+
+# --- flujo_calibracion_referencia/ (2026-11-13): artefacto de referencia del nuevo flujo de
+# calibracion PD (3 tablas + pkl de parametros + 2 motores) para que otra IA lo implemente en la
+# maquina de ejecucion. Brief LEEME_PARA_IA.md, DDL, plantillas de inference.sql (NO probadas en
+# Athena), job inference.py + calculo.py, parametros de calibracion en JSON (sin pkl), pesos Denton,
+# referencia en Python y prueba autonoma (26/26, tambien desde copia limpia).
+# Verificado ANTES del push: llaves de los parquet INVENTADAS (E000123 / F000012, 7 chars), cero
+# hashes de 64 chars, unicos numeros de 8+ digitos = fechas de ejemplo de p_fecdia (20260915,
+# 20261215). porc_ipc es serie publica del BCRP. NO incluye la entrega de APOYO (posible licencia):
+# las pruebas de Denton usan trimestres sinteticos. Cero dato de cliente. Repo PRIVADO.
+# Rutas explicitas, no glob: un archivo nuevo necesita su propia linea. Un push no se deshace.
+!entregables/flujo_calibracion_referencia/
+!entregables/flujo_calibracion_referencia/ddl/
+!entregables/flujo_calibracion_referencia/denton/
+!entregables/flujo_calibracion_referencia/docs/
+!entregables/flujo_calibracion_referencia/mlops/
+!entregables/flujo_calibracion_referencia/mlops/scripts/
+!entregables/flujo_calibracion_referencia/mlops/scripts/utils/
+!entregables/flujo_calibracion_referencia/pkl/
+!entregables/flujo_calibracion_referencia/pruebas/
+!entregables/flujo_calibracion_referencia/referencia/
+!entregables/flujo_calibracion_referencia/sql/
+!entregables/flujo_calibracion_referencia/LEEME_PARA_IA.md
+!entregables/flujo_calibracion_referencia/ddl/01_t_cal_parametros_rsk.sql
+!entregables/flujo_calibracion_referencia/ddl/02_t_cal_modelo_rsk.sql
+!entregables/flujo_calibracion_referencia/ddl/03_scr_cal_cppibkren_rsk.sql
+!entregables/flujo_calibracion_referencia/ddl/03b_scr_cal_vcadmbnk_rsk.sql
+!entregables/flujo_calibracion_referencia/ddl/04_t_mst_denton_pesos_rsk.sql
+!entregables/flujo_calibracion_referencia/denton/generar_pesos.py
+!entregables/flujo_calibracion_referencia/denton/t_mst_denton_pesos_rsk.csv
+!entregables/flujo_calibracion_referencia/docs/estructuras_calibracion.html
+!entregables/flujo_calibracion_referencia/docs/propuesta_calibracion_der.html
+!entregables/flujo_calibracion_referencia/mlops/scripts/inference.py
+!entregables/flujo_calibracion_referencia/mlops/scripts/utils/__init__.py
+!entregables/flujo_calibracion_referencia/mlops/scripts/utils/calculo.py
+!entregables/flujo_calibracion_referencia/pkl/armar_pkl.py
+!entregables/flujo_calibracion_referencia/pkl/spec_cppibkren_201801_v1.json
+!entregables/flujo_calibracion_referencia/pkl/spec_vcadmbnk_201801_v2.json
+!entregables/flujo_calibracion_referencia/pkl/spec_vcadmbnk_202505_v3.json
+!entregables/flujo_calibracion_referencia/pkl/spec_vcadmbnk_202508_v4.json
+!entregables/flujo_calibracion_referencia/pruebas/probar_todo.py
+!entregables/flujo_calibracion_referencia/referencia/ds_cppibkren_202609.parquet
+!entregables/flujo_calibracion_referencia/referencia/ds_cppibkren_202612.parquet
+!entregables/flujo_calibracion_referencia/referencia/ds_vcadmbnk_202609.parquet
+!entregables/flujo_calibracion_referencia/referencia/ds_vcadmbnk_202612.parquet
+!entregables/flujo_calibracion_referencia/referencia/porc_ipc_bcrp.csv
+!entregables/flujo_calibracion_referencia/referencia/scr_cal_cppibkren_202612_esperado.parquet
+!entregables/flujo_calibracion_referencia/referencia/scr_cal_vcadmbnk_202612_esperado.parquet
+!entregables/flujo_calibracion_referencia/referencia/sql_referencia.py
+!entregables/flujo_calibracion_referencia/referencia/t_cal_parametros_rsk.csv
+!entregables/flujo_calibracion_referencia/sql/inference_t_cal_cppibkren_rsk.sql
+!entregables/flujo_calibracion_referencia/sql/inference_t_cal_vcadmbnk_rsk.sql

@@ -1,0 +1,41 @@
+-- 02 t_cal_<modelo>_rsk
+CREATE EXTERNAL TABLE IF NOT EXISTS <base_cal>.t_cal_<modelo>_rsk (
+  cod_mes        string,
+  cod_tip_doc    string,
+  key_value      string,
+  cod_cli        string,
+  prob_modelo    double,
+  puntuacion     int,
+  var_macro_01   double,
+  var_macro_02   double,
+  var_macro_03   double,
+  var_macro_04   double,
+  var_macro_05   double,
+  var_macro_06   double,
+  var_macro_07   double,
+  var_macro_08   double,
+  var_macro_09   double,
+  var_macro_10   double,
+  var_macro_11   double,
+  var_macro_12   double,
+  var_driver_01  string,
+  var_driver_02  string,
+  var_driver_03  string,
+  var_driver_04  string,
+  var_driver_05  string,
+  var_driver_06  string,
+  var_driver_07  string,
+  var_driver_08  string,
+  var_driver_09  string,
+  var_driver_10  string,
+  var_driver_11  string,
+  var_driver_12  string,
+  flg_clean_01   string,
+  flg_clean_02   string,
+  flg_clean_03   string,
+  flg_clean_04   string,
+  ts_carga       timestamp
+)
+PARTITIONED BY (p_codmes string, p_fecdia string)
+STORED AS PARQUET
+LOCATION 's3://<bucket>/t_cal_<modelo>_rsk/'

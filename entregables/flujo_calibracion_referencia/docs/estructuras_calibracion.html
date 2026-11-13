@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calibración PD: diagrama ER</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#05BE50;--verde-t:#067A38;--verde-c:#E3F7EB;--tinta:#0F191E;--gris:#4A585E;--gris2:#6B787D;--borde:#D5DDD9;
+--azul:#0039A6;--azul-c:#E5ECF8;--morado:#6B2FB3;--morado-c:#F1EAFB;--ambar:#9A6200;--ambar-c:#FFF4DC;--fondo:#F6F8F7;--blanco:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:15px/1.55 'Poppins',sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 64px}
+h1{font-size:30px;line-height:1.25;margin:0 0 6px;font-weight:600}
+h1 span{color:var(--verde-t)}
+.lead{color:var(--gris);margin:0 0 28px;max-width:900px}
+h2{font-size:21px;margin:40px 0 6px;font-weight:600;display:flex;align-items:center;gap:10px}
+h2 .n{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--verde-t);color:#fff;font-size:15px;align-items:center;justify-content:center}
+h2 .n.p{background:var(--tinta)} h2 .n.g{background:var(--gris2)}
+.sub{color:var(--gris);margin:0 0 14px}
+.card{background:var(--blanco);border:1px solid var(--borde);border-radius:12px;padding:6px 0;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-weight:500;color:var(--gris2);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;padding:9px 12px;border-bottom:1.5px solid var(--borde);white-space:nowrap}
+td{padding:7px 12px;border-bottom:1px solid #EEF2F0;vertical-align:top}
+tr:last-child td{border-bottom:none}
+code,.m{font-family:'JetBrains Mono',monospace;font-size:12.5px}
+td code{color:var(--tinta);font-weight:500}
+.grp td{background:#F3F6F4;font-weight:600;color:var(--gris);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.t-mlops{background:#EEF2F0;color:var(--gris)}
+.t-prop{background:var(--ambar-c);color:var(--ambar)}
+.t-dbl{background:var(--azul-c);color:var(--azul)}
+.from{color:var(--verde-t)} .to{color:var(--tinta)}
+.flow{background-color:var(--fondo);background-image:radial-gradient(rgba(0,57,166,.10) 1.4px,transparent 1.4px);background-size:28px 28px;border:1px solid var(--borde);border-radius:12px;padding:16px}
+.leg{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:var(--gris);margin:10px 0 0}
+.leg span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:10px;border-radius:2px;display:inline-block;border:1px solid}
+.note{background:var(--ambar-c);border:1px solid #E8C77A;border-radius:10px;padding:10px 14px;color:#5C3D00;font-size:14px;margin:12px 0 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:16px}
+.mini h3{font-size:15px;margin:0;padding:10px 12px 4px;font-weight:600}
+.mini h3 code{font-size:13.5px;color:var(--verde-t)}
+.mini .d{padding:0 12px 6px;color:var(--gris);font-size:13px}
+.mermaid svg{max-width:none!important;height:auto;background:transparent!important}
+.mermaid .er.relationshipLabelBox{fill:#F6F8F7!important;opacity:1!important}
+.uk{--u:#C98500;--ub:#FFF1D6}.um{--u:#05BE50;--ub:#E3F7EB}.up{--u:#0039A6;--ub:#E5ECF8}.ud{--u:#D85A30;--ub:#FCEAE3}.ur{--u:#2A8FC7;--ub:#E0F2FA}.uc{--u:#8A9690;--ub:#F0F2F1}
+td.uso{background:var(--ub);box-shadow:inset 4px 0 0 var(--u)}
+.usoleg{display:flex;flex-wrap:wrap;gap:8px 16px;margin:10px 0 14px;font-size:13px;color:var(--gris)}
+.usoleg span{display:inline-flex;align-items:center;gap:6px}
+.usoleg i{width:16px;height:12px;border-radius:3px;background:var(--ub);box-shadow:inset 3px 0 0 var(--u);display:inline-block}
+@media (max-width:640px){.wrap{padding:20px 16px 48px}h1{font-size:24px}}
+</style>
+<body>
+<div class="wrap">
+
+<h1>Calibración PD: <span>diagrama entidad-relación</span></h1>
+<p class="lead">Tres tablas de calibración (ds, parámetros y scr), dos motores (<code>inference.sql</code> e <code>inference.py</code>), el pkl de calibración y las fuentes que ya existen. El ds lleva insumos: la PD raw y las variables macro <b>transformadas</b> (x). El f_t y las PDs son resultados del pkl y quedan en el scr. La tabla de parámetros solo guarda el mes de freeze.</p>
+
+<div class="botones"><button id="zoomER" type="button">Ver a tamaño real</button><button id="bajaPNG" type="button">Descargar PNG</button><button id="bajaSVG" type="button">Descargar SVG</button><button id="bajaXLS" type="button" class="xls">Descargar Excel (3 tablas)</button></div>
+<style>.botones{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px;margin:0 0 8px}.botones button{font:inherit;font-size:12.5px;background:#fff;border:1px solid var(--borde);border-radius:8px;padding:2px 12px;cursor:pointer;color:var(--tinta)}.botones button:hover{border-color:var(--gris2)}.botones .xls{background:#0F191E;color:#fff;border-color:#0F191E}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<div class="flow" style="overflow-x:auto"><pre class="mermaid" style="margin:0">
+erDiagram
+  SCR_MODELO_RSK ||..|| INFERENCE_SQL : "PD raw"
+  T_MST_BCRP_RSK ||..|| INFERENCE_SQL : "porc_ipc"
+  MACRO_APOYO_TICKER ||--o{ MACRO_APOYO_PROY : "ticker"
+  MACRO_APOYO_PROY ||..|| INFERENCE_SQL : "valor BASE"
+  FUENTES_DRIVERS ||..|| INFERENCE_SQL : "drivers y flags"
+  T_CAL_PARAMETROS_RSK ||..|| INFERENCE_SQL : "cod_mes_freeze"
+  INFERENCE_SQL ||..|| T_CAL_MODELO_RSK : "escribe el ds y relee la x del freeze"
+  T_CAL_MODELO_RSK ||..|| INFERENCE_PY : "PD raw, x, drivers"
+  OBJETO_CALIBRACION ||..|| INFERENCE_PY : "parametros"
+  INFERENCE_PY ||..|| SCR_CAL_MODELO_RSK : "escribe el scr"
+
+  INFERENCE_SQL {
+    f l1 "PASO 1 · ARMA EL DS"
+    f l2 "Lee la PD raw, la macro y el cod_mes_freeze"
+    f l3 "Calcula las x macro (del mes y congelada)"
+    f l4 "Arma drivers y flags con la lógica del modelo"
+  }
+  FUENTES_DRIVERS {
+    string tablas_del_modelo "segun modelo"
+    string reglas "en el sql"
+  }
+  INFERENCE_PY {
+    f l1 "PASO 2 · CALCULA EL SCR"
+    f l2 "Lee el ds y carga los parámetros del pkl"
+    f l3 "TTC: PD raw → PD_TTC"
+    f l4 "f_t: x → f_t del mes y freeze"
+    f l5 "PIT: PD_TTC + f_t → PD_PIT y PD freeze"
+    f l6 "Escribe el scr"
+  }
+  SCR_MODELO_RSK {
+    string cod_mes PK
+    string cod_tip_doc PK
+    string key_value PK
+    string cod_cli
+    double prob_modelo "PD raw"
+    int puntuacion
+    string modelo
+    string ts_carga
+    string grupo_ejec
+    string segmento
+    string orden
+    string extra_01_a_05
+    double woe_zvariablez "REE: 48"
+    string p_codmes
+  }
+  T_MST_BCRP_RSK {
+    string cod_mes PK
+    double porc_ipc
+  }
+  MACRO_APOYO_TICKER {
+    string ticker PK
+    string escenario
+    string ticker_bcrp1
+  }
+  MACRO_APOYO_PROY {
+    string ticker PK, FK
+    string cod_mes PK
+    string p_codmes PK
+    double valor
+    int nro_carga
+  }
+  T_CAL_PARAMETROS_RSK {
+    string modelo PK
+    string parametro PK "cod_mes_freeze"
+    string valor "202609"
+    int nro_carga PK
+    timestamp ts_carga
+    string p_codmes PK
+  }
+  T_CAL_MODELO_RSK {
+    string cod_mes PK, FK
+    string cod_tip_doc PK, FK
+    string key_value PK, FK
+    string cod_cli
+    double prob_modelo "NEW"
+    int puntuacion "NEW"
+    double var_macro_01_a_12 "x: mes y congelada"
+    string var_driver_01_a_12
+    string flg_clean_01_a_04
+    timestamp ts_carga
+    string p_codmes
+    string p_fecdia
+  }
+  OBJETO_CALIBRACION {
+    f l1 "PKL · PARÁMETROS DE CALIBRACIÓN"
+    f l2 "TTC: método por celda (Beta, Platt o tramos) y anclas"
+    f l3 "f_t: forma, coefs (LRA, β, μ) y topes"
+    f l4 "PIT: ρ y λ"
+    f l5 "Por producto · versión id_calibracion"
+  }
+  SCR_CAL_MODELO_RSK {
+    string cod_mes PK, FK
+    string cod_tip_doc PK, FK
+    string key_value PK, FK
+    string cod_cli
+    double prob_modelo "PD raw"
+    int puntuacion
+    double factor_macro_zprodz "f_t del mes"
+    double factor_macro_freeze_zprodz "f_t congelado"
+    double prob_modelo_cal_zprodz "PD con f_t del mes"
+    int puntuacion_cal_zprodz
+    double prob_modelo_cal_freeze_zprodz "PD con f_t congelado"
+    int puntuacion_cal_freeze_zprodz
+    double prob_modelo_cal_smacro_zprodz "PD sin macro"
+    int puntuacion_cal_smacro_zprodz "NEW"
+    string id_calibracion FK "NEW"
+    string extra_01_a_05
+    string extra_06 "NEW"
+    string extra_07 "NEW"
+    string extra_08 "NEW"
+    string p_codmes
+    string p_fecdia
+  }
+</pre></div>
+<div class="leyfin">
+<div><b>Color de campo (linaje):</b>
+<span class="um"><i></i>Macro: serie → x → f_t</span>
+<span class="up"><i></i>PD: raw → calibrada</span>
+<span class="ud"><i></i>Drivers y flags</span>
+<span class="ur"><i></i>Parámetros</span>
+<span class="uk"><i></i>Llaves</span>
+<span class="uc"><i></i>Control</span>
+<span><i class="sw" style="background:#FFE45C;border-color:#C9A800"></i>NEW: campo nuevo (a acordar con MLOps)</span></div>
+<div><b>Cabecera:</b>
+<span><i class="sw" style="background:#0F191E;border-color:#0F191E"></i>Tabla de calibración</span>
+<span><i class="sw" style="background:#0039A6;border-color:#0039A6"></i>Tabla del modelo</span>
+<span><i class="sw" style="background:#05BE50;border-color:#067A38"></i>Motor</span>
+<span><i class="sw" style="background:#2A8FC7;border-color:#2A8FC7"></i>Parámetros (pkl)</span>
+<span><i class="sw" style="background:#EEF2F0;border-color:#A9B6B1"></i>Fuente</span>
+<span>┄ pasa por un motor</span><span><i class="paso">1</i>orden del flujo (0 modelo · 1 arma el ds · 2 parámetros · 3 calcula el scr)</span></div>
+</div>
+<style>
+.leyfin{margin:8px 2px 0;font-size:11.5px;line-height:1.35;color:var(--gris)}
+.leyfin>div{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;margin:0 0 3px}
+.leyfin b{color:var(--tinta);font-weight:600}
+.leyfin span{display:inline-flex;align-items:center;gap:5px}
+.leyfin i{width:12px;height:9px;border-radius:2px;background:var(--ub);box-shadow:inset 3px 0 0 var(--u);display:inline-block}
+.leyfin i.sw{box-shadow:none;border:1px solid}
+.leyfin i.paso{display:inline-flex;width:17px;height:17px;border-radius:50%;background:#fff;border:1.5px solid #0F191E;color:#0F191E;font-style:normal;font-weight:700;font-size:11px;align-items:center;justify-content:center;box-shadow:none}
+</style>
+
+
+</div>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs';
+mermaid.initialize({startOnLoad: false, theme: 'base', fontFamily: 'Poppins, sans-serif',
+  themeVariables: {primaryColor: '#FFFFFF', primaryBorderColor: '#A9B6B1', primaryTextColor: '#0F191E', lineColor: '#6B787D', background: 'transparent', tertiaryColor: '#F6F8F7', fontSize: '13px'},
+  er: {layoutDirection: 'TB', minEntityWidth: 120}});
+await mermaid.run();
+const svgER = document.querySelector('.mermaid svg');
+const anchoReal = svgER.viewBox.baseVal.width + 'px';
+const btnZoom = document.getElementById('zoomER');
+const ajustar = real => { svgER.style.maxWidth = 'none'; svgER.style.width = real ? svgER.viewBox.baseVal.width + 'px' : '100%';
+  btnZoom.textContent = real ? 'Ajustar al ancho' : 'Ver a tamaño real'; btnZoom.dataset.real = real ? '1' : ''; };
+ajustar(false);
+btnZoom.addEventListener('click', () => ajustar(!btnZoom.dataset.real));
+const USO = {
+  SCR_MODELO_RSK: {cod_mes:'uk', cod_tip_doc:'uk', key_value:'uk', cod_cli:'uk', prob_modelo:'up', puntuacion:'up', modelo:'uc', ts_carga:'uc',
+                 grupo_ejec:'uc', segmento:'uc', orden:'uc', extra_01_a_05:'uc', p_codmes:'uc'},
+  T_MST_BCRP_RSK: {cod_mes:'uk', porc_ipc:'um'},
+  MACRO_APOYO_TICKER: {ticker:'uk', escenario:'um', ticker_bcrp1:'um'},
+  MACRO_APOYO_PROY: {ticker:'uk', cod_mes:'uk', p_codmes:'uk', nro_carga:'uk', valor:'um'},
+  T_CAL_PARAMETROS_RSK: {modelo:'uk', parametro:'ur', valor:'ur', nro_carga:'uk', p_codmes:'uk', ts_carga:'uc'},
+  FUENTES_DRIVERS: {tablas_del_modelo:'ud', reglas:'ud'},
+  T_CAL_MODELO_RSK: {cod_mes:'uk', cod_tip_doc:'uk', key_value:'uk', cod_cli:'uk', prob_modelo:'up', puntuacion:'up',
+                     var_macro_01_a_12:'um', var_driver_01_a_12:'ud', flg_clean_01_a_04:'ud', ts_carga:'uc', p_codmes:'uc', p_fecdia:'uc'},
+  OBJETO_CALIBRACION: {modelo:'uk', id_calibracion:'uc', fecha:'uc', sufijo:'ur', variables:'ur', modelo_macro:'ur',
+                       metodo:'ur', celdas:'ur', vasicek:'ur', recortes:'ur'},
+  SCR_CAL_MODELO_RSK: {cod_mes:'uk', cod_tip_doc:'uk', key_value:'uk', cod_cli:'uk', prob_modelo:'up', puntuacion:'up',
+                   factor_macro_zprodz:'um', factor_macro_freeze_zprodz:'um', 
+                   prob_modelo_cal_zprodz:'up', puntuacion_cal_zprodz:'up', prob_modelo_cal_smacro_zprodz:'up', prob_modelo_cal_freeze_zprodz:'up', puntuacion_cal_freeze_zprodz:'up', puntuacion_cal_smacro_zprodz:'up', id_calibracion:'uc', extra_01_a_05:'uc', extra_06:'uc', extra_07:'uc', extra_08:'uc', p_codmes:'uc', p_fecdia:'uc'}
+};
+const COLOR = {uk:'#FFF1D6', um:'#E3F7EB', up:'#E5ECF8', ud:'#FCEAE3', ur:'#E0F2FA', uc:'#F0F2F1'};
+const TIPO = {OBJETOCALIBRACION:'pkl', SCRMODELORSK:'modelo', INFERENCESQL:'motor', INFERENCEPY:'motor', TCALMODELORSK:'tabla', TCALPARAMETROSRSK:'tabla', SCRCALMODELORSK:'tabla'};
+const ESTILO = {pkl: ['#2A8FC7', '#2A8FC7', '#ffffff'], modelo: ['#0039A6', '#0039A6', '#ffffff'], motor: ['#05BE50', '#067A38', '#ffffff'], tabla: ['#0F191E', '#0F191E', '#ffffff'], otro: ['#EEF2F0', '#A9B6B1', '#0F191E']};
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const [fondo, borde, texto] = ESTILO[TIPO[g.id.split('-')[1]] || 'otro'];
+  const r = g.querySelectorAll('rect');
+  r.forEach(x => { x.style.stroke = borde; });
+  r[0].style.fill = fondo;
+  g.querySelector('text').style.fill = texto;
+  g.querySelector('text').style.fontWeight = '600';
+  if (TIPO[g.id.split('-')[1]] === 'motor') [...r].slice(1).forEach(x => { x.style.fill = '#E3F7EB'; });
+});
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const ent = Object.keys(USO).find(e => g.id.startsWith('entity-' + e.replace(/_/g, '') + '-'));
+  if (!ent) return;
+  const rects = [...g.querySelectorAll('rect')].slice(1);
+  g.querySelectorAll('text').forEach(tx => {
+    const cat = USO[ent][tx.textContent.trim()];
+    if (!cat) return;
+    const b = tx.getBBox(), tr = tx.transform.baseVal.consolidate(), y = (tr ? tr.matrix.f : 0) + b.y + b.height / 2;
+    rects.forEach(rc => {
+      const r = rc.getBBox();
+      if (y > r.y && y < r.y + r.height) rc.style.fill = COLOR[cat];
+    });
+  });
+});
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const rects = [...g.querySelectorAll('rect')].slice(1);
+  g.querySelectorAll('text').forEach(tx => {
+    if (tx.textContent.trim() !== 'NEW') return;
+    tx.style.fontWeight = '700'; tx.style.fill = '#5C4A00';
+    const b = tx.getBBox(), tr = tx.transform.baseVal.consolidate(), y = (tr ? tr.matrix.f : 0) + b.y + b.height / 2;
+    rects.forEach(rc => { const r = rc.getBBox(); if (y > r.y && y < r.y + r.height) { rc.style.fill = '#FFE45C'; } });
+  });
+});
+const NS = 'http://www.w3.org/2000/svg';
+let anchoExtra = 0;
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const caja = g.querySelector('rect').getBBox();
+  g.querySelectorAll('text').forEach(tx => {
+    const MARCA = {'_zprodz': ['_<prod>', '×N'], 'woe_zvariablez': ['woe_<variable>', '×V']};
+    const k = Object.keys(MARCA).find(m => tx.textContent.includes(m));
+    if (!k) return;
+    tx.textContent = tx.textContent.replace(k, MARCA[k][0]);
+    const b = tx.getBBox(), tr = tx.transform.baseVal.consolidate(), y = (tr ? tr.matrix.f : 0) + b.y + b.height / 2;
+    const r = document.createElementNS(NS, 'rect'), t = document.createElementNS(NS, 'text');
+    r.setAttribute('x', caja.x + caja.width + 8); r.setAttribute('y', y - 8); r.setAttribute('width', 26); r.setAttribute('height', 16); r.setAttribute('rx', 4);
+    r.style.fill = '#0F191E'; r.style.stroke = 'none';
+    t.setAttribute('x', caja.x + caja.width + 21); t.setAttribute('y', y + 4); t.setAttribute('text-anchor', 'middle');
+    t.style.fill = '#ffffff'; t.style.fontSize = '11px'; t.style.fontWeight = '700'; t.style.fontFamily = 'Poppins, sans-serif'; t.textContent = MARCA[k][1];
+    g.appendChild(r); g.appendChild(t); anchoExtra = 44;
+  });
+});
+if (anchoExtra) { const vb = svgER.viewBox.baseVal; svgER.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.width + anchoExtra} ${vb.height}`); }
+const BLOQUES = {INFERENCESQL: ['#E3F7EB', '#067A38', '#067A38'], INFERENCEPY: ['#E3F7EB', '#067A38', '#067A38'],
+                 OBJETOCALIBRACION: ['#E0F2FA', '#2A8FC7', '#1F6E99']};
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const est = BLOQUES[g.id.split('-')[1]];
+  if (!est) return;
+  const filas = [...g.querySelectorAll('rect')].slice(1), bb = filas.map(r => r.getBBox());
+  const x0 = Math.min(...bb.map(b => b.x)), x1 = Math.max(...bb.map(b => b.x + b.width));
+  const y0 = Math.min(...bb.map(b => b.y)), y1 = Math.max(...bb.map(b => b.y + b.height));
+  const textos = [...g.querySelectorAll('text')].slice(1);
+  const lineas = textos.map(t => t.textContent.trim()).filter(x => x && !/^(f|l\d)$/.test(x));
+  filas.forEach(r => r.style.display = 'none');
+  textos.forEach(t => t.style.display = 'none');
+  const r = document.createElementNS(NS, 'rect');
+  r.setAttribute('x', x0); r.setAttribute('y', y0); r.setAttribute('width', x1 - x0); r.setAttribute('height', y1 - y0);
+  r.style.fill = est[0]; r.style.stroke = est[1];
+  g.appendChild(r);
+  const alto = (y1 - y0) / lineas.length;
+  lineas.forEach((txt, i) => {
+    const t = document.createElementNS(NS, 'text');
+    t.setAttribute('x', (x0 + x1) / 2); t.setAttribute('y', y0 + alto * (i + 0.5));
+    t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'central');
+    t.style.fontFamily = 'Poppins, sans-serif'; t.style.fontSize = i ? '12.5px' : '12px';
+    t.style.fill = i ? '#0F191E' : est[2]; t.style.fontWeight = i ? '400' : '700'; t.style.letterSpacing = i ? '0' : '.04em';
+    t.textContent = i ? '•  ' + txt : txt;
+    g.appendChild(t);
+  });
+  const nuevos = [...g.querySelectorAll('text')].slice(-lineas.length);
+  const ancho = Math.max(x1 - x0, ...nuevos.map(t => t.getBBox().width + 40)), cx = (x0 + x1) / 2;
+  const cab = g.querySelector('rect');
+  [cab, r].forEach(e => { e.setAttribute('x', cx - ancho / 2); e.setAttribute('width', ancho); });
+  nuevos.slice(1).forEach(t => { t.setAttribute('x', cx - ancho / 2 + 18); t.setAttribute('text-anchor', 'start'); });
+});
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const t = g.querySelector('text');
+  if (t && t.textContent.includes('_MODELO_')) t.textContent = t.textContent.replace('_MODELO_', '_<MODELO>_');
+});
+
+const PASOS = {SCRMODELORSK: 0, INFERENCESQL: 1, TCALMODELORSK: 1, OBJETOCALIBRACION: 2, INFERENCEPY: 3, SCRCALMODELORSK: 3};
+document.querySelectorAll('.mermaid svg g[id^="entity-"]').forEach(g => {
+  const n = PASOS[g.id.split('-')[1]];
+  if (n === undefined) return;
+  const cab = g.querySelector('rect').getBBox();
+  const c = document.createElementNS(NS, 'circle'), t = document.createElementNS(NS, 'text');
+  c.setAttribute('cx', cab.x + 2); c.setAttribute('cy', cab.y + 2); c.setAttribute('r', 14);
+  c.style.fill = '#FFFFFF'; c.style.stroke = '#0F191E'; c.style.strokeWidth = '2';
+  t.setAttribute('x', cab.x + 2); t.setAttribute('y', cab.y + 2); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'central');
+  t.style.fill = '#0F191E'; t.style.fontSize = '14px'; t.style.fontWeight = '700'; t.style.fontFamily = 'Poppins, sans-serif';
+  t.textContent = n;
+  g.appendChild(c); g.appendChild(t);
+});
+{ const v = svgER.viewBox.baseVal; svgER.setAttribute('viewBox', `${v.x - 18} ${v.y - 18} ${v.width + 18} ${v.height + 18}`); }
+
+function bajar(blob, nombre) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function fuenteEmbebida() {
+  try {
+    const css = await (await fetch('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap')).text();
+    const urls = [...new Set(css.match(/https:[^)]+\.woff2/g) || [])];
+    let out = css;
+    for (const u of urls) {
+      const b = await (await fetch(u)).arrayBuffer();
+      let bin = ''; const v = new Uint8Array(b);
+      for (let i = 0; i < v.length; i += 0x8000) bin += String.fromCharCode.apply(null, v.subarray(i, i + 0x8000));
+      out = out.split(u).join('data:font/woff2;base64,' + btoa(bin));
+    }
+    return out;
+  } catch (e) { return ''; }
+}
+async function svgListo() {
+  const c = svgER.cloneNode(true);
+  const vb = svgER.viewBox.baseVal;
+  c.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  c.setAttribute('width', vb.width); c.setAttribute('height', vb.height);
+  c.style.width = vb.width + 'px'; c.style.maxWidth = 'none'; c.style.background = '#FFFFFF';
+  const fondo = document.createElementNS(NS, 'rect');
+  fondo.setAttribute('x', vb.x); fondo.setAttribute('y', vb.y); fondo.setAttribute('width', vb.width); fondo.setAttribute('height', vb.height);
+  fondo.setAttribute('fill', '#FFFFFF');
+  c.insertBefore(fondo, c.firstChild);
+  const css = await fuenteEmbebida();
+  if (css) { const st = document.createElementNS(NS, 'style'); st.textContent = css; c.insertBefore(st, c.firstChild); }
+  return {txt: new XMLSerializer().serializeToString(c), w: vb.width, h: vb.height};
+}
+document.getElementById('bajaSVG').addEventListener('click', async () => {
+  const {txt} = await svgListo();
+  bajar(new Blob([txt], {type: 'image/svg+xml'}), 'diagrama_calibracion.svg');
+});
+async function pngBlob(esc) {
+  const {txt, w, h} = await svgListo();
+  const img = new Image();
+  await new Promise((ok, mal) => { img.onload = ok; img.onerror = mal; img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(txt); });
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(w * esc); cv.height = Math.round(h * esc);
+  const cx = cv.getContext('2d');
+  cx.fillStyle = '#FFFFFF'; cx.fillRect(0, 0, cv.width, cv.height);
+  cx.scale(esc, esc); cx.drawImage(img, 0, 0, w, h);
+  return await new Promise(ok => cv.toBlob(ok, 'image/png'));
+}
+window.pngBlob = pngBlob;
+document.getElementById('bajaPNG').addEventListener('click', async () => {
+  bajar(await pngBlob(3), 'diagrama_calibracion.png');
+});
+
+const p2 = i => String(i).padStart(2, '0');
+const TABLAS = [
+  {hoja: 't_cal_<modelo>_rsk', filas: [
+    ['cod_mes', 'string', 'PK', 'Mes de proceso', '202612', ''],
+    ['cod_tip_doc', 'string', 'PK', 'Tipo de documento', '1', ''],
+    ['key_value', 'string', 'PK', 'Documento del cliente', 'DOC_EJEMPLO', ''],
+    ['cod_cli', 'string', '', 'Código de cliente', 'CLI_EJEMPLO', ''],
+    ['prob_modelo', 'double', '', 'PD raw (de scr_<modelo>_rsk)', 0.0731, 'NEW'],
+    ['puntuacion', 'int', '', 'Puntuación del modelo', 927, 'NEW'],
+    ...[1, 2, 3, 4, 5, 6].flatMap(k => [
+      ['var_macro_' + p2(2 * k - 1), 'double', '', 'x' + k + ' del mes' + (k === 1 ? ' (REE: promedio porc_ipc t-11..t-6)' : ''), k === 1 ? 0.6260333333333333 : '', ''],
+      ['var_macro_' + p2(2 * k), 'double', '', 'x' + k + ' congelada (x del ds del mes de freeze)', k === 1 ? 0.5705583377953397 : '', '']]),
+    ...Array.from({length: 12}, (_, i) => ['var_driver_' + p2(i + 1), 'string', '', i === 0 ? 'Driver 1 (REE: DEP / NO DEP)' : 'Driver ' + (i + 1) + ' (según el modelo)', i === 0 ? 'DEP' : '', '']),
+    ...Array.from({length: 4}, (_, i) => ['flg_clean_' + p2(i + 1), 'string', '', 'Flag de población limpia ' + (i + 1) + ' (según el modelo)', '', '']),
+    ['ts_carga', 'timestamp', '', 'Fecha y hora de carga', '2026-12-15 08:00:00', ''],
+    ['p_codmes', 'string', 'Partición', 'Partición: mes', '202612', ''],
+    ['p_fecdia', 'string', 'Partición', 'Partición: día', '20261215', '']]},
+  {hoja: 't_cal_parametros_rsk', filas: [
+    ['modelo', 'string', 'PK', 'Modelo de calibración', 'cppibkren', ''],
+    ['parametro', 'string', 'PK', 'Nombre del parámetro', 'cod_mes_freeze', ''],
+    ['valor', 'string', '', 'Valor del parámetro', '202609', ''],
+    ['nro_carga', 'int', 'PK', 'Correlativo de la carga dentro del mes', 1, ''],
+    ['ts_carga', 'timestamp', '', 'Fecha y hora de carga', '2026-09-15 10:00:00', ''],
+    ['p_codmes', 'string', 'PK · Partición', 'Mes desde el que rige', '202609', '']]},
+  {hoja: 'scr_cal_<modelo>_rsk', filas: [
+    ['cod_mes', 'string', 'PK', 'Mes de proceso', '202612', ''],
+    ['cod_tip_doc', 'string', 'PK', 'Tipo de documento', '1', ''],
+    ['key_value', 'string', 'PK', 'Documento del cliente', 'DOC_EJEMPLO', ''],
+    ['cod_cli', 'string', '', 'Código de cliente', 'CLI_EJEMPLO', ''],
+    ['prob_modelo', 'double', '', 'PD raw', 0.0731, ''],
+    ['puntuacion', 'int', '', 'Puntuación del modelo', 927, ''],
+    ['factor_macro_<prod>', 'double', '', 'f_t del mes', -1.1308495593693428, '×N'],
+    ['factor_macro_freeze_<prod>', 'double', '', 'f_t congelado', -0.9867608669870671, '×N'],
+    ['prob_modelo_cal_<prod>', 'double', '', 'PD_PIT con el f_t del mes', 0.01205770865481469, '×N'],
+    ['puntuacion_cal_<prod>', 'int', '', 'Puntuación de la PD_PIT', 988, '×N'],
+    ['prob_modelo_cal_freeze_<prod>', 'double', '', 'PD_PIT con el f_t congelado', 0.011187684986232386, '×N'],
+    ['puntuacion_cal_freeze_<prod>', 'int', '', 'Puntuación de la PD freeze', 989, '×N'],
+    ['prob_modelo_cal_smacro_<prod>', 'double', '', 'PD sin macro (f_t = 0)', 0.0065666715239417394, '×N'],
+    ['puntuacion_cal_smacro_<prod>', 'int', '', 'Puntuación de la PD sin macro', 993, '×N · NEW'],
+    ['id_calibracion', 'string', 'FK', 'Versión del pkl de calibración', 'cppibkren_202609_v1', 'NEW'],
+    ...[1, 2, 3, 4, 5].map(i => ['extra_0' + i, 'string', '', 'Comodín (libre)', '', '']),
+    ...[6, 7, 8].map(i => ['extra_0' + i, 'string', '', 'Comodín: producto no planificado (con extra_01..05)', '', 'NEW']),
+    ['p_codmes', 'string', 'Partición', 'Partición: mes', '202612', ''],
+    ['p_fecdia', 'string', 'Partición', 'Partición: día', '20261215', '']]}
+];
+async function xlsBuffer() {
+  const wb = new ExcelJS.Workbook();
+  const borde = {style: 'thin', color: {argb: 'FFD5DDD9'}};
+  for (const t of TABLAS) {
+    const ws = wb.addWorksheet(t.hoja, {views: [{state: 'frozen', ySplit: 1}]});
+    ws.columns = [{header: 'N°', width: 6}, {header: 'Campo', width: 34}, {header: 'Tipo', width: 11}, {header: 'Llave', width: 15},
+                  {header: 'Descripción', width: 52}, {header: 'Ejemplo (REE, 202612)', width: 24}, {header: 'Marca', width: 11}];
+    t.filas.forEach((f, i) => ws.addRow([i + 1, ...f]));
+    ws.getRow(1).eachCell(c => {
+      c.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: 'FF0F191E'}};
+      c.font = {name: 'Calibri', bold: true, color: {argb: 'FFFFFFFF'}};
+      c.alignment = {vertical: 'middle'};
+    });
+    ws.getRow(1).height = 20;
+    ws.eachRow((r, n) => {
+      r.eachCell({includeEmpty: true}, c => { c.border = {top: borde, bottom: borde, left: borde, right: borde}; });
+      if (n === 1) return;
+      r.getCell(2).font = {name: 'Consolas'};
+      const m = String(r.getCell(7).value || '');
+      if (m.includes('NEW')) r.eachCell({includeEmpty: true}, c => { c.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: 'FFFFE45C'}}; });
+      if (m.includes('×N')) r.getCell(7).font = {bold: true};
+      const e = r.getCell(6);
+      if (typeof e.value === 'number' && !Number.isInteger(e.value)) e.numFmt = '0.000000000000000';
+    });
+    ws.autoFilter = {from: 'A1', to: 'G1'};
+  }
+  return await wb.xlsx.writeBuffer();
+}
+window.xlsBuffer = xlsBuffer;
+document.getElementById('bajaXLS').addEventListener('click', async () => {
+  if (!window.ExcelJS) { alert('No se pudo cargar la librería de Excel (requiere internet).'); return; }
+  bajar(new Blob([await xlsBuffer()], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}), 'estructuras_calibracion.xlsx');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+{
+ "modelo": "cppibkren",
+ "id_calibracion": "cppibkren_201801_v1",
+ "fecha": "2026-11-12",
+ "productos": {
+  "PP": {
+   "sufijo": "_pp",
+   "variables": [
+    1
+   ],
+   "modelo_macro": {
+    "tipo": "FT_VASICEK",
+    "pd_lra": 0.04226346409008948,
+    "intercepto": -1.900195796163702,
+    "pendientes": [
+     0.6583423568236846
+    ],
+    "media_centrado": -0.19111262350586136,
+    "ft_min": -1.1308495593693428,
+    "ft_max": 0.7656842281878757
+   },
+   "filas": [
+    {
+     "bloque": "ESQUEMA",
+     "parametro": "metodo",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": null,
+     "valor_txt": "BETA"
+    },
+    {
+     "bloque": "ESQUEMA",
+     "parametro": "convencion_macro",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": null,
+     "valor_txt": "VASICEK"
+    },
+    {
+     "bloque": "ESQUEMA",
+     "parametro": "slot_llave_01",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1.0,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "ESQUEMA",
+     "parametro": "escala_puntuacion",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1000.0,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "ESQUEMA",
+     "parametro": "redondeo",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": null,
+     "valor_txt": "HALF_EVEN"
+    },
+    {
+     "bloque": "CLIP",
+     "parametro": "p_min",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1e-09,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "CLIP",
+     "parametro": "p_max",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.999999999,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "CLIP",
+     "parametro": "pd_cal_min",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1e-09,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "CLIP",
+     "parametro": "pd_cal_max",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.999999999,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "CLIP",
+     "parametro": "pd_final_min",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.0001,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "CLIP",
+     "parametro": "pd_final_max",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.9999,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "BETA",
+     "parametro": "beta_m",
+     "llave_01": "DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": -1.4235902271832188,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "BETA",
+     "parametro": "beta_a",
+     "llave_01": "DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1.4307409240924087,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "BETA",
+     "parametro": "beta_b",
+     "llave_01": "DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.11673242216482149,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "ANCLA",
+     "parametro": "delta",
+     "llave_01": "DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.061973725544583,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "BETA",
+     "parametro": "beta_m",
+     "llave_01": "NO DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": -1.8712301290911784,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "BETA",
+     "parametro": "beta_a",
+     "llave_01": "NO DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1.12194919105907,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "BETA",
+     "parametro": "beta_b",
+     "llave_01": "NO DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.5587876581505312,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "ANCLA",
+     "parametro": "delta",
+     "llave_01": "NO DEP",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.10257577255744288,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "ANCLA",
+     "parametro": "ajuste",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.034261721611022956,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "VASICEK",
+     "parametro": "rho",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 0.038030115964094044,
+     "valor_txt": ""
+    },
+    {
+     "bloque": "VASICEK",
+     "parametro": "lambda",
+     "llave_01": "*",
+     "llave_02": "*",
+     "llave_03": "*",
+     "llave_04": "*",
+     "llave_clean": "*",
+     "orden": 1,
+     "valor": 1.0,
+     "valor_txt": ""
+    }
+   ]
+  }
+ }
+}
