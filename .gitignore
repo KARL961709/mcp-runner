@@ -360,3 +360,5 @@ entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/*.pyc
 !entregables/flujo_calibracion_referencia/referencia/t_cal_parametros_rsk.csv
 !entregables/flujo_calibracion_referencia/sql/inference_t_cal_cppibkren_rsk.sql
 !entregables/flujo_calibracion_referencia/sql/inference_t_cal_vcadmbnk_rsk.sql
+
+!entregables/t_cal_parametros_rsk_muestra.csv
