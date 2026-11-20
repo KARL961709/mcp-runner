@@ -362,3 +362,7 @@ entregables/Artefactos_MLOps_CPPIBKREN_CALIBRADO/**/*.pyc
 !entregables/flujo_calibracion_referencia/sql/inference_t_cal_vcadmbnk_rsk.sql
 
 !entregables/t_cal_parametros_rsk_muestra.csv
+# --- BD_emer_danos_2003_2020.xlsx (2026-11-19): base PUBLICA de INDECI, emergencias y danos
+#     2003-2020 por distrito (96,531 registros). Sin datos de personas ni del banco.
+#     19 MB; MD5 63a2d9a4f1adead84e04eba69885fb39 (identica a elnino_ibk/01_inputs/sinpad).
+!entregables/BD_emer_danos_2003_2020.xlsx
